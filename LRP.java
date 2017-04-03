@@ -11,7 +11,7 @@ class sqlDB {
 	String drivername = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	String url = "jdbc:sqlserver://localhost:50680;DatabaseName=library";
 	String user = "sa";
-	String password = "2019623325518zjh";
+	String password = "**********";
 	Connection con;
 	Statement com;
 	ResultSet rs;
@@ -21,7 +21,7 @@ class sqlDB {
 			Class.forName(drivername);
 			con = DriverManager.getConnection(url, user, password);
 		} catch (Exception e) {
-			System.out.println("ÎŞ·¨Á¬½ÓÊı¾İ¿â");
+			System.out.println("æ— æ³•è¿æ¥æ•°æ®åº“");
 		}
 	}
 
@@ -31,7 +31,7 @@ class sqlDB {
 			rs = com.executeQuery(stmt);
 			return rs;
 		} catch (Exception e1) {
-			System.out.println("ÎŞ·¨´´½¨statement");
+			System.out.println("æ— æ³•åˆ›å»ºstatement");
 			return null;
 		}
 	}
@@ -63,7 +63,7 @@ public class LRP extends JFrame implements ActionListener {
 	JMenu usermenu;
 	Borrow borrowpane;
 	Sendback loanpane;
-	public static JLabel jlabel=new JLabel("ÕËºÅÎ´µÇÂ¼");
+	public static JLabel jlabel=new JLabel("è´¦å·æœªç™»å½•");
 	public static String currentop=null;
 	JLabel label;
 	LoginPane loginpane;
@@ -96,18 +96,18 @@ public class LRP extends JFrame implements ActionListener {
 	public void mainbackground(){
 		if(label!=null)
 		   this.getLayeredPane().remove(label);
-		ImageIcon background =new ImageIcon(getClass().getResource("Í¼Êé¹ÜÀíÏµÍ³.jpg"));
-		 label = new JLabel(background); //backgroundÎªImageIcon
-		// °Ñ±êÇ©µÄ´óĞ¡Î»ÖÃÉèÖÃÎªÍ¼Æ¬¸ÕºÃÌî³äÕû¸öÃæ°å 
+		ImageIcon background =new ImageIcon(getClass().getResource("å›¾ä¹¦ç®¡ç†ç³»ç»Ÿ.jpg"));
+		 label = new JLabel(background); //backgroundä¸ºImageIcon
+		// æŠŠæ ‡ç­¾çš„å¤§å°ä½ç½®è®¾ç½®ä¸ºå›¾ç‰‡åˆšå¥½å¡«å……æ•´ä¸ªé¢æ¿ 
 		label.setBounds(0, 0, background.getIconWidth(), background.getIconHeight());
-		//Ìí¼ÓÍ¼Æ¬µ½frameµÄµÚ¶ş²ã(°Ñ±³¾°Í¼Æ¬Ìí¼Óµ½·Ö²ã´°¸ñµÄ×îµ×²ã×÷Îª±³¾°)
+		//æ·»åŠ å›¾ç‰‡åˆ°frameçš„ç¬¬äºŒå±‚(æŠŠèƒŒæ™¯å›¾ç‰‡æ·»åŠ åˆ°åˆ†å±‚çª—æ ¼çš„æœ€åº•å±‚ä½œä¸ºèƒŒæ™¯)
 		
 		//this.getLayeredPane().setLayout(null);
 	    this.getLayeredPane().add(label,new Integer(Integer.MIN_VALUE));
 	    this.setSize(background.getIconWidth(),background.getIconHeight()+44);
 	      JPanel jPanell=(JPanel)this.getContentPane();
 	    jPanell.setOpaque(false);
-		//°ÑÄÚÈİ´°¸ñ×ª»¯ÎªJPanel£¬·ñÔò²»ÄÜÓÃ·½·¨setOpaque()À´Ê¹ÄÚÈİ´°¸ñÍ¸Ã÷
+		//æŠŠå†…å®¹çª—æ ¼è½¬åŒ–ä¸ºJPanelï¼Œå¦åˆ™ä¸èƒ½ç”¨æ–¹æ³•setOpaque()æ¥ä½¿å†…å®¹çª—æ ¼é€æ˜
 	}
 	public LRP() {
 		icon[0]=new ImageIcon(getClass().getResource("1.jpg"));
@@ -123,19 +123,19 @@ public class LRP extends JFrame implements ActionListener {
 		picture =new JLabel(icon[0]);
 			
 		mainbackground();
-		//jlabel=new JLabel("ÌáÊ¾");
+		//jlabel=new JLabel("æç¤º");
 		//jPanel.add(jlabel,BorderLayout.SOUTH);
 		
-		setTitle("Í¼Êé¹ÜÀíÏµÍ³");
+		setTitle("å›¾ä¹¦ç®¡ç†ç³»ç»Ÿ");
 		bar = new JMenuBar();
-		usermenu=new JMenu("ÕËºÅ");
-		lognin=new JMenuItem("µÇÂ¼");
-		lognout=new JMenuItem("×¢Ïú");
+		usermenu=new JMenu("è´¦å·");
+		lognin=new JMenuItem("ç™»å½•");
+		lognout=new JMenuItem("æ³¨é”€");
 		usermenu.add(lognin);usermenu.add(lognout);
-		borrowmenu = new JMenuItem("½èÊéµÇ¼Ç");
-		loanmenu = new JMenuItem("»¹ÊéµÇ¼Ç");
-		enquirymenu=new JMenuItem("Í¼Êé²éÑ¯");
-		registermenu=new JMenuItem("½èÔÄ¿¨×¢²á");
+		borrowmenu = new JMenuItem("å€Ÿä¹¦ç™»è®°");
+		loanmenu = new JMenuItem("è¿˜ä¹¦ç™»è®°");
+		enquirymenu=new JMenuItem("å›¾ä¹¦æŸ¥è¯¢");
+		registermenu=new JMenuItem("å€Ÿé˜…å¡æ³¨å†Œ");
 		bar.add(borrowmenu);
 		bar.add(loanmenu);
 		bar.add(enquirymenu);
@@ -159,12 +159,12 @@ public class LRP extends JFrame implements ActionListener {
 		add(jlabel,BorderLayout.SOUTH);
 		 //Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("o.png"));
 		 //int imWidth = image.getWidth(this);
-			//int imHeight = image.getHeight(this); // ¶¨ÒåÍ¼Æ¬µÄ¿í¶È¡¢¸ß¶È
+			//int imHeight = image.getHeight(this); // å®šä¹‰å›¾ç‰‡çš„å®½åº¦ã€é«˜åº¦
 			//int FWidth = getWidth();
-			//int FHeight = getHeight();// ¶¨Òå´°¿ÚµÄ¿í¶È¡¢¸ß¶È
+			//int FHeight = getHeight();// å®šä¹‰çª—å£çš„å®½åº¦ã€é«˜åº¦
 			//int x = (FWidth - imWidth) / 2;
 			//int y = (FHeight - imHeight)/2;
-		//getGraphics().drawImage(image,0,0,null);// »æÖÆÍ¼Æ¬
+		//getGraphics().drawImage(image,0,0,null);// ç»˜åˆ¶å›¾ç‰‡
 	}
 
 	public void run() {
@@ -222,7 +222,7 @@ public class LRP extends JFrame implements ActionListener {
 		if(e.getSource()==lognout){
 			if(jlabel!=null) getContentPane().remove(jlabel);
 			currentop=null;
-			jlabel=new JLabel("ÕËºÅÎ´µÇÂ¼");
+			jlabel=new JLabel("è´¦å·æœªç™»å½•");
 			
 			getContentPane().add(jlabel,BorderLayout.SOUTH);
 			this.repaint();
@@ -256,8 +256,8 @@ public class LRP extends JFrame implements ActionListener {
 class Enquiry extends JPanel implements ActionListener{ 
 	  JComboBox combobox;
 	  JLabel label;
-      String requirement[]={"ÀàĞÍ","×÷Õß","ÊéÃû"}; 
-      String msg[]={"Í¼Êé±àºÅ","ÊéÃû","ÀàĞÍ","×÷Õß","Êé¼ÜÃû³Æ","ÊÇ·ñ½è³ö"}; 
+      String requirement[]={"ç±»å‹","ä½œè€…","ä¹¦å"}; 
+      String msg[]={"å›¾ä¹¦ç¼–å·","ä¹¦å","ç±»å‹","ä½œè€…","ä¹¦æ¶åç§°","æ˜¯å¦å€Ÿå‡º"}; 
       JTable table; 
       JTextField write;
       JButton ok; 
@@ -269,11 +269,11 @@ class Enquiry extends JPanel implements ActionListener{
     	    	for(int j=0;j<6;j++)
     	    		a[i][j]='\0';
     	    }
-    	    label=new JLabel("Ë¢Ñ¡Ìõ¼ş");
+    	    label=new JLabel("åˆ·é€‰æ¡ä»¶");
         	combobox=new JComboBox(requirement);
         	combobox.setSelectedIndex(0);
         	write=new JTextField(15); 
-        	ok=new JButton("È·ÈÏ");
+        	ok=new JButton("ç¡®è®¤");
             JPanel northpanel=new JPanel();
             northpanel.setOpaque(false);
             northpanel.add(label);
@@ -346,7 +346,7 @@ class Borrow extends JPanel implements ActionListener {
 
 	public String getdate() {
 		Date d = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// ÉèÖÃÈÕÆÚ¸ñÊ½£¬¿ÉĞ´³ÉSimpleDateFormat
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// è®¾ç½®æ—¥æœŸæ ¼å¼ï¼Œå¯å†™æˆSimpleDateFormat
 																			// df
 																			// =
 																			// new
@@ -362,26 +362,26 @@ class Borrow extends JPanel implements ActionListener {
 		//ImageIcon background =new ImageIcon(getClass().getResource("x.png"));
 		//image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("o.png"));
 		//int imWidth = image.getWidth(this);
-		//int imHeight = image.getHeight(this); // ¶¨ÒåÍ¼Æ¬µÄ¿í¶È¡¢¸ß¶È
+		//int imHeight = image.getHeight(this); // å®šä¹‰å›¾ç‰‡çš„å®½åº¦ã€é«˜åº¦
 		//int FWidth = getWidth();
-		//int FHeight = getHeight();// ¶¨Òå´°¿ÚµÄ¿í¶È¡¢¸ß¶È
+		//int FHeight = getHeight();// å®šä¹‰çª—å£çš„å®½åº¦ã€é«˜åº¦
 		//int x = (FWidth - imWidth) / 2;
-		//int y = (FHeight - imHeight) / 2;// ¼ÆËãÍ¼Æ¬µÄ×ø±ê,Ê¹Í¼Æ¬ÏÔÊ¾ÔÚ´°¿ÚÕıÖĞ¼ä
-		//g.drawImage(image, 0, 0, 150,150,null);// »æÖÆÍ¼Æ¬
+		//int y = (FHeight - imHeight) / 2;// è®¡ç®—å›¾ç‰‡çš„åæ ‡,ä½¿å›¾ç‰‡æ˜¾ç¤ºåœ¨çª—å£æ­£ä¸­é—´
+		//g.drawImage(image, 0, 0, 150,150,null);// ç»˜åˆ¶å›¾ç‰‡
 		textfield[2].setText(getdate());
 	}
 
 	public Borrow() {
 		setOpaque(false);
-		label1 = new JLabel("½èÔÄÖ¤ºÅ");
-		label2 = new JLabel("Í¼Êé±àºÅ");
-		label3 = new JLabel("½èÔÄÈÕÆÚ");
-		label4 = new JLabel("²Ù×÷Ô±");
+		label1 = new JLabel("å€Ÿé˜…è¯å·");
+		label2 = new JLabel("å›¾ä¹¦ç¼–å·");
+		label3 = new JLabel("å€Ÿé˜…æ—¥æœŸ");
+		label4 = new JLabel("æ“ä½œå‘˜");
 		textfield = new JTextField[4];
 		for (int i = 0; i < 4; i++) {
 			textfield[i] = new JTextField(15);
 		}
-		ok = new JButton("È·¶¨");
+		ok = new JButton("ç¡®å®š");
 		JPanel eastpanel = new JPanel();
 		eastpanel.setOpaque(false);
 		eastpanel.setLayout(new GridLayout(4, 1));
@@ -405,7 +405,7 @@ class Borrow extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == ok) {
-			if(LRP.jlabel.getText().equals("ÕËºÅÎ´µÇÂ¼"))  JOptionPane.showMessageDialog(null, "ÄãÉĞÎ´µÇÂ¼","¾¯¸æ",JOptionPane.OK_OPTION);
+			if(LRP.jlabel.getText().equals("è´¦å·æœªç™»å½•"))  JOptionPane.showMessageDialog(null, "ä½ å°šæœªç™»å½•","è­¦å‘Š",JOptionPane.OK_OPTION);
 			else
 				try {
 				sqlDB db = new sqlDB();
@@ -428,7 +428,7 @@ class Sendback extends JPanel implements ActionListener {
     
 	public String getdate() {
 		Date d = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// ÉèÖÃÈÕÆÚ¸ñÊ½£¬¿ÉĞ´³ÉSimpleDateFormat
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// è®¾ç½®æ—¥æœŸæ ¼å¼ï¼Œå¯å†™æˆSimpleDateFormat
 																			// df
 																			// =
 																			// new
@@ -445,15 +445,15 @@ class Sendback extends JPanel implements ActionListener {
 
 	public Sendback() {
 		setOpaque(false);
-		label1 = new JLabel("½èÔÄÖ¤ºÅ");
-		label2 = new JLabel("Í¼Êé±àºÅ");
-		label3 = new JLabel("¹é»¹ÈÕÆÚ");
-		label4 = new JLabel("²Ù×÷Ô±");
+		label1 = new JLabel("å€Ÿé˜…è¯å·");
+		label2 = new JLabel("å›¾ä¹¦ç¼–å·");
+		label3 = new JLabel("å½’è¿˜æ—¥æœŸ");
+		label4 = new JLabel("æ“ä½œå‘˜");
 		textfield = new JTextField[4];
 		for (int i = 0; i < 4; i++) {
 			textfield[i] = new JTextField(15);
 		}
-		ok = new JButton("È·¶¨");
+		ok = new JButton("ç¡®å®š");
 		JPanel eastpanel = new JPanel();
 		eastpanel.setLayout(new GridLayout(4, 1));
 		eastpanel.add(textfield[0]);
@@ -476,7 +476,7 @@ class Sendback extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == ok) {
-			if(LRP.jlabel.getText().equals("ÕËºÅÎ´µÇÂ¼"))  JOptionPane.showMessageDialog(null, "ÄãÉĞÎ´µÇÂ¼","¾¯¸æ",JOptionPane.OK_OPTION);
+			if(LRP.jlabel.getText().equals("è´¦å·æœªç™»å½•"))  JOptionPane.showMessageDialog(null, "ä½ å°šæœªç™»å½•","è­¦å‘Š",JOptionPane.OK_OPTION);
 			else
 			   try {
 				sqlDB db = new sqlDB();
@@ -498,8 +498,8 @@ class LoginPane extends JPanel implements ActionListener{
 		Icon button=new ImageIcon(getClass().getResource("ok.jpg"));
 		ok=new JButton(button);
 		ok.setBorderPainted(false);
-		userlabel=new JLabel("ÕËºÅ:");
-		passwordlabel=new JLabel("ÃÜÂë:");
+		userlabel=new JLabel("è´¦å·:");
+		passwordlabel=new JLabel("å¯†ç :");
 		userfield=new JTextArea(1,15);
 		passwordfield=new JPasswordField(15);
 		setOpaque(false);
@@ -519,12 +519,12 @@ class LoginPane extends JPanel implements ActionListener{
 		centerpanel.add(ok);
 		centerpanel.add(new JLabel());
 		//userlabel.setBounds(0, 0, this.getWidth()/4, this.getHeight()/4);
-		userlabel.setFont(new Font("¿¬Ìå",Font.BOLD,40));
-		passwordlabel.setFont(new Font("¿¬Ìå",Font.BOLD,40));
+		userlabel.setFont(new Font("æ¥·ä½“",Font.BOLD,40));
+		passwordlabel.setFont(new Font("æ¥·ä½“",Font.BOLD,40));
 		westpanel.add(userlabel);westpanel.add(passwordlabel);
 		eastpanel.add(userfield);
 		eastpanel.add(new JLabel());eastpanel.add(passwordfield);
-		//passwordfield.setFont(new Font("¿¬Ìå",Font.BOLD,50));
+		//passwordfield.setFont(new Font("æ¥·ä½“",Font.BOLD,50));
 	   // userlabel.setLocation(100, 100);
 	    panel.add(westpanel,BorderLayout.WEST);
 	    panel.add(eastpanel,BorderLayout.EAST);
@@ -535,7 +535,7 @@ class LoginPane extends JPanel implements ActionListener{
 	    add(panel,BorderLayout.NORTH);
 	    add(centerpanel, BorderLayout.CENTER);
 	    //add(LRP.jlabel,BorderLayout.SOUTH);
-		//jlabel=new JLabel("ÌáÊ¾");
+		//jlabel=new JLabel("æç¤º");
 		//add(LRP.jlabel,BorderLayout.SOUTH);
 	}
 	public void actionPerformed(ActionEvent e){
@@ -549,10 +549,10 @@ class LoginPane extends JPanel implements ActionListener{
 			
 			if(use.equals("123456")&&psd.equals("123456")) 
 			
-			{LRP.jlabel=new JLabel("¹ÜÀíÔ±ÒÑµÇÂ¼");
+			{LRP.jlabel=new JLabel("ç®¡ç†å‘˜å·²ç™»å½•");
 			islogin=true;
-			LRP.currentop="¹ÜÀíÔ±";
-			JOptionPane.showMessageDialog(null, "µÇÂ¼³É¹¦","",JOptionPane.OK_OPTION);}
+			LRP.currentop="ç®¡ç†å‘˜";
+			JOptionPane.showMessageDialog(null, "ç™»å½•æˆåŠŸ","",JOptionPane.OK_OPTION);}
 			
 			else
 				try{
@@ -567,14 +567,14 @@ class LoginPane extends JPanel implements ActionListener{
 			    	{
 			    		islogin=true;
 			    		LRP.currentop=rs.getString("operator_ID");
-			    		LRP.jlabel=new JLabel("²Ù×÷Ô±:"+use);
-			    		JOptionPane.showMessageDialog(null, "µÇÂ¼³É¹¦","",JOptionPane.OK_OPTION);
+			    		LRP.jlabel=new JLabel("æ“ä½œå‘˜:"+use);
+			    		JOptionPane.showMessageDialog(null, "ç™»å½•æˆåŠŸ","",JOptionPane.OK_OPTION);
 			    		break;
 			    	}
 			   
 			}
 			    if(!islogin){
-			    	JOptionPane.showMessageDialog(null, "µÇÂ¼Ê§°Ü","",JOptionPane.OK_OPTION);
+			    	JOptionPane.showMessageDialog(null, "ç™»å½•å¤±è´¥","",JOptionPane.OK_OPTION);
 			    }
 			}catch(SQLException ew){ew.printStackTrace();}
 		}
@@ -610,9 +610,9 @@ class Register extends JPanel implements ActionListener{
 	}
 	public Register(){
 		setOpaque(false);
-		name=new JLabel("ĞÕÃû");card=new JLabel("¿¨ºÅ");registertime=new JLabel("×¢²áÊ±¼ä");
+		name=new JLabel("å§“å");card=new JLabel("å¡å·");registertime=new JLabel("æ³¨å†Œæ—¶é—´");
 		namefield=new JTextField(15);cardfield=new JTextField(15);registertimefield=new JTextField(getdata());
-		register=new JButton("×¢²á");
+		register=new JButton("æ³¨å†Œ");
 		JPanel panel=new JPanel();
 		panel.setOpaque(false);
 		panel.setLayout(new GridLayout(3,2));
@@ -628,7 +628,7 @@ class Register extends JPanel implements ActionListener{
 	}
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==register){
-			if(LRP.jlabel.getText().equals("ÕËºÅÎ´µÇÂ¼"))  JOptionPane.showMessageDialog(null, "ÄãÉĞÎ´µÇÂ¼","¾¯¸æ",JOptionPane.OK_OPTION);
+			if(LRP.jlabel.getText().equals("è´¦å·æœªç™»å½•"))  JOptionPane.showMessageDialog(null, "ä½ å°šæœªç™»å½•","è­¦å‘Š",JOptionPane.OK_OPTION);
 			else{
 			sqlDB sql=new sqlDB();
 			sql.exceUpadate("insert dbo.stuedent values('"+namefield.getText()+"','"+cardfield.getText()+"',10)");
