@@ -54,10 +54,26 @@ public class Friend {
 	}
 	@Override
 	public String toString() {
-		if(!isnickname){
+		if(!isnickname&&remarkname!=null&&!remarkname.equals("")){
 		   return remarkname;
 		}
 		return nickname;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Friend other = (Friend) obj;
+		if (user_id == null) {
+			if (other.user_id != null)
+				return false;
+		} else if (!user_id.equals(other.user_id))
+			return false;
+		return true;
 	}
 	
 }

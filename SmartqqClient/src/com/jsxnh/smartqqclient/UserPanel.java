@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,6 +43,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -51,7 +55,11 @@ public class UserPanel extends JFrame{
 	 * 信息标识符
 	 * */
 	public final static Integer UpdateNicknameMessage=0,UpdateSignatureMessage=1,UpdateDatasMessage=2,
-			                    DeletePacketMessage=3,AddPacketMessage=4,ModifyPacketMessage=5;
+			                    DeletePacketMessage=3,AddPacketMessage=4,ModifyPacketMessage=5,
+			                    ModifyRemarkMessage=6,MovePacketMessage=7,AddFriendMessage=8,
+			                    AddFriendResultMessage=9,AgreeAddFriendMessage=10,DisagreeFriendMessage=11,
+			                    FindUserByIdSuccessMessage=12,FindUserByNicknameSuccessMessage=13,
+			                    FindUserByIdFailureMessage=14,FindUserByNicknameFailureMessage=15;
 	
 	private User user;
 	private Map<String, LinkedList<Friend>> friends=new HashMap<>();
@@ -61,14 +69,23 @@ public class UserPanel extends JFrame{
 	private JScrollPane jsPanel;
 	private Container con=this.getContentPane();
 	private JLabel nickname,signature,weather;
-	private JLabel headimg,headimglb;
+	private JLabel headimg,headimglb,MSGLb;
 	private Point point;
-	private JButton close,min;
+	private JButton close,min,searchbt,MSGBt;
+	private JTextField searchtf;
 	private JMenuBar modify;
 	private Friend currentfriend;
 	private String currentpacket;
 	private DefaultMutableTreeNode currentnode;
 	private JPopupMenu popupmenu;
+	
+	public JLabel getMsgLb(){
+		return this.MSGLb;
+	}
+	
+	public void injectMessage(Integer message,String json){
+		messages.put(message, json);
+	}
 	public UserPanel(){
 		
 	}
@@ -124,6 +141,19 @@ public class UserPanel extends JFrame{
 		}
 		
 	}
+	
+	public void initRoot(){
+		//初始化朋友树
+		root=new DefaultMutableTreeNode();
+		for(Map.Entry<String, LinkedList<Friend>> entry:friends.entrySet()){
+			DefaultMutableTreeNode packetname=new DefaultMutableTreeNode(entry.getKey());
+			for(Friend friend_:entry.getValue()){
+				packetname.add(new DefaultMutableTreeNode(friend_));
+			}
+			root.add(packetname);
+		}
+	}
+	
 	public void lunch(String str){
 		initUserandFriend(str);
 		this.setLayout(null);
@@ -177,20 +207,89 @@ public class UserPanel extends JFrame{
 		weather.setBounds(220, 30, 60, 50);
 		con.add(weather);
 		
-		//朋友信息根目录
-		root=new DefaultMutableTreeNode("");
+		searchtf=new JTextField("搜索账号，昵称");
+		searchtf.setBorder(null);
+		searchtf.setFont(new Font("楷体",Font.PLAIN,14));
+		searchtf.setForeground(Color.darkGray);
+		searchtf.setBackground(new Color(248,248,255));
+        searchtf.addMouseListener(new MouseAdapter() {	
+			public void mouseEntered(MouseEvent e) {				
+				searchtf.setBackground(Color.white);
+				}
+		});
+        searchtf.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				searchtf.setText("");   
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				//searchtf.setText("搜索账号，昵称");
+			}
+		});
+        searchbt=new JButton();
+        searchbt.setIcon(new ImageIcon(this.getClass().getResource("search.png")));
+        searchbt.setRolloverIcon(new ImageIcon(this.getClass().getResource("search_hover.png")));
+        searchbt.setPressedIcon(new ImageIcon(this.getClass().getResource("search_press.png")));
+        searchbt.setBorder(null);
+        searchbt.setFocusPainted(false);
+        searchbt.setContentAreaFilled(false);
+        searchtf.setBounds(1, 108, 249, 33);
+        searchbt.setBounds(250, 111, 22, 25);
+        searchbt.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String str=searchtf.getText();
+				if(str.equals("")){
+					return;
+				}
+				if(str.matches("\\d+")){
+					SendtoServer.finduserById(Integer.parseInt(str));
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(FindUserByIdFailureMessage)){
+						JOptionPane.showMessageDialog(UserPanel.this, "无账号");
+						messages.remove(FindUserByIdFailureMessage);
+					}else{						
+						new addFriendbyidFrame().lunch(messages.get(FindUserByIdSuccessMessage));
+						messages.remove(FindUserByIdSuccessMessage);
+					}
+				}else{
+					SendtoServer.finduserByName(str);
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(FindUserByNicknameFailureMessage)){
+						JOptionPane.showMessageDialog(UserPanel.this, "无账号");
+						messages.remove(FindUserByNicknameFailureMessage);
+					}else{
+						new addFriendbynicknameFrame().lunch(messages.get(FindUserByNicknameSuccessMessage));
+						messages.remove(FindUserByNicknameSuccessMessage);
+					}					
+				}
+			}
+		});
+        con.add(searchtf);
+        con.add(searchbt);
+        
 		jsPanel=new JScrollPane();
 		jsPanel.setBorder(null);
 		jsPanel.setBounds(2, 182, 278, 430);
-		jsPanel.setVisible(true);
-		//初始化朋友树
-		for(Map.Entry<String, LinkedList<Friend>> entry:friends.entrySet()){
-			DefaultMutableTreeNode packetname=new DefaultMutableTreeNode(entry.getKey());
-			for(Friend friend_:entry.getValue()){
-				packetname.add(new DefaultMutableTreeNode(friend_));
-			}
-			root.add(packetname);
-		}
+		jsPanel.setVisible(true);		
+		initRoot();
 		DefaultTreeModel model=new DefaultTreeModel(root);
 		friendsTree=new JTree();
 		friendsTree.setVisible(true);
@@ -202,6 +301,9 @@ public class UserPanel extends JFrame{
 			public void valueChanged(TreeSelectionEvent e) {
 				// TODO Auto-generated method stub
 				DefaultMutableTreeNode node=(DefaultMutableTreeNode)friendsTree.getLastSelectedPathComponent();
+				if(node==null){
+					return;
+				}
 				currentnode=node;
 				if(node.getUserObject()==null){
 					return;
@@ -234,8 +336,44 @@ public class UserPanel extends JFrame{
 		popupmenu=new JPopupMenu();
 		popupmenu.setVisible(true);
 		JMenuItem deletepacket=new JMenuItem("删除分组");
-		
+		deletepacket.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(friends.get(currentpacket).size()>0){
+					JOptionPane.showMessageDialog(UserPanel.this, "请删除空的分组");
+					return;
+				}
+				SendtoServer.deletePacket(user.getUser_id(), currentpacket);
+				synchronized (UserPanel.this) {
+					try {
+						UserPanel.this.wait();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				if(messages.containsKey(DeletePacketMessage)){
+					messages.remove(DeletePacketMessage);
+					user.getPackets().remove(currentpacket);
+					friends.remove(currentpacket);
+					JOptionPane.showMessageDialog(UserPanel.this, "删除成功");
+					root.remove(currentnode);
+					friendsTree.setModel(new DefaultTreeModel(root));
+					jsPanel.repaint();
+				}
+			}
+		});
 		JMenuItem addpacket=new JMenuItem("增加分组");
+		addpacket.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				new addpacketFrame().lunch();
+			}
+		});
 		JMenuItem modifypacket=new JMenuItem("修改分组");
 		//修改分组监听事件
 		modifypacket.addActionListener(new ActionListener() {
@@ -243,66 +381,89 @@ public class UserPanel extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				new JFrame(){
-					private JTextField packettf;
-					private JButton confirm;
-					private Container container=this.getContentPane();
-					public void lunch(){
-						this.setLayout(null);
-						this.setSize(300, 150);
-						packettf=new JTextField(1000);
-						packettf.setBorder(BorderFactory.createLineBorder(Color.blue));
-						packettf.setBounds(1, 20, 174, 28);
-						confirm=new JButton("确认修改");
-						confirm.setBounds(181, 20, 86, 28);
-						confirm.addActionListener(new ActionListener() {
-							
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								// TODO Auto-generated method stub
-								String str=packettf.getText();
-								if(packettf.getText().equals("")){
-									JOptionPane.showMessageDialog(UserPanel.this, "不为空");
-									return;
-								}
-								SendtoServer.modifyPacket(user.getUser_id(), currentpacket, packettf.getText());
-								synchronized (UserPanel.this) {
-									try {
-										UserPanel.this.wait();
-									} catch (InterruptedException e1) {
-										// TODO Auto-generated catch block
-										e1.printStackTrace();
-									}
-								}
-								if(messages.containsKey(ModifyPacketMessage)){
-									JOptionPane.showMessageDialog(UserPanel.this, "修改成功");
-									messages.remove(ModifyPacketMessage);
-									user.getPackets().remove(currentfriend);
-									user.getPackets().add(str);
-									LinkedList<Friend> friends_=friends.get(currentpacket);
-									friends.remove(currentpacket);
-									friends.put(str, friends_);
-									currentnode.setUserObject(str);
-									jsPanel.repaint();
-								}
-							}
-						});
-						container.add(packettf);
-						container.add(confirm);
-						setVisible(true);
-					}
-				}.lunch();
+				new modifypacketFrame().lunch();
 			}
 			
 		});
+		JMenuItem movepacket=new JMenuItem("移动分组");
+		movepacket.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				new movepacketFrame().lunch();
+			}
+		});
+		JMenuItem modifyremark=new JMenuItem("修改备注");
+		modifyremark.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				new modifyremarkFrame().lunch();
+			}
+		});
 		JMenuItem friendmessage=new JMenuItem("查看资料");
+		friendmessage.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				new friendmessageFrame();
+			}
+		});
 		JMenuItem chatwith=new JMenuItem("发送消息");
+		
+		JMenuItem shownickname=new JMenuItem("显示昵称");
+		shownickname.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				for(Map.Entry<String, LinkedList<Friend>> entry:friends.entrySet()){
+					LinkedList<Friend> friends_=entry.getValue();
+					for(Friend item:friends_){
+						item.setIsnickname(true);
+					}
+				}
+				initRoot();
+				friendsTree.setModel(new DefaultTreeModel(root));
+				jsPanel.setViewportView(friendsTree);
+				jsPanel.repaint();
+				jsPanel.validate();
+			}
+		});
+		JMenuItem showremark=new JMenuItem("显示备注");
+		showremark.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				for(Map.Entry<String, LinkedList<Friend>> entry:friends.entrySet()){
+					LinkedList<Friend> friends_=entry.getValue();
+					for(Friend item:friends_){
+						item.setIsnickname(false);
+					}
+				}
+				initRoot();
+				friendsTree.setModel(new DefaultTreeModel(root));
+				jsPanel.setViewportView(friendsTree);
+				jsPanel.repaint();
+				jsPanel.validate();
+			}
+		});
+		
 		popupmenu.add(deletepacket);
 		popupmenu.add(addpacket);
 		popupmenu.add(modifypacket);
+		popupmenu.add(movepacket);
 		popupmenu.addSeparator();
+		popupmenu.add(modifyremark);
 		popupmenu.add(friendmessage);
 		popupmenu.add(chatwith);
+		popupmenu.addSeparator();
+		popupmenu.add(shownickname);
+		popupmenu.add(showremark);
 		popupmenu.setInvoker(friendsTree);
 		con.add(popupmenu);
 		
@@ -344,6 +505,61 @@ public class UserPanel extends JFrame{
 		modify.setBorder(null);
 		con.add(modify);
 		
+		MSGLb=new JLabel();
+		MSGLb.setFont(new Font("宋体",Font.PLAIN,14));
+		MSGLb.setForeground(Color.white);
+		MSGLb.setText("无消息");
+		MSGLb.setBounds(107, 0, 60, 18);
+		MSGBt=new JButton();
+		MSGBt.setBorder(null);
+		MSGBt.setFocusPainted(false);
+		MSGBt.setContentAreaFilled(false);
+		MSGBt.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(messages.containsKey(AddFriendMessage)){
+					new acceptaddfriendFrame().lunch(messages.get(AddFriendMessage));
+					MSGLb.setText("无消息");
+				}
+				else if(messages.containsKey(AgreeAddFriendMessage)){
+					if(!messages.get(AgreeAddFriendMessage).equals("添加成功")){
+						JSONObject addfriend=JSONObject.fromObject(messages.get(AgreeAddFriendMessage)).getJSONObject("agreeaddfriend");
+						Integer user_id=addfriend.getInt("user2_id");
+						JOptionPane.showMessageDialog(UserPanel.this, String.valueOf(user_id)+"同意添加");
+						Friend newFriend=new Friend();
+						newFriend.setUser_id(user_id);
+						newFriend.setNickname(addfriend.getString("nickname2"));
+						if(addfriend.containsKey("signature2")){
+							newFriend.setSignature(addfriend.getString("signature2"));
+						}						
+						newFriend.setStatus(addfriend.getInt("status2"));
+						newFriend.setPacket(addfriend.getString("packet1_name"));
+						friends.get(newFriend.getPacket()).add(newFriend);
+						initRoot();
+						friendsTree.setModel(new DefaultTreeModel(root));
+						jsPanel.setViewportView(friendsTree);
+						jsPanel.repaint();
+						jsPanel.validate();
+						messages.remove(AgreeAddFriendMessage);
+						MSGLb.setText("无消息");
+					}
+				}
+				else if(messages.containsKey(DisagreeFriendMessage)){
+					if(!messages.get(DisagreeFriendMessage).equals("拒绝成功")){
+						JSONObject disagreejson=JSONObject.fromObject(messages.get(DisagreeFriendMessage)).getJSONObject("disagreeaddfriend");
+						Integer user_id=disagreejson.getInt("user2_id");
+						JOptionPane.showMessageDialog(UserPanel.this, String.valueOf(user_id)+"拒绝添加");
+						MSGLb.setText("无消息");
+					}
+				}
+			}
+		});
+		MSGBt.setBounds(107, 0, 60, 18);
+		con.add(MSGLb);
+		con.add(MSGBt);
+		
 		close=new JButton();
 		close.setIcon(new ImageIcon(this.getClass().getResource("Mainclose.png")));
 		close.setRolloverIcon(new ImageIcon(this.getClass().getResource("Mainclose_hover.png")));
@@ -355,6 +571,7 @@ public class UserPanel extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				SendtoServer.logout(user.getUser_id());
 			    UserPanel.this.dispose();				
 			}
 		});
@@ -579,6 +796,553 @@ public class UserPanel extends JFrame{
 			this.setVisible(true);
 		}
 	}
+	
+	private class addpacketFrame extends JFrame{	
+		private JTextField addpackettf;
+		private JButton confirm;
+		private Container container=this.getContentPane();
+		public void lunch(){
+			this.setLayout(null);
+			this.setSize(300, 150);
+			this.setTitle("添加分组");
+			addpackettf=new JTextField(1000);
+			addpackettf.setBorder(BorderFactory.createLineBorder(Color.blue));
+			addpackettf.setBounds(1, 20, 124, 28);
+			confirm=new JButton("确认添加");
+			confirm.setBounds(181, 20, 86, 28);
+			confirm.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					String str=addpackettf.getText();
+					if(str.equals("")){
+						JOptionPane.showMessageDialog(UserPanel.this, "请输入分组");
+						return;
+					}
+					if(friends.containsKey(str)){
+						JOptionPane.showMessageDialog(UserPanel.this, "请输入不同分组");
+						return;
+					}
+					SendtoServer.addPacket(user.getUser_id(), str);
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(AddPacketMessage)){
+						addpacketFrame.this.dispose();
+						JOptionPane.showMessageDialog(UserPanel.this, "添加成功");
+						messages.remove(AddPacketMessage);
+						friends.put(str, new LinkedList<Friend>());
+						user.getPackets().add(str);
+						root.add(new DefaultMutableTreeNode(str));
+						friendsTree.setModel(new DefaultTreeModel(root));
+						jsPanel.setViewportView(friendsTree);
+						jsPanel.repaint();
+						jsPanel.validate();
+						
+					}
+				}
+			});
+			container.add(addpackettf);
+			container.add(confirm);
+			this.setVisible(true);
+		}
+	}
+	
+	private class modifypacketFrame extends JFrame{
+		private JTextField packettf;
+		private JButton confirm;
+		private Container container=this.getContentPane();
+		public void lunch(){
+			this.setLayout(null);
+			this.setSize(300, 150);
+			this.setTitle("修改分组");
+			packettf=new JTextField(1000);
+			packettf.setBorder(BorderFactory.createLineBorder(Color.blue));
+			packettf.setBounds(1, 20, 174, 28);
+			packettf.setText(currentpacket);
+			confirm=new JButton("确认修改");
+			confirm.setBounds(181, 20, 86, 28);
+			confirm.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					String str=packettf.getText();
+					if(packettf.getText().equals("")){
+						JOptionPane.showMessageDialog(UserPanel.this, "不为空");
+						return;
+					}
+					SendtoServer.modifyPacket(user.getUser_id(), currentpacket, packettf.getText());
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(ModifyPacketMessage)){
+						JOptionPane.showMessageDialog(UserPanel.this, "修改成功");
+						messages.remove(ModifyPacketMessage);
+						user.getPackets().remove(currentfriend);
+						user.getPackets().add(str);
+						LinkedList<Friend> friends_=friends.get(currentpacket);
+						friends.remove(currentpacket);
+						friends.put(str, friends_);
+						currentnode.setUserObject(str);
+						currentpacket=str;
+						jsPanel.repaint();
+					}
+				}
+			});
+			container.add(packettf);
+			container.add(confirm);
+			setVisible(true);
+		}
+	}
+	
+	private class friendmessageFrame extends JFrame{
+		private JLabel nicknamelb,nicknametextlb,user_idlb,user_idtextlb,
+		               signaturelb,signaturetextlb,statuslb,statustextlb,
+		               remarklb,remarktextlb;
+		private Container container=this.getContentPane();
+		public friendmessageFrame(){
+			setSize(330, 280);
+			setLayout(null);
+			Font font=new Font("楷体",Font.BOLD,19);
+			nicknamelb=new JLabel("昵    称");
+			nicknamelb.setFont(font);
+			nicknametextlb=new JLabel();
+			nicknametextlb.setFont(font);
+			nicknametextlb.setText(currentfriend.getNickname());
+			nicknamelb.setBounds(50, 50, 86, 28);
+			nicknametextlb.setBounds(160, 50, 200, 28);
+			container.add(nicknamelb);
+			container.add(nicknametextlb);
+			user_idlb=new JLabel("账    号");
+			user_idlb.setFont(font);
+			user_idtextlb=new JLabel();
+			user_idtextlb.setFont(font);
+			user_idtextlb.setText(String.valueOf(currentfriend.getUser_id()));
+			user_idlb.setBounds(50, 88, 86, 28);
+			user_idtextlb.setBounds(160, 88, 200, 28);
+			container.add(user_idlb);
+			container.add(user_idtextlb);
+			signaturelb=new JLabel("个性签名");
+			signaturelb.setFont(font);
+			signaturetextlb=new JLabel();
+			signaturetextlb.setFont(font);
+			if(currentfriend.getSignature()!=null){
+				signaturetextlb.setText(currentfriend.getSignature());
+			}
+			signaturelb.setBounds(50, 121, 86, 28);
+			signaturetextlb.setBounds(160, 121, 200, 28);
+			container.add(signaturelb);
+			container.add(signaturetextlb);
+			statuslb=new JLabel("状    态");
+			statuslb.setFont(font);
+			statustextlb=new JLabel();
+			statustextlb.setFont(font);
+			if(currentfriend.getStatus().equals(1)){
+				statustextlb.setText("在线");
+			}else{
+				statustextlb.setText("离线");
+			}
+			statuslb.setBounds(50, 154, 86, 28);
+			statustextlb.setBounds(160, 154, 200, 28);
+			remarklb=new JLabel("备    注");
+			remarklb.setFont(font);
+			remarktextlb=new JLabel();
+			remarktextlb.setFont(font);
+			if(currentfriend.getRemarkname()!=null){
+				remarktextlb.setText(currentfriend.getRemarkname());
+			}
+			remarklb.setBounds(50, 187, 86, 28);
+			remarktextlb.setBounds(160, 187,200, 28);			
+			container.add(statuslb);
+			container.add(statustextlb);
+			container.add(remarklb);
+			container.add(remarktextlb);
+			setVisible(true);
+			
+		}
+	}
+	
+	private class modifyremarkFrame extends JFrame{
+		private JTextField remarktf;
+		private JButton confirm;
+		public void lunch(){
+			this.setSize(300, 150);
+			this.setLayout(null);
+			this.setTitle("修改备注");
+			remarktf=new JTextField(1000);
+			remarktf.setBorder(BorderFactory.createLineBorder(Color.black));
+			if(currentfriend.getRemarkname()!=null){
+				remarktf.setText(currentfriend.getRemarkname());
+			}
+			confirm=new JButton("确认修改");
+			remarktf.setBounds(1, 20, 174, 28);
+			confirm.setBounds(181, 20, 86, 28);
+			confirm.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					String str=remarktf.getText();
+					if(remarktf.getText().equals("")){
+						JOptionPane.showMessageDialog(modifyremarkFrame.this, "请填写备注");
+						return;
+					}
+					SendtoServer.modifyRemark(user.getUser_id(), currentfriend.getUser_id(),str );
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(ModifyRemarkMessage)){
+						messages.remove(ModifyRemarkMessage);
+						JOptionPane.showMessageDialog(UserPanel.this, "修改成功");
+						LinkedList<Friend> friends_=friends.get(currentfriend.getPacket());
+						for(Friend item:friends_){
+							if(item.equals(currentfriend)){
+								item.setRemarkname(str);
+							}
+						}
+						initRoot();
+						friendsTree.setModel(new DefaultTreeModel(root));
+						jsPanel.setViewportView(friendsTree);
+						jsPanel.repaint();
+						jsPanel.validate();
+					}
+				}
+			});
+			this.getContentPane().add(remarktf);
+			this.getContentPane().add(confirm);
+			this.setVisible(true);
+		}
+	}
+	
+	private class movepacketFrame extends JFrame{
+		private JComboBox<String> packetbox;
+		private JButton confirm;
+		private Container container=this.getContentPane();
+		public void lunch(){
+			setSize(250, 150);
+			setLayout(null);
+			setTitle("移动分组");
+			String[] packets=user.getPackets().toArray(new String[0]);
+			packetbox=new JComboBox<>(packets);
+			packetbox.setBounds(1, 20, 86, 28);
+			confirm=new JButton("确认移动");
+			confirm.setBounds(100, 20, 86, 28);
+			confirm.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					String packet_=(String) packetbox.getSelectedItem();
+					String oldpacket=currentfriend.getPacket();
+					SendtoServer.movePacket(user.getUser_id(), currentfriend.getUser_id(), currentfriend.getPacket(), packet_);
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(MovePacketMessage)){
+						messages.remove(MovePacketMessage);
+						JOptionPane.showMessageDialog(UserPanel.this, "移动成功");
+						friends.get(oldpacket).remove(currentfriend);
+						currentfriend.setPacket(packet_);
+						friends.get(packet_).add(currentfriend);
+						initRoot();
+						friendsTree.setModel(new DefaultTreeModel(root));
+						jsPanel.setViewportView(friendsTree);
+						jsPanel.repaint();
+						jsPanel.validate();
+					}
+				}
+			});
+			container.add(packetbox);
+			container.add(confirm);
+			setVisible(true);
+		}
+	}
+	
+	private class addFriendbyidFrame extends JFrame{
+		private JLabel user_idlb,user_idtextlb,nicknamelb,nicknametextlb;
+		private JButton add;
+		private Container container=this.getContentPane();
+		public void lunch(String json){
+			JSONObject userjson=JSONObject.fromObject(json);
+			Integer user_id=userjson.getInt("user_id");
+			String nickanme=userjson.getString("nickname");
+			setLayout(null);
+			setSize(300, 300);
+			Font font=new Font("楷体",Font.BOLD,19);
+			user_idlb=new JLabel("账   号");
+			user_idlb.setFont(font);
+			user_idtextlb=new JLabel();
+			user_idtextlb.setFont(font);
+			user_idtextlb.setText(String.valueOf(user_id));
+			user_idlb.setBounds(40, 40, 86, 28);
+			user_idtextlb.setBounds(130, 40, 150, 28);
+			container.add(user_idlb);
+			container.add(user_idtextlb);
+			nicknamelb=new JLabel("昵    称");
+			nicknamelb.setFont(font);
+			nicknametextlb=new JLabel();
+			nicknametextlb.setFont(font);
+			nicknametextlb.setText(nickanme);
+			nicknamelb.setBounds(40, 73, 86, 28);
+			nicknametextlb.setBounds(130, 73, 150, 28);
+			container.add(nicknamelb);
+			container.add(nicknametextlb);
+			add=new JButton("确认添加");
+			add.setBounds(80, 120, 120, 28);
+			add.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					new addFriendFrame().lunch(user_id);
+				}
+			});
+			container.add(add);
+			setVisible(true);
+		}
+	}
+	
+	private class addFriendbynicknameFrame extends JFrame{
+		private JLabel[] user_idtextlb;
+		private JLabel[] nicknametextlb;
+		private JButton[] confirm;
+		private JLabel user_idlb,nicknamelb;
+		private Container container=this.getContentPane();
+		public void lunch(String json){
+			JSONArray usersjson=JSONArray.fromObject(json);
+			Integer size=usersjson.size();
+			setSize(500, 33*size+100);
+			setLayout(null);
+			Font font=new Font("楷体",Font.BOLD,19);
+			
+			user_idlb=new JLabel("账      号");
+			user_idlb.setFont(font);
+			nicknamelb=new JLabel("昵      称");
+			nicknamelb.setFont(font);
+			user_idlb.setBounds(40, 40, 120, 28);
+			nicknamelb.setBounds(165, 40, 150, 28);
+			container.add(user_idlb);
+			container.add(nicknamelb);
+			user_idtextlb=new JLabel[size];
+			nicknametextlb=new JLabel[size];
+			confirm=new JButton[size];
+			for(int i=0;i<size;i++){
+				JSONObject item=usersjson.getJSONObject(i);
+				user_idtextlb[i]=new JLabel();
+				user_idtextlb[i].setText(String.valueOf(item.getInt("user_id")));
+				user_idtextlb[i].setFont(font);
+				user_idtextlb[i].setBounds(40, 40+33*i, 120,28);
+				nicknametextlb[i]=new JLabel();
+				nicknametextlb[i].setText(item.getString("nickname"));
+				nicknametextlb[i].setFont(font);
+				nicknametextlb[i].setBounds(165, 40+33*i, 150, 28);
+				confirm[i]=new JButton("确认添加");
+				confirm[i].setBounds(320, 40+33*i, 120, 28);
+				confirm[i].addActionListener(new MyactionListener());
+				container.add(user_idtextlb[i]);
+				container.add(nicknametextlb[i]);
+				container.add(confirm[i]);
+			}
+			setVisible(true);
+		}
+		
+		public class MyactionListener implements ActionListener{
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				for(int i=0;i<confirm.length;i++){
+					if(e.getSource()==confirm[i]){
+						new addFriendFrame().lunch(Integer.parseInt(user_idtextlb[i].getText()));
+						break;
+					}
+				}
+			}			
+		}
+	}
+	
+	private class addFriendFrame extends JFrame{
+		private JComboBox<String> packetbox;
+		private JButton confirm;
+		private Container container=this.getContentPane();
+		public void lunch(Integer user_id){
+			setSize(250, 150);
+			setLayout(null);
+			setTitle("添加好友");
+			String[] packets=user.getPackets().toArray(new String[0]);
+			packetbox=new JComboBox<>(packets);
+			packetbox.setBounds(1, 20, 86, 28);
+			confirm=new JButton("确认添加");
+			confirm.setBounds(100, 20, 86, 28);
+			confirm.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					String packet_=(String) packetbox.getSelectedItem();
+					SendtoServer.addFriend(user.getUser_id(), user_id, packet_);
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(AddFriendResultMessage)){
+						JOptionPane.showMessageDialog(UserPanel.this, messages.get(AddFriendResultMessage));
+						messages.remove(AddFriendResultMessage);
+					}
+				}
+			});
+			container.add(packetbox);
+			container.add(confirm);
+			setVisible(true);
+		}
+	}
+	
+	private class acceptaddfriendFrame extends JFrame{
+		private JLabel user_idlb,user_idtextlb;
+		private JButton agree,disagree;
+		private Container container=this.getContentPane();
+		
+		public void lunch(String json){
+			JSONObject jobject=JSONObject.fromObject(json);
+			Integer  user_id=jobject.getInt("user1_id");
+			setLayout(null);
+			setSize(250, 150);
+			setTitle("添加好友");
+			Font font=new Font("楷体",Font.BOLD,19);
+			user_idlb=new JLabel("账  号");
+			user_idlb.setFont(font);
+			user_idtextlb=new JLabel();
+			user_idtextlb.setFont(font);
+			user_idtextlb.setText(String.valueOf(user_id));
+			user_idlb.setBounds(20, 20, 86, 28);
+			user_idtextlb.setBounds(110, 20, 174, 18);
+			agree=new JButton("同意添加");
+			agree.setBounds(30, 53, 80, 28);
+			agree.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					new agreeaddfriendFrame().lunch(json);
+				}
+			});
+			disagree=new JButton("拒绝添加");
+			disagree.setBounds(110, 53, 80, 28);
+			disagree.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					SendtoServer.disagreeAddFriend(user_id,jobject.getInt("user2_id"));
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(DisagreeFriendMessage)){
+						if(messages.get(DisagreeFriendMessage).equals("拒绝成功")){
+							JOptionPane.showMessageDialog(UserPanel.this, "拒绝成功");
+							messages.remove(DisagreeFriendMessage);
+						}
+					}
+				}
+			});
+			container.add(user_idlb);
+			container.add(user_idtextlb);
+			container.add(agree);
+			container.add(disagree);
+			setVisible(true);
+		}
+	}
+	
+	private class agreeaddfriendFrame extends JFrame{
+		private JComboBox<String> packetbox;
+		private JButton confirm;
+		private Container container=this.getContentPane();
+		public void lunch(String  json){
+			JSONObject userjson=JSONObject.fromObject(json);
+			setSize(250, 150);
+			setLayout(null);
+			setTitle("添加好友");
+			String[] packets=user.getPackets().toArray(new String[0]);
+			packetbox=new JComboBox<>(packets);
+			packetbox.setBounds(1, 20, 86, 28);
+			confirm=new JButton("确认添加");
+			confirm.setBounds(100, 20, 86, 28);
+			confirm.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					String packet_=(String) packetbox.getSelectedItem();
+					SendtoServer.agreeAddFriend(userjson.getInt("user1_id"),userjson.getInt("user2_id"),userjson.getString("packetname"),
+							                packet_);
+					synchronized (UserPanel.this) {
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(AgreeAddFriendMessage)){
+						if(messages.get(AgreeAddFriendMessage).equals("添加成功")){
+							messages.remove(AgreeAddFriendMessage);
+							JOptionPane.showMessageDialog(UserPanel.this, "添加成功");
+							Friend friend_=new Friend();
+							friend_.setUser_id(userjson.getInt("user1_id"));
+							friend_.setNickname(userjson.getString("nickname1"));
+							friend_.setStatus(userjson.getInt("status1"));
+							friend_.setPacket(userjson.getString("packet2_name"));
+							if(userjson.containsKey("signature1")){
+								friend_.setSignature(userjson.getString("signature1"));
+							}
+							friends.get(friend_.getPacket()).add(friend_);
+							initRoot();
+							friendsTree.setModel(new DefaultTreeModel(root));
+							jsPanel.setViewportView(friendsTree);
+							jsPanel.repaint();
+							jsPanel.validate();							
+						}
+					}
+				}
+			});
+			container.add(packetbox);
+			container.add(confirm);
+			setVisible(true);
+		}
+	}
+	
+	
 	
 	private class backgournd extends JPanel{
 		private Image image;

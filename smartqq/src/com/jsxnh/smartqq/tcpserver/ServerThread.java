@@ -38,17 +38,8 @@ public class ServerThread implements Runnable {
 	private ApplicationContext ctx=null;
 	private BufferedReader in=null;
 	private PrintWriter out=null;
-	private List<String> addFriendMessage=new LinkedList<>();
-	private List<String> chatMessage=new LinkedList<>();
 	private Integer user_id;
 	
-	public List<String> getFriendMessage(){
-		return this.addFriendMessage;
-	}
-	
-	public List<String> getChatMessage(){
-		return this.chatMessage;
-	}
 	
 	public Integer getUser_id(){
 		return this.user_id;
@@ -102,6 +93,9 @@ public class ServerThread implements Runnable {
 			else if(function.equals("修改昵称")){
 				result=updateNickName(functionjson);
 			}
+			else if(function.equals("好友备注")){
+				result=modifyRemark(functionjson);
+			}
 			else if(function.equals("添加分组")){
 				result=addPacket(functionjson);
 			}
@@ -110,6 +104,9 @@ public class ServerThread implements Runnable {
 			}
 			else if(function.equals("删除分组")){
 				result=deletePacket(functionjson);
+			}
+			else if(function.equals("移动分组")){
+				result=movePacket(functionjson);
 			}
 			else if(function.equals("精确查找")){
 				result=findUserById(functionjson);
@@ -135,6 +132,7 @@ public class ServerThread implements Runnable {
 			else if(function.equals("接收消息")){
 				result=chatReceive(functionjson);
 			}
+			System.out.println(result);
 			out.println(result);
 			out.flush();
 //			out.close();
@@ -290,28 +288,18 @@ public class ServerThread implements Runnable {
     	JSONObject result=new JSONObject();
     	userService.updateNickName((Integer)json.get("user_id"), (String)json.get("nickname"));
     	result.put("updatenicknameresult", "更新成功");
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
+    	return result.toString();
+    }
+    private String modifyRemark(JSONObject json){
+    	JSONObject result=new JSONObject();
+    	friendService.modifyRemarkName(json.getInt("user1_id"), json.getInt("user2_id"), json.getString("remarkname"));
+    	result.put("modifyremarkresult", "修改成功");
     	return result.toString();
     }
     private String updateSignature(JSONObject json){
     	userService.updateSignature((Integer)json.get("user_id"), (String)json.get("signature"));
     	JSONObject result=new JSONObject();
     	result.put("updatesignatureresult", "更新成功");
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     private String updateDatas(JSONObject json){
@@ -328,14 +316,6 @@ public class ServerThread implements Runnable {
     	userService.updateData((Integer)json.get("user_id"), datas);
     	JSONObject result=new JSONObject();
     	result.put("updatedatasresult", "更新成功");
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
         return result.toString();
     }
     private String findProblem(JSONObject json){
@@ -348,14 +328,6 @@ public class ServerThread implements Runnable {
     	    String answer=userService.findProblem((Integer)json.get("user_id"));   	
     	    result.put("findproblemresult", answer);
     	}
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     private String modifyPassword(JSONObject json){
@@ -367,42 +339,18 @@ public class ServerThread implements Runnable {
     	else{
     		result.put("modifypasswordresult", "密保错误");
     	}
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     private String addPacket(JSONObject json){
     	JSONObject result=new JSONObject();
     	userService.addPacket((Integer)json.get("user_id"), (String)json.get("packetname"));
     	result.put("addpacketresult", "添加成功");
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     private String deletePacket(JSONObject json){
     	JSONObject result=new JSONObject();
     	userService.deletePacket((Integer)json.get("user_id"), (String)json.get("packetname"));
     	result.put("deletepacketresult", "删除成功");
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     private String modifyPacket(JSONObject json){
@@ -410,20 +358,19 @@ public class ServerThread implements Runnable {
     	userService.modifyPacket((Integer)json.get("user_id"),(String)json.get("oldpacketname"),
     			(String)json.get("newpacketname"));
     	result.put("modifypacketresult", "修改成功");
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
+    	return result.toString();
+    }
+    private String movePacket(JSONObject json){
+    	JSONObject result=new JSONObject();
+    	friendService.movePacket(json.getInt("user1_id"), json.getInt("user2_id"), json.getString("oldpacketname"), 
+    			                 json.getString("newpacketname"));
+    	result.put("movepacketresult", "移动成功");
     	return result.toString();
     }
     private String findUserById(JSONObject json){
     	JSONObject result=new JSONObject();
     	User user=userService.findUserById((Integer)json.get("user_id"));
-    	if(user!=null){
+    	if(user!=null&&friendService.findFriend(user_id, user.getUser_id())==null){
     		result.put("finduserbyidresult", "查找成功");
     		JSONObject userjson=new JSONObject();
     		userjson.put("user_id", user.getUser_id());
@@ -436,14 +383,6 @@ public class ServerThread implements Runnable {
     	else{
     		result.put("finduserbyidresult", "查找失败");
     	}
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     private String findUsersByNickName(JSONObject json){
@@ -453,6 +392,9 @@ public class ServerThread implements Runnable {
     		result.put("finduserbynicknameresult", "查找成功");
     		JSONArray usersarray=new JSONArray();
     		for(User user_:users){
+    			if(friendService.findFriend(user_id, user_.getUser_id())!=null){
+    				continue;
+    			}
     			JSONObject userjson=new JSONObject();
     			userjson.put("user_id", user_.getUser_id());
     			userjson.put("nickname", user_.getNick_name());
@@ -472,7 +414,9 @@ public class ServerThread implements Runnable {
     	this.user_id=(Integer)json.get("user1_id");
     	User user=userService.findUserById((Integer)json.get("user2_id"));
     	if(user.getStatus()==1){
-    		sendFriendMessage((Integer)json.get("user2_id"),json.toString());
+    		JSONObject addjson=new JSONObject();
+    		addjson.put("addfriend", json);
+    		sendFriendMessage((Integer)json.get("user2_id"),addjson.toString());
     		result.put("addfriendresult","等待添加");
     	}
     	else{
@@ -480,43 +424,37 @@ public class ServerThread implements Runnable {
     				(Integer)json.get("user2_id"), (String)json.get("packetname"));
     		result.put("addfriendresult", "等待上线");
     	}
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     
     private String agreeAddFriend(JSONObject json){
-    	this.user_id=(Integer)json.get("user2_id");
     	friendService.addFriend((Integer)json.get("user1_id"),(Integer)json.get("user2_id"), 
     			(String)json.get("packet1_name"),(String)json.get("packet2_name")); 	
     	if(friendService.findTemporaryFriend((Integer)json.get("user1_id"),(Integer)json.get("user2_id"))!=null){
     		friendService.deleteTemporaryFriend((Integer)json.get("user1_id"),(Integer)json.get("user2_id"));
     	}
+    	User user2=userService.findUserById(json.getInt("user2_id"));
+    	User user1=userService.findUserById(json.getInt("user1_id"));
+    	json.put("nickname1", user1.getNick_name());
+    	json.put("nickname2", user2.getNick_name());
+    	json.put("status2", user2.getStatus());
+    	json.put("status1", user1.getStatus());
+    	if(user2.getSignature()!=null){
+    		json.put("signature2", user2.getSignature());
+    	}
+    	if(user1.getSignature()!=null){
+    		json.put("signature1", user2.getSignature());
+    	}
     	JSONObject result=new JSONObject();
     	result.put("agreeaddfriendresult", "添加成功");
     	JSONObject message=new JSONObject();
     	message.put("agreeaddfriendresult", "添加成功");
-    	message.put("friend", json);
+    	message.put("agreeaddfriend", json);
     	sendFriendMessage((Integer)json.get("user1_id"), message.toString());
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     
     private String disagreeAddFriend(JSONObject json){
-    	this.user_id=(Integer)json.get("user2_id");
     	if(friendService.findTemporaryFriend((Integer)json.get("user1_id"),(Integer)json.get("user2_id"))!=null){
     		friendService.deleteTemporaryFriend((Integer)json.get("user1_id"),(Integer)json.get("user2_id"));
     	}
@@ -524,16 +462,8 @@ public class ServerThread implements Runnable {
     	result.put("disagreeaddfriendresult", "拒绝成功");
     	JSONObject message=new JSONObject();
     	message.put("disagreeaddfriendresult", "拒绝添加");
-    	message.put("friend", json);
+    	message.put("disagreeaddfriend", json);
         sendFriendMessage((Integer)json.get("user1_id"), message.toString());
-        if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     
@@ -547,14 +477,6 @@ public class ServerThread implements Runnable {
     		chatService.sendMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"),
     				(String)json.get("content"));
     	}
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     
@@ -567,14 +489,6 @@ public class ServerThread implements Runnable {
     		chatService.saveMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"), 
     				(String)json.get("content"),(java.util.Date)json.get("send_time"));
     	}
-    	if(this.addFriendMessage.size()>0){
-    		result.put("friendMessage", getaddFriendMessage());
-    		getFriendMessage().clear();
-    	}
-    	if(this.chatMessage.size()>0){
-    		result.put("chatMessage", getChatMessages());
-    		getChatMessage().clear();
-    	}
     	return result.toString();
     }
     
@@ -582,7 +496,7 @@ public class ServerThread implements Runnable {
     	List<ServerThread>serverThreads=TCPServer.getserverThreads();
     	for(ServerThread serverThread:serverThreads){
     		if(serverThread.getUser_id()==user_id){
-    			serverThread.getFriendMessage().add(message);
+    			serverThread.convertFriendMessage(message);
     			break;
     		}
     	}
@@ -592,29 +506,36 @@ public class ServerThread implements Runnable {
     	List<ServerThread>serverThreads=TCPServer.getserverThreads();
     	for(ServerThread serverThread:serverThreads){
     		if(serverThread.getUser_id()==user_id){
-    			serverThread.getChatMessage().add(message);
+    			
     			break;
     		}
     	}
     }
     
-    private JSONArray getaddFriendMessage(){
-    	JSONArray result=new JSONArray();
-    	for(String message:this.addFriendMessage){
-    		JSONObject json=JSONObject.fromObject(message);
-    		result.add(json);
-    	}
-    	return result;
+    public void convertFriendMessage(String message){
+    	PrintWriter write=null;
+    	try {
+			write=new PrintWriter(socket.getOutputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	write.println(message);
+    	write.flush();
     }
     
-    private JSONArray getChatMessages(){
-    	JSONArray result=new JSONArray();
-    	for(String message:this.chatMessage){
-    		JSONObject json=JSONObject.fromObject(message);
-    		result.add(json);
-    	}
-    	return result;
+    public void convertChatMessage(String message){
+    	PrintWriter write=null;
+    	try {
+			write=new PrintWriter(socket.getOutputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	write.println(message);
+    	write.flush();
     }
+  
 }
 
 

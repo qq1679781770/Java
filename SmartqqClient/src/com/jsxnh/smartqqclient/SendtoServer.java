@@ -29,7 +29,21 @@ public class SendtoServer{
 		write.flush();
 		
 	}
-    
+    public static void logout(Integer user_id){
+    	PrintWriter write = null;
+		try {
+			write = new PrintWriter(socket.getOutputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		JSONObject json=new JSONObject();
+		json.put("user_id", user_id);
+		JSONObject logoutjson=new JSONObject();
+		logoutjson.put("登出", json);
+		write.println(logoutjson.toString());
+		write.flush();
+    }
 	public static void register(Integer user_id,String password,String nickname,String problem,String answer,Integer age,String name,String message ){
 		PrintWriter write=null;
 		try {
@@ -135,6 +149,23 @@ public class SendtoServer{
 		write.flush();
 	}
 	
+	public static void modifyRemark(Integer user1_id,Integer user2_id,String remarkname){
+		PrintWriter write=null;
+		try{
+			write=new PrintWriter(socket.getOutputStream());
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		JSONObject json=new JSONObject();
+		json.put("user1_id", user1_id);
+		json.put("user2_id", user2_id);
+		json.put("remarkname", remarkname);
+		JSONObject modifyjson=new JSONObject();
+		modifyjson.put("好友备注", json);
+		write.println(modifyjson.toString());
+		write.flush();
+	}
+	
 	public static void addPacket(Integer user_id,String packetname){
 		PrintWriter write=null;
 		try{
@@ -184,6 +215,24 @@ public class SendtoServer{
 		write.flush();
 	}
 	
+	public static void movePacket(Integer user1_id,Integer user2_id,String oldpacketname,String newpacketname){
+		PrintWriter write=null;
+		try{
+			write=new PrintWriter(socket.getOutputStream());
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		JSONObject json=new JSONObject();
+		json.put("user1_id", user1_id);
+		json.put("user2_id", user2_id);
+		json.put("oldpacketname", oldpacketname);
+		json.put("newpacketname", newpacketname);
+		JSONObject movejson=new JSONObject();
+		movejson.put("移动分组",json);
+		write.println(movejson.toString());
+		write.flush();
+	}
+	
 	public static void finduserById(Integer user_id){
 		PrintWriter write=null;
 		try{
@@ -213,4 +262,56 @@ public class SendtoServer{
 		write.println(findjson.toString());
 		write.flush();
 	}
+	
+	public static void addFriend(Integer user1_id,Integer user2_id,String packetname){
+		PrintWriter write=null;
+		try{
+			write=new PrintWriter(socket.getOutputStream());
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		JSONObject json=new JSONObject();
+		json.put("user1_id", user1_id);
+		json.put("user2_id", user2_id);
+		json.put("packetname", packetname);
+		JSONObject addjson=new JSONObject();
+		addjson.put("添加好友", json);
+		write.println(addjson.toString());
+		write.flush();
+	}
+	
+	public static void agreeAddFriend(Integer user1_id,Integer user2_id,String packet1_name,String packet2_name){
+		PrintWriter write=null;
+		try{
+			write=new PrintWriter(socket.getOutputStream());
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		JSONObject json=new JSONObject();
+		json.put("user1_id", user1_id);
+		json.put("user2_id", user2_id);
+		json.put("packet1_name", packet1_name);
+		json.put("packet2_name", packet2_name);
+		JSONObject agreefriend=new JSONObject();
+		agreefriend.put("同意添加", agreefriend);
+		write.println(agreefriend);
+		write.flush();
+	}
+	
+	public static void disagreeAddFriend(Integer user1_id,Integer user2_id){
+		PrintWriter write=null;
+		try{
+			write=new PrintWriter(socket.getOutputStream());
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		JSONObject json=new JSONObject();
+		json.put("user1_id", user1_id);
+		json.put("user2_id", user2_id);
+		JSONObject disagree=new JSONObject();
+		disagree.put("拒绝添加", json);
+		write.println(disagree.toString());
+		write.flush();
+	}
+	
 }

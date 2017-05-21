@@ -85,6 +85,55 @@ public class ReceivefromServer extends Thread{
 				else if(json.containsKey("modifypacketresult")){
 					user.notifyall(UserPanel.ModifyPacketMessage, json.getString("modifypacketresult"));
 				}
+				else if(json.containsKey("addpacketresult")){
+					user.notifyall(UserPanel.AddPacketMessage, json.getString("addpacketresult"));
+				}
+				else if(json.containsKey("deletepacketresult")){
+					user.notifyall(UserPanel.DeletePacketMessage, json.getString("deletepacketresult"));
+				}
+				else if(json.containsKey("movepacketresult")){
+					user.notifyall(UserPanel.MovePacketMessage, json.getString("movepacketresult"));
+				}
+				else if(json.containsKey("modifyremarkresult")){
+					user.notifyall(UserPanel.ModifyRemarkMessage, json.getString("modifyremarkresult"));
+				}
+				else if(json.containsKey("addfriend")){
+					user.getMsgLb().setText("有消息");
+					user.injectMessage(UserPanel.AddFriendMessage, json.getJSONObject("addfriend").toString());
+				}
+				else if(json.containsKey("addfriendresult")){
+					user.notifyall(UserPanel.AddFriendResultMessage, json.getString("addfriendresult"));
+				}
+				else if(json.containsKey("agreeaddfriendresult")){
+					if(json.containsKey("agreeaddfriend")){
+						user.getMsgLb().setText("有消息");
+						user.injectMessage(UserPanel.AgreeAddFriendMessage, json.toString());
+					}else{
+						user.notifyall(UserPanel.AgreeAddFriendMessage, json.getString("agreeaddfriendresult"));
+					}
+				}
+				else if(json.containsKey("disagreeaddfriendresult")){
+					if(json.containsKey("disagreeaddfriend")){
+						user.getMsgLb().setText("有消息");
+						user.injectMessage(UserPanel.DisagreeFriendMessage, json.toString());
+					}else{
+						user.notifyall(UserPanel.DisagreeFriendMessage, json.getString("disagreeaddfriendresult"));
+					}
+				}
+				else if(json.containsKey("finduserbyidresult")){
+					if(json.containsKey("user")){
+						user.notifyall(UserPanel.FindUserByIdSuccessMessage, json.getJSONObject("user").toString());
+					}else{
+						user.notifyall(UserPanel.FindUserByIdFailureMessage, json.getString("finduserbyidresult"));
+					}
+				}
+				else if(json.containsKey("finduserbynicknameresult")){
+					if(json.containsKey("users")){
+						user.notifyall(UserPanel.FindUserByNicknameSuccessMessage, json.getJSONArray("users").toString());
+					}else{
+						user.notifyall(UserPanel.FindUserByNicknameFailureMessage, json.getString("finduserbynicknameresult"));
+					}
+				}
 //				login.notifyall(str);
 			}catch(IOException e){
 				e.printStackTrace();

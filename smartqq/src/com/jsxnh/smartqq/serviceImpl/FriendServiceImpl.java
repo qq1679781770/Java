@@ -114,4 +114,13 @@ public class FriendServiceImpl implements FriendService{
 	public List<TemporaryFriend> findTemporaryFriend(Integer user1_id, Integer user2_id) {
 		return temporaryFriendDao.findTemporaryFriend(user1_id, user2_id);
 	}
+
+	@Override
+	public Friend findFriend(Integer user1_id, Integer user2_id) {
+		User user1=new User();
+		user1.setUser_id(user1_id);
+		User user2=new User();
+		user2.setUser_id(user2_id);
+		return friendDao.findFriend(user1, user2);
+	}
 }

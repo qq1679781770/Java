@@ -28,4 +28,6 @@ public interface FriendService {
 	public List<TemporaryFriend> findTemporaryFriends(Integer user_id); 
 	//
 	public List<TemporaryFriend>  findTemporaryFriend(Integer user1_id,Integer user2_id);
+	
+	public Friend findFriend(Integer user1_id,Integer user2_id);
 }
