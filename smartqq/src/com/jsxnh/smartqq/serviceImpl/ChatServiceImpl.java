@@ -71,13 +71,13 @@ public class ChatServiceImpl implements ChatService{
 	}
 
 	@Override
-	public void saveMessage(Integer user1_id, Integer user2_id, String content,Date date) {
+	public void saveMessage(Integer user1_id, Integer user2_id, String content,Date send_date,Date receive_date) {
 		Message message=new Message();
 		message.setSend_id(user1_id);
 		message.setReceive_id(user2_id);
 		message.setContent(content);
-		message.setSend_time(date);
-		message.setReceive_time(new Date());
+		message.setSend_time(send_date);
+		message.setReceive_time(receive_date);
 		messageDao.addMessage(message);
 	}
 

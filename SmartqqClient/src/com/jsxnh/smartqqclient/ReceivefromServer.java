@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import net.sf.json.JSONObject;
 
@@ -134,7 +136,19 @@ public class ReceivefromServer extends Thread{
 						user.notifyall(UserPanel.FindUserByNicknameFailureMessage, json.getString("finduserbynicknameresult"));
 					}
 				}
-//				login.notifyall(str);
+				else if(json.containsKey("sendchat")){
+					JSONObject message=json.getJSONObject("sendchat");
+					SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					SendtoServer.receiveChat(message.getInt("user1_id"), message.getInt("user2_id"), message.getString("content"),
+							                 message.getString("send_time"), df.format(new Date()));
+					if(user.getchatpanels().containsKey(message.getInt("user1_id"))){
+						user.getchatpanels().get(message.getInt("user1_id")).appendMessage(message);
+					}
+					else{
+						user.getMsgLb().setText("ÓÐÏûÏ¢");
+						user.injectMessage(UserPanel.ChatMessage, json.getJSONObject("sendchat").toString());
+					}					
+				}
 			}catch(IOException e){
 				e.printStackTrace();
 			}

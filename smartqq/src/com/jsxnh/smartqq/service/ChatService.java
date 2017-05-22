@@ -16,7 +16,7 @@ public interface ChatService {
 	
 	public boolean findTemporaryMessage(Integer send_id,Integer receive_id);
 	
-	public void saveMessage(Integer user1_id,Integer user2_id,String content,Date date);
+	public void saveMessage(Integer user1_id,Integer user2_id,String content,Date send_date,Date receive_date);
 	
 	public List<TemporaryMessage> findMessages(Integer receive_id);
 }

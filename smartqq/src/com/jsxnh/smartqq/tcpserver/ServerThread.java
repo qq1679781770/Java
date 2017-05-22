@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -130,7 +132,12 @@ public class ServerThread implements Runnable {
 				result=chatSend(functionjson);
 			}
 			else if(function.equals("接收消息")){
-				result=chatReceive(functionjson);
+				try {
+					result=chatReceive(functionjson);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			System.out.println(result);
 			out.println(result);
@@ -411,12 +418,17 @@ public class ServerThread implements Runnable {
     }
     private String addFriend(JSONObject json){
     	JSONObject result=new JSONObject();
-    	this.user_id=(Integer)json.get("user1_id");
     	User user=userService.findUserById((Integer)json.get("user2_id"));
+    	User user1=userService.findUserById(json.getInt("user1_id"));
+    	json.put("nickname1", user1.getNick_name());
+    	json.put("status1", user1.getStatus());
+    	if(user1.getSignature()!=null){
+    		json.put("signature1", user1.getSignature());
+    	}
     	if(user.getStatus()==1){
     		JSONObject addjson=new JSONObject();
     		addjson.put("addfriend", json);
-    		sendFriendMessage((Integer)json.get("user2_id"),addjson.toString());
+    		sendMessage((Integer)json.get("user2_id"),addjson.toString());
     		result.put("addfriendresult","等待添加");
     	}
     	else{
@@ -434,23 +446,23 @@ public class ServerThread implements Runnable {
     		friendService.deleteTemporaryFriend((Integer)json.get("user1_id"),(Integer)json.get("user2_id"));
     	}
     	User user2=userService.findUserById(json.getInt("user2_id"));
-    	User user1=userService.findUserById(json.getInt("user1_id"));
-    	json.put("nickname1", user1.getNick_name());
+//    	User user1=userService.findUserById(json.getInt("user1_id"));
+//    	json.put("nickname1", user1.getNick_name());
     	json.put("nickname2", user2.getNick_name());
     	json.put("status2", user2.getStatus());
-    	json.put("status1", user1.getStatus());
+//    	json.put("status1", user1.getStatus());
     	if(user2.getSignature()!=null){
     		json.put("signature2", user2.getSignature());
     	}
-    	if(user1.getSignature()!=null){
-    		json.put("signature1", user2.getSignature());
-    	}
+//    	if(user1.getSignature()!=null){
+//    		json.put("signature1", user2.getSignature());
+//    	}
     	JSONObject result=new JSONObject();
     	result.put("agreeaddfriendresult", "添加成功");
     	JSONObject message=new JSONObject();
     	message.put("agreeaddfriendresult", "添加成功");
     	message.put("agreeaddfriend", json);
-    	sendFriendMessage((Integer)json.get("user1_id"), message.toString());
+    	sendMessage((Integer)json.get("user1_id"), message.toString());
     	return result.toString();
     }
     
@@ -463,16 +475,22 @@ public class ServerThread implements Runnable {
     	JSONObject message=new JSONObject();
     	message.put("disagreeaddfriendresult", "拒绝添加");
     	message.put("disagreeaddfriend", json);
-        sendFriendMessage((Integer)json.get("user1_id"), message.toString());
+        sendMessage((Integer)json.get("user1_id"), message.toString());
     	return result.toString();
     }
     
     private String chatSend(JSONObject json){
     	JSONObject result=new JSONObject();
-    	this.user_id=(Integer)json.get("user1_id");
     	User user=userService.findUserById((Integer)json.get("user2_id"));
+    	User user1=userService.findUserById(json.getInt("user1_id"));
+    	json.put("nickname1", user1.getNick_name());
+    	if(user1.getSignature()!=null){
+    		json.put("signature1", user1.getSignature());
+    	}
     	if(user.getStatus()==1){
-    		sendChatMessage((Integer)json.get("user2_id"), json.toString());
+    		JSONObject sendchat=new JSONObject();
+    		sendchat.put("sendchat", json);
+    		sendMessage((Integer)json.get("user2_id"), sendchat.toString());
     	}else{
     		chatService.sendMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"),
     				(String)json.get("content"));
@@ -480,39 +498,29 @@ public class ServerThread implements Runnable {
     	return result.toString();
     }
     
-    private String chatReceive(JSONObject json){
+    private String chatReceive(JSONObject json) throws ParseException{
     	JSONObject result=new JSONObject();
-    	this.user_id=(Integer)json.get("user2_id");
+    	SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	if(chatService.findTemporaryMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"))){
     		chatService.receiveMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"));
     	}else{
     		chatService.saveMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"), 
-    				(String)json.get("content"),(java.util.Date)json.get("send_time"));
+    				(String)json.get("content"),df.parse(json.getString("send_time")),
+    				df.parse(json.getString("receive_time")));
     	}
     	return result.toString();
     }
     
-    private void sendFriendMessage(Integer user_id,String message){
+    private void sendMessage(Integer user_id,String message){
     	List<ServerThread>serverThreads=TCPServer.getserverThreads();
     	for(ServerThread serverThread:serverThreads){
-    		if(serverThread.getUser_id()==user_id){
-    			serverThread.convertFriendMessage(message);
+    		if(serverThread.getUser_id().equals(user_id)){
+    			serverThread.convertMessage(message);
     			break;
     		}
     	}
     }
-    
-    private void sendChatMessage(Integer user_id,String message){
-    	List<ServerThread>serverThreads=TCPServer.getserverThreads();
-    	for(ServerThread serverThread:serverThreads){
-    		if(serverThread.getUser_id()==user_id){
-    			
-    			break;
-    		}
-    	}
-    }
-    
-    public void convertFriendMessage(String message){
+    public void convertMessage(String message){
     	PrintWriter write=null;
     	try {
 			write=new PrintWriter(socket.getOutputStream());
@@ -520,21 +528,11 @@ public class ServerThread implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    	System.out.println(message);
     	write.println(message);
     	write.flush();
     }
     
-    public void convertChatMessage(String message){
-    	PrintWriter write=null;
-    	try {
-			write=new PrintWriter(socket.getOutputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	write.println(message);
-    	write.flush();
-    }
   
 }
 

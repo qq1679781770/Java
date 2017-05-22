@@ -16,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -59,11 +61,13 @@ public class UserPanel extends JFrame{
 			                    ModifyRemarkMessage=6,MovePacketMessage=7,AddFriendMessage=8,
 			                    AddFriendResultMessage=9,AgreeAddFriendMessage=10,DisagreeFriendMessage=11,
 			                    FindUserByIdSuccessMessage=12,FindUserByNicknameSuccessMessage=13,
-			                    FindUserByIdFailureMessage=14,FindUserByNicknameFailureMessage=15;
+			                    FindUserByIdFailureMessage=14,FindUserByNicknameFailureMessage=15,
+			                    ChatMessage=16;
 	
 	private User user;
 	private Map<String, LinkedList<Friend>> friends=new HashMap<>();
 	private Map<Integer, String> messages=new HashMap<Integer, String>();//消息map
+	private Map<Integer, ChatPanel> chatpanels=new HashMap<>();
 	private JTree friendsTree;//朋友列表树
 	private DefaultMutableTreeNode root;
 	private JScrollPane jsPanel;
@@ -86,6 +90,15 @@ public class UserPanel extends JFrame{
 	public void injectMessage(Integer message,String json){
 		messages.put(message, json);
 	}
+	
+	public Map<Integer, ChatPanel> getchatpanels(){
+		return this.chatpanels;
+	}
+	
+	public User getUser(){
+		return this.user;
+	}
+	
 	public UserPanel(){
 		
 	}
@@ -413,7 +426,16 @@ public class UserPanel extends JFrame{
 			}
 		});
 		JMenuItem chatwith=new JMenuItem("发送消息");
-		
+		chatwith.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				ChatPanel chatpanel=new ChatPanel();
+				chatpanels.put(currentfriend.getUser_id(), chatpanel);
+				chatpanel.lunch(UserPanel.this, currentfriend, "");
+			}
+		});
 		JMenuItem shownickname=new JMenuItem("显示昵称");
 		shownickname.addActionListener(new ActionListener() {
 			
@@ -521,6 +543,7 @@ public class UserPanel extends JFrame{
 				// TODO Auto-generated method stub
 				if(messages.containsKey(AddFriendMessage)){
 					new acceptaddfriendFrame().lunch(messages.get(AddFriendMessage));
+					messages.remove(AddFriendMessage);
 					MSGLb.setText("无消息");
 				}
 				else if(messages.containsKey(AgreeAddFriendMessage)){
@@ -551,8 +574,17 @@ public class UserPanel extends JFrame{
 						JSONObject disagreejson=JSONObject.fromObject(messages.get(DisagreeFriendMessage)).getJSONObject("disagreeaddfriend");
 						Integer user_id=disagreejson.getInt("user2_id");
 						JOptionPane.showMessageDialog(UserPanel.this, String.valueOf(user_id)+"拒绝添加");
+						messages.remove(DisagreeFriendMessage);
 						MSGLb.setText("无消息");
 					}
+				}
+				else if(messages.containsKey(ChatMessage)){
+					JSONObject message=JSONObject.fromObject(messages.get(ChatMessage));					
+					ChatPanel chatpanel=new ChatPanel();
+					chatpanels.put(message.getInt("user1_id"), chatpanel);
+					chatpanel.lunch(UserPanel.this, null, message.toString());			
+					messages.remove(ChatMessage);
+					MSGLb.setText("无消息");
 				}
 			}
 		});
@@ -1322,7 +1354,7 @@ public class UserPanel extends JFrame{
 							friend_.setUser_id(userjson.getInt("user1_id"));
 							friend_.setNickname(userjson.getString("nickname1"));
 							friend_.setStatus(userjson.getInt("status1"));
-							friend_.setPacket(userjson.getString("packet2_name"));
+							friend_.setPacket(packet_);
 							if(userjson.containsKey("signature1")){
 								friend_.setSignature(userjson.getString("signature1"));
 							}
@@ -1341,9 +1373,7 @@ public class UserPanel extends JFrame{
 			setVisible(true);
 		}
 	}
-	
-	
-	
+		
 	private class backgournd extends JPanel{
 		private Image image;
 		public backgournd(){
@@ -1359,6 +1389,5 @@ public class UserPanel extends JFrame{
 				g.drawImage(image, 0, 0,this);
 			}
 		}
-	}
-	
+	}	
 }

@@ -3,6 +3,8 @@ package com.jsxnh.smartqqclient;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import net.sf.json.JSONObject;
 
@@ -293,7 +295,7 @@ public class SendtoServer{
 		json.put("packet1_name", packet1_name);
 		json.put("packet2_name", packet2_name);
 		JSONObject agreefriend=new JSONObject();
-		agreefriend.put("同意添加", agreefriend);
+		agreefriend.put("同意添加", json);
 		write.println(agreefriend);
 		write.flush();
 	}
@@ -311,6 +313,44 @@ public class SendtoServer{
 		JSONObject disagree=new JSONObject();
 		disagree.put("拒绝添加", json);
 		write.println(disagree.toString());
+		write.flush();
+	}
+	
+	public static void sendChat(Integer user1_id,Integer user2_id,String content,String send_time){
+		PrintWriter write=null;
+		try{
+			write=new PrintWriter(socket.getOutputStream());
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		
+		JSONObject json=new JSONObject();
+		json.put("user1_id", user1_id);
+		json.put("user2_id", user2_id);
+		json.put("content",content);
+		json.put("send_time", send_time);
+		JSONObject sendjson=new JSONObject();
+		sendjson.put("发送消息", json);
+		write.println(sendjson.toString());
+		write.flush();
+	}
+	
+	public static void receiveChat(Integer user1_id,Integer user2_id,String content,String send_time,String receive_time){
+		PrintWriter write=null;
+		try{
+			write=new PrintWriter(socket.getOutputStream());
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		JSONObject json=new JSONObject();
+		json.put("user1_id", user1_id);
+		json.put("user2_id", user2_id);
+		json.put("content",content);
+		json.put("send_time", send_time);
+		json.put("receive_time", receive_time);
+		JSONObject receivejson=new JSONObject();
+		receivejson.put("接收消息", json);
+		write.println(receivejson.toString());
 		write.flush();
 	}
 	
