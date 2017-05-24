@@ -352,6 +352,5 @@ public class SendtoServer{
 		receivejson.put("接收消息", json);
 		write.println(receivejson.toString());
 		write.flush();
-	}
-	
+	}	
 }

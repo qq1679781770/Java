@@ -194,8 +194,8 @@ public class UserPanel extends JFrame{
 		nickname.setBounds(79, 37, 80, 17);
 		con.add(nickname);
 		//头像
-		headimg=new JLabel(new ImageIcon(this.getClass().getResource("headimg2.jpg")));
-		headimglb=new JLabel(new ImageIcon(this.getClass().getResource("headimgbg.png")));
+		headimg=new JLabel(new ImageIcon("images\\headimg2.jpg"));
+		headimglb=new JLabel(new ImageIcon("images\\headimgbg.png"));
 		headimg.setBounds(11, 41, 61, 60);
 		headimglb.setBounds(9, 39, 65, 65);
 		con.add(headimg);
@@ -216,7 +216,7 @@ public class UserPanel extends JFrame{
 		signature.setBounds(79, 54, 200, 20);
 		con.add(signature);
 		weather=new  JLabel();
-		weather.setIcon(new ImageIcon(this.getClass().getResource("tianqi.png")));
+		weather.setIcon(new ImageIcon("images\\tianqi.png"));
 		weather.setBounds(220, 30, 60, 50);
 		con.add(weather);
 		
@@ -241,9 +241,9 @@ public class UserPanel extends JFrame{
 			}
 		});
         searchbt=new JButton();
-        searchbt.setIcon(new ImageIcon(this.getClass().getResource("search.png")));
-        searchbt.setRolloverIcon(new ImageIcon(this.getClass().getResource("search_hover.png")));
-        searchbt.setPressedIcon(new ImageIcon(this.getClass().getResource("search_press.png")));
+        searchbt.setIcon(new ImageIcon("images\\search.png"));
+        searchbt.setRolloverIcon(new ImageIcon("images\\search_hover.png"));
+        searchbt.setPressedIcon(new ImageIcon("images\\search_press.png"));
         searchbt.setBorder(null);
         searchbt.setFocusPainted(false);
         searchbt.setContentAreaFilled(false);
@@ -593,9 +593,9 @@ public class UserPanel extends JFrame{
 		con.add(MSGBt);
 		
 		close=new JButton();
-		close.setIcon(new ImageIcon(this.getClass().getResource("Mainclose.png")));
-		close.setRolloverIcon(new ImageIcon(this.getClass().getResource("Mainclose_hover.png")));
-		close.setPressedIcon(new ImageIcon(this.getClass().getResource("Mainclose_press.png")));
+		close.setIcon(new ImageIcon("images\\Mainclose.png"));
+		close.setRolloverIcon(new ImageIcon("images\\Mainclose_hover.png"));
+		close.setPressedIcon(new ImageIcon("images\\Mainclose_press.png"));
 		close.setBorder(null);
 		close.setFocusPainted(false);
 		close.setContentAreaFilled(false);
@@ -608,9 +608,9 @@ public class UserPanel extends JFrame{
 			}
 		});
 		min=new JButton();
-		min.setIcon(new ImageIcon(this.getClass().getResource("Mainmin.png")));
-		min.setRolloverIcon(new ImageIcon(this.getClass().getResource("Mainmin_hover.png")));
-		min.setPressedIcon(new ImageIcon(this.getClass().getResource("Mainmin_press.png")));
+		min.setIcon(new ImageIcon("images\\Mainmin.png"));
+		min.setRolloverIcon(new ImageIcon("images\\Mainmin_hover.png"));
+		min.setPressedIcon(new ImageIcon("images\\Mainmin_press.png"));
 		min.setBorder(null);
 		min.setToolTipText("最小化");
 		min.setFocusPainted(false);
@@ -628,10 +628,10 @@ public class UserPanel extends JFrame{
 		con.add(close);
 		con.add(min);
 		backgournd bg=new backgournd();
-		bg.setImage(this.getToolkit().getImage(this.getClass().getResource("mainbg.png")));
+		bg.setImage(this.getToolkit().getImage("images\\mainbg.png"));
 		bg.setBounds(0, 0, 284, 674);
 		con.add(bg);
-		this.setIconImage(this.getToolkit().getImage(this.getClass().getResource("title.png")));
+		this.setIconImage(this.getToolkit().getImage("images\\title.png"));
 		this.setUndecorated(true);
 //		this.setAlwaysOnTop(true);
 		this.setVisible(true);
@@ -922,7 +922,7 @@ public class UserPanel extends JFrame{
 					if(messages.containsKey(ModifyPacketMessage)){
 						JOptionPane.showMessageDialog(UserPanel.this, "修改成功");
 						messages.remove(ModifyPacketMessage);
-						user.getPackets().remove(currentfriend);
+						user.getPackets().remove(currentpacket);
 						user.getPackets().add(str);
 						LinkedList<Friend> friends_=friends.get(currentpacket);
 						friends.remove(currentpacket);

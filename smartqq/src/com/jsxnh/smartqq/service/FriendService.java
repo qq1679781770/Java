@@ -26,8 +26,8 @@ public interface FriendService {
 	public void deleteTemporaryFriend(Integer user1_id,Integer user2_id);
 	//查找好友添加
 	public List<TemporaryFriend> findTemporaryFriends(Integer user_id); 
-	//
+	//查找用户待添加好友
 	public List<TemporaryFriend>  findTemporaryFriend(Integer user1_id,Integer user2_id);
-	
+	//查找用户是否已经成为朋友
 	public Friend findFriend(Integer user1_id,Integer user2_id);
 }

@@ -79,8 +79,8 @@ public class Login extends JFrame{
 			}
 		});
 		
-		headlb=new JLabel(new ImageIcon(this.getClass().getResource("headimg.png")));
-		headlbbg=new JLabel(new ImageIcon(this.getClass().getResource("headimgbg.png")));
+		headlb=new JLabel(new ImageIcon("images\\headimg.png"));
+		headlbbg=new JLabel(new ImageIcon("images\\headimgbg.png"));
 		this.setLayout(null);
 		headlb.setBounds(42, 197, 80, 79);
 		headlbbg.setBounds(40, 195, 84,84);
@@ -135,9 +135,9 @@ public class Login extends JFrame{
 		container.add(passwordField);
 		
 		register=new JButton();
-		register.setIcon(new ImageIcon(this.getClass().getResource("zhuce_normal.png")));
-		register.setRolloverIcon(new ImageIcon(this.getClass().getResource("zhuce_hover.png")));
-		register.setPressedIcon(new ImageIcon(this.getClass().getResource("zhuce_press.png")));
+		register.setIcon(new ImageIcon("images\\zhuce_normal.png"));
+		register.setRolloverIcon(new ImageIcon("images\\zhuce_hover.png"));
+		register.setPressedIcon(new ImageIcon("images\\zhuce_press.png"));
 		register.setBorder(null);
 		register.setFocusPainted(false);
 		register.setContentAreaFilled(false);
@@ -151,9 +151,9 @@ public class Login extends JFrame{
 		});
 		
 		findbackpassword=new JButton();
-		findbackpassword.setIcon(new ImageIcon(this.getClass().getResource("mima_normal.png")));
-		findbackpassword.setRolloverIcon(new ImageIcon(this.getClass().getResource("mima_hover.png")));
-		findbackpassword.setPressedIcon(new ImageIcon(this.getClass().getResource("mima_press.png")));
+		findbackpassword.setIcon(new ImageIcon("images\\mima_normal.png"));
+		findbackpassword.setRolloverIcon(new ImageIcon("images\\mima_hover.png"));
+		findbackpassword.setPressedIcon(new ImageIcon("images\\mima_press.png"));
 		findbackpassword.setBorder(null);
 		findbackpassword.setFocusPainted(false);
 		findbackpassword.setContentAreaFilled(false);
@@ -175,9 +175,9 @@ public class Login extends JFrame{
 		loginlb.setForeground(Color.white);
 		loginlb.setFont(new Font("宋体",Font.BOLD,19));
 		login=new JButton();
-		login.setIcon(new ImageIcon(this.getClass().getResource("button_blue_normal.png")));
-		login.setRolloverIcon(new ImageIcon(this.getClass().getResource("button_blue_hover.png")));
-		login.setPressedIcon(new ImageIcon(this.getClass().getResource("button_blue_press.png")));
+		login.setIcon(new ImageIcon("images\\button_blue_normal.png"));
+		login.setRolloverIcon(new ImageIcon("images\\button_blue_hover.png"));
+		login.setPressedIcon(new ImageIcon("images\\button_blue_press.png"));
 		login.setBorder(null);
 		login.setFocusPainted(false);
 		login.setContentAreaFilled(false);
@@ -193,9 +193,9 @@ public class Login extends JFrame{
 		container.add(login);
 		
 		close=new JButton();
-		close.setIcon(new ImageIcon(this.getClass().getResource("close.png")));
-		close.setRolloverIcon(new ImageIcon(this.getClass().getResource("close_hover.png")));
-		close.setPressedIcon(new ImageIcon(this.getClass().getResource("close_press.png")));
+		close.setIcon(new ImageIcon("images\\close.png"));
+		close.setRolloverIcon(new ImageIcon("images\\close_hover.png"));
+		close.setPressedIcon(new ImageIcon("images\\close_press.png"));
 		close.setBorder(null);
 		close.addActionListener(new ActionListener() {
 			
@@ -206,9 +206,9 @@ public class Login extends JFrame{
 			}
 		});
 		min=new JButton();
-		min.setIcon(new ImageIcon(this.getClass().getResource("min.png")));
-		min.setRolloverIcon(new ImageIcon(this.getClass().getResource("min_hover.png")));
-		min.setPressedIcon(new ImageIcon(this.getClass().getResource("min_press.png")));
+		min.setIcon(new ImageIcon("images\\min.png"));
+		min.setRolloverIcon(new ImageIcon("images\\min_hover.png"));
+		min.setPressedIcon(new ImageIcon("images\\min_press.png"));
 		min.setBorder(null);
 		min.setToolTipText("最小化");
 		min.setFocusPainted(false);
@@ -226,12 +226,12 @@ public class Login extends JFrame{
 		container.add(min);
 		container.add(close);
 		backgournd bg=new backgournd();
-		bg.setImage(this.getToolkit().getImage(this.getClass().getResource("loginbg.png")));
+		bg.setImage(this.getToolkit().getImage("images\\loginbg.png"));
 		bg.setBounds(0, 0, 437, 340);
 		container.add(bg);
 		container.repaint();
 		
-		this.setIconImage(this.getToolkit().getImage(this.getClass().getResource("title.png")));
+		this.setIconImage(this.getToolkit().getImage("images\\title.png"));
 		this.setUndecorated(true);
 		this.setAlwaysOnTop(true);
 		setVisible(true);
@@ -393,8 +393,8 @@ public class Login extends JFrame{
     		con.add(message);
     		
     		this.register=new JButton();
-    		this.register.setIcon(new ImageIcon(this.getClass().getResource("zhuce.png")));
-    		this.register.setRolloverIcon(new ImageIcon(this.getClass().getResource("zhuce_hover.jpg")));
+    		this.register.setIcon(new ImageIcon("images\\zhuce.png"));
+    		this.register.setRolloverIcon(new ImageIcon("images\\zhuce_hover.jpg"));
     		this.register.setBorder(null);
     		this.register.setFocusPainted(false);
     		this.register.setContentAreaFilled(false);
@@ -442,9 +442,9 @@ public class Login extends JFrame{
     		con.add(this.register);
     		
     		JButton subclose=new JButton();
-    		subclose.setIcon(new ImageIcon(this.getClass().getResource("close.png")));
-    		subclose.setRolloverIcon(new ImageIcon(this.getClass().getResource("close_hover.png")));
-    		subclose.setPressedIcon(new ImageIcon(this.getClass().getResource("close_press.png")));
+    		subclose.setIcon(new ImageIcon("images\\close.png"));
+    		subclose.setRolloverIcon(new ImageIcon("images\\close_hover.png"));
+    		subclose.setPressedIcon(new ImageIcon("images\\close_press.png"));
     		subclose.setBorder(null);
     		subclose.addActionListener(new ActionListener() {
     			
@@ -457,7 +457,7 @@ public class Login extends JFrame{
     		subclose.setBounds(523, 5, 27, 19);
     		con.add(subclose);
 			backgournd bg=new backgournd();
-			bg.setImage(this.getToolkit().getImage(this.getClass().getResource("registerbg.jpg")));
+			bg.setImage(this.getToolkit().getImage("images\\registerbg.jpg"));
 			bg.setBounds(0, 0,550, 600);
 			con.add(bg);
 			con.repaint();
@@ -504,8 +504,8 @@ public class Login extends JFrame{
     		user_id.setFont(font);
     		user_id.setBorder(BorderFactory.createLineBorder(Color.blue));
     		findproblem=new JButton();
-    		findproblem.setIcon(new ImageIcon(this.getClass().getResource("findproblem.jpg")));
-    		findproblem.setRolloverIcon(new ImageIcon(this.getClass().getResource("findproblem_hover.jpg")));
+    		findproblem.setIcon(new ImageIcon("images\\findproblem.jpg"));
+    		findproblem.setRolloverIcon(new ImageIcon("images\\findproblem_hover.jpg"));
     		findproblem.setBorder(null);
     		findproblem.setFocusPainted(false);
      		findproblem.setContentAreaFilled(false);
@@ -584,9 +584,9 @@ public class Login extends JFrame{
     		modifylb.setForeground(Color.white);
     		modifylb.setFont(new Font("宋体",Font.BOLD,19));
     		modify=new JButton();
-    		modify.setIcon(new ImageIcon(this.getClass().getResource("button_blue_normal.png")));
-    		modify.setRolloverIcon(new ImageIcon(this.getClass().getResource("button_blue_hover.png")));
-    		modify.setPressedIcon(new ImageIcon(this.getClass().getResource("button_blue_press.png")));
+    		modify.setIcon(new ImageIcon("images\\button_blue_normal.png"));
+    		modify.setRolloverIcon(new ImageIcon("images\\button_blue_hover.png"));
+    		modify.setPressedIcon(new ImageIcon("images\\button_blue_press.png"));
     		modify.setBorder(null);
     		modify.setFocusPainted(false);
     		modify.setContentAreaFilled(false);
@@ -626,9 +626,9 @@ public class Login extends JFrame{
     		con.add(modify);
     		
     		JButton subclose=new JButton();
-    		subclose.setIcon(new ImageIcon(this.getClass().getResource("close.png")));
-    		subclose.setRolloverIcon(new ImageIcon(this.getClass().getResource("close_hover.png")));
-    		subclose.setPressedIcon(new ImageIcon(this.getClass().getResource("close_press.png")));
+    		subclose.setIcon(new ImageIcon("images\\close.png"));
+    		subclose.setRolloverIcon(new ImageIcon("images\\close_hover.png"));
+    		subclose.setPressedIcon(new ImageIcon("images\\close_press.png"));
     		subclose.setBorder(null);
     		subclose.addActionListener(new ActionListener() {
     			
@@ -641,7 +641,7 @@ public class Login extends JFrame{
     		subclose.setBounds(473, 5, 27, 19);
     		con.add(subclose);
     		backgournd bg=new backgournd();
-			bg.setImage(this.getToolkit().getImage(this.getClass().getResource("registerbg.jpg")));
+			bg.setImage(this.getToolkit().getImage("images\\registerbg.jpg"));
 			bg.setBounds(0, 0,500, 400);
 			con.add(bg);
 			con.repaint();
