@@ -1,0 +1,133 @@
+ body{
+             filter:alpha(opacity=100 finishopacity=50 style=1 startx=0,starty=0,finishx=0,finishy=150) progid:DXImageTransform.Microsoft.gradient(startcolorstr=red,endcolorstr=blue,gradientType=0);
+               -ms-filter:alpha(opacity=100 finishopacity=50 style=1 startx=0,starty=0,finishx=0,finishy=150) progid:DXImageTransform.Microsoft.gradient(startcolorstr=red,endcolorstr=blue,gradientType=0);/*IE8*/	
+               background:#00BFFF; /* 一些不支持背景渐变的浏览器 */  
+               background:-moz-linear-gradient(top, #00BFFF,white);  
+               background:-webkit-gradient(linear, 0 0, 0 bottom, from(#00BFFF), to(white));  
+               background:-o-linear-gradient(top, #00BFFFF,white); 
+             }
+#input{
+width:100%;
+outline-color:#00FFFF;
+}
+
+#jsxnh{
+margin-top:20px;
+}
+ul li{
+list-style-type:none;
+}
+
+.documentdiv{
+height:560px;
+line-height:560px;
+overflow:auto;
+overflow-x:hidden;
+background-color:white; 
+}
+
+.document2div{
+height:560px;
+line-height:560px;
+overflow:auto;
+overflow-x:hidden;
+background-color:white; 
+margin-top:30px;
+}
+.picturediv{
+height:560px;
+background-color:white;
+margin-top:30px;
+}
+
+#marktypes{
+height:560px;
+line-height:560px;
+overflow:auto;
+overflow-x:hidden;
+background-color:white; 
+}
+#wordfrequencydocdiv{
+height:560px;
+line-height:560px;
+overflow:auto;
+overflow-x:hidden;
+background-color:white; 
+}
+
+.resultdiv{
+margin-top:30px;
+background-color:white;
+}
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}
+
+#b1{background-color:#0000FF;}
+#b2{background-color:#009900;}
+#b3{background-color:#00CCCC;}
+#b4{background-color:#3399CC;}
+#b5{background-color:#33CC33;}
+#b6{background-color:#33FFFF;}
+#b7{background-color:#666600;}
+#b8{background-color:#6699CC;}
+#b9{background-color:#66FFCC;}
+#b10{background-color:#996600;}
+#b11{background-color:#99CCFF;}
+#b12{background-color:#CCFF00;}
+#b13{background-color:#CC9900;}
+#b14{background-color:#CC3399;}
+#b15{background-color:#FF00CC;}
+#b16{background-color:#FF3333;}
+#b17{background-color:#99FF66;}
+#b18{background-color:#3333FF;}
+#b19{background-color:#FF0033;}
+#b20{background-color:#FFCC00;}
+#b21{background-color:#99FF00;}
+#b22{background-color:#FF6633;}
+
+.b1{background-color:#0000FF;margin-left:45px;margin-top:6px;}
+.b2{background-color:#009900;margin-left:45px;margin-top:6px;}
+.b3{background-color:#00CCCC;margin-left:45px;margin-top:6px;}
+.b4{background-color:#3399CC;margin-left:45px;margin-top:6px;}
+.b5{background-color:#33CC33;margin-left:45px;margin-top:6px;}
+.b6{background-color:#33FFFF;margin-left:45px;margin-top:6px;}
+.b7{background-color:#666600;margin-left:45px;margin-top:6px;}
+.b8{background-color:#6699CC;margin-left:45px;margin-top:6px;}
+.b9{background-color:#66FFCC;margin-left:45px;margin-top:6px;}
+.b10{background-color:#996600;margin-left:45px;margin-top:6px;}
+.b11{background-color:#99CCFF;margin-left:45px;margin-top:6px;}
+.b12{background-color:#CCFF00;margin-left:45px;margin-top:6px;}
+.b13{background-color:#CC9900;margin-left:45px;margin-top:6px;}
+.b14{background-color:#CC3399;margin-left:45px;margin-top:6px;}
+.b15{background-color:#FF00CC;margin-left:45px;margin-top:6px;}
+.b16{background-color:#FF3333;margin-left:45px;margin-top:6px;}
+.b17{background-color:#99FF66;margin-left:45px;margin-top:6px;}
+.b18{background-color:#3333FF;margin-left:45px;margin-top:6px;}
+.b19{background-color:#FF0033;margin-left:45px;margin-top:6px;}
+.b20{background-color:#FFCC00;margin-left:45px;margin-top:6px;}
+.b21{background-color:#99FF00;margin-left:45px;margin-top:6px;}
+.b22{background-color:#FF6633;margin-left:45px;margin-top:6px;}
