@@ -68,16 +68,16 @@ public class Handler {
 	public @ResponseBody String Analyse(@RequestBody String str){
 		content=str;
 		System.out.println(content);
-		return new Seg().wordMarkdoc(content);	
+		return new Seg().wordMark(content);	
 	}
 	
 	@RequestMapping(value="/wordmarkdoc",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
 	public @ResponseBody String wordMarkdoc(){
-		return new Seg().wordMarkdoc(content);	
+		return new Seg().wordMark(content);	
 	}
 	
 	@RequestMapping(value="/wordmarkpic",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
 	public @ResponseBody String wordMarkpic(){
-		return new Seg().wordMarkdoc(content);	
+		return new Seg().wordMark(content);	
 	}
 }

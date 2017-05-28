@@ -135,6 +135,23 @@
 
             </div>
         </div>
+         <div style="background-color:#003333;margin-top:30px">
+            <div class="container">
+                <div style="margin-top:10px">
+                <ul class="row">
+                    <li class="col-md-2 col-md-offset-1"><h4 style="color:white">链接</h4></li>
+                    <li class="col-md-2"><h4><a href="http://v3.bootcss.com/" target="_blank">Bootstrap</a></h4></li>
+                    <li class="col-md-2"><h4><a href="https://github.com/hankcs/HanLP" target="_blank">Hanpl</a></h4></li>
+                     <li class="col-md-2"><h4><a href="http://echarts.baidu.com" target="_blank">Echarts</a></h4></li>
+                    <li class="col-md-2"><h4><a href="https://github.com/qq1679781770/Java/tree/master/hanlp" target="_blank">源码</a></h4></li>
+                </ul>
+                 </div>
+                <div>
+                <p class="text-center" style="color:white">Powered by <a href="#">jsxnh</a>. Copyright &copy; 2017. Manage</p>
+                <p class="text-center" style="color:white"><a href="http://www.jianshixiaonanhai.com/" target="_blank">www.jianshixiaonanhai.com</a>. All rights reserved.</p>
+                </div>
+                </div>
+        </div>
         <script count="300" src="js/canvas-nest.js"></script>
 </body>
 </html>
