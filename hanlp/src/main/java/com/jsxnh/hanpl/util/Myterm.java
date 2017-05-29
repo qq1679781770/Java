@@ -29,4 +29,25 @@ public class Myterm {
 			return false;
 		return true;
 	}
+	
+	public Myterm(){
+		
+	}
+	public Myterm(String word, Nature nature) {
+		super();
+		this.word = word;
+		this.nature = nature;
+	}
+	public String getWord() {
+		return word;
+	}
+	public void setWord(String word) {
+		this.word = word;
+	}
+	public Nature getNature() {
+		return nature;
+	}
+	public void setNature(Nature nature) {
+		this.nature = nature;
+	}
 }

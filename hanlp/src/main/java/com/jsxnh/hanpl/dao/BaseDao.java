@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import com.jsxnh.hanpl.entities.Document;
 import com.jsxnh.hanpl.entities.Word;
 import com.jsxnh.hanpl.mapper.DocumentMapper;
 import com.jsxnh.hanpl.mapper.WordMapper;
 
+@Repository
 public class BaseDao {
 
 	@Autowired
@@ -20,7 +22,7 @@ public class BaseDao {
 		RowMapper<Document> docmapper=new DocumentMapper();
 		String sql="select * from document";
 		@SuppressWarnings("unchecked")
-		List<Document> docs=(List<Document>) jdbctemplate.queryForObject(sql, docmapper);
+		List<Document> docs=(List<Document>) jdbctemplate.query(sql, docmapper);
 		return docs.size();
 	}
 	
@@ -28,7 +30,7 @@ public class BaseDao {
 		RowMapper<Word> wordmapper=new WordMapper();
 		String sql="select * from word where word=?";
 		@SuppressWarnings("unchecked")
-		List<Word> words=(List<Word>) jdbctemplate.queryForObject(sql,new Object[]{word} ,wordmapper);
+		List<Word> words=(List<Word>) jdbctemplate.query(sql,new Object[]{word} ,wordmapper);
 		return words.size();
 	}
 	

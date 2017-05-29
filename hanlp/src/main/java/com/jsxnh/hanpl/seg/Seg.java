@@ -1,15 +1,30 @@
-package com.jsnxh.hanpl.seg;
+package com.jsxnh.hanpl.seg;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.summary.TextRankKeyword;
 import com.hankcs.hanlp.tokenizer.NLPTokenizer;
+import com.jsxnh.hanpl.dao.BaseDao;
+import com.jsxnh.hanpl.util.Myterm;
 
+@Service
 public class Seg {
 
+	@Autowired
+	private BaseDao basedao;
+	
+	public Seg(){
+		basedao=new BaseDao();
+	}
+	
 	public String wordMark(String content){
 		List<Term> termlist=NLPTokenizer.segment(content);
 		JSONArray result=new JSONArray();
@@ -25,57 +40,51 @@ public class Seg {
 		return result.toString();
 	}
 	
-//	public String wordMarkpic(String content){
-//		String[] categoriesstr=new String[]{"����","���ݴ�","����","����","����","���","����","����"};
-//		List<Term> termlist=NLPTokenizer.segment(content);
-//		JSONObject result=new JSONObject();
-//		JSONArray datas=new JSONArray();
-//		JSONArray links=new JSONArray();
-//		JSONArray legend=new JSONArray();
-//		JSONArray categories=new JSONArray();
-//		for(String str:categoriesstr){
-//			legend.put(str);
-//			JSONObject category=new JSONObject();
-//			category.put("name", str);
-//			categories.put(category);
-//		}
-//		JSONObject data;
-//		JSONObject link;
-//		for(Term term:termlist){
-//			data=new JSONObject();
-//			link=new JSONObject();
-//			char start=term.nature.toString().charAt(0);
-//			switch (start){
-//			case 'n':data.put("name", term.word);data.put("value", 1);data.put("category", 0);
-//			         link.put("source",term.word);link.put("target", "����") ;datas.put(data);break;
-//			case 'a':data.put("name", term.word);data.put("value", 1);data.put("category", 1);
-//			         link.put("source",term.word);link.put("target", "���ݴ�") ;datas.put(data);break;
-//			case 'v':data.put("name", term.word);data.put("value", 1);data.put("category", 2);
-//	                 link.put("source",term.word);link.put("target", "����") ;datas.put(data);break;
-//			case 'd':data.put("name", term.word);data.put("value", 1);data.put("category", 3);
-//	                 link.put("source",term.word);link.put("target", "����") ;datas.put(data);break;
-//			case 'c':data.put("name", term.word);data.put("value", 1);data.put("category", 4);
-//			         link.put("source",term.word);link.put("target", "����") ;datas.put(data);break;
-//			case 'p':data.put("name", term.word);data.put("value", 1);data.put("category", 5);
-//	                 link.put("source",term.word);link.put("target", "���") ;datas.put(data);break;
-//			case 'u':data.put("name", term.word);data.put("value", 1);data.put("category", 6);
-//	                 link.put("source",term.word);link.put("target", "����") ;datas.put(data);break;
-//			case 'r':data.put("name", term.word);data.put("value", 1);data.put("category", 7);
-//	                 link.put("source",term.word);link.put("target", "����") ;datas.put(data);break;
-//	        default:break;
-//			}
-//	//		datas.put(data);
-//	//		links.put(links);
-//		}
-//		result.put("legend", legend);
-//		result.put("datas", datas);
-////		result.put("links", links);
-//		result.put("categories", categories);
-//		return result.toString();
-//	}
-	
-	public String wordFrequency(String context){
+
+	public String wordFrequency(String content){
 		JSONArray result=new JSONArray();
+		Integer totaldoc=basedao.getTotaldoc();
+		List<Term> termlist=NLPTokenizer.segment(content);
+		HashMap<Myterm, Integer> termmap=new HashMap<Myterm, Integer>();
+		Integer  totalterm=termlist.size();
+		for(Term term:termlist){
+			Myterm myterm=new Myterm(term.word,term.nature);
+			if(termmap.containsKey(myterm)){
+				Integer num=termmap.get(myterm);
+				termmap.put(myterm, num+1);
+			}else{
+				termmap.put(myterm, 1);
+			}
+		}
+		
+		for(Map.Entry<Myterm, Integer> entry:termmap.entrySet()){
+			Myterm term=entry.getKey();
+			Integer wordnum=entry.getValue();
+			Integer wordincludedoc=basedao.docsincludeofWord(term.getWord());
+			double rate=(double)wordnum/totalterm;
+			double tf_idf=rate*Math.log10((double)totaldoc/(1+wordincludedoc));
+			JSONArray json=new JSONArray();
+			json.put(term.getWord());
+			json.put(wordnum);
+			json.put(rate);
+			json.put(tf_idf);
+		    result.put(json);
+		}		
+		return result.toString();
+	}
+	
+	public String wordCloud(String content){
+		JSONArray result=new JSONArray();
+		Map<String, Float> keys=new TextRankKeyword().getTermAndRank(content);
+		if(keys.size()>50){
+			keys=new TextRankKeyword().getTermAndRank(content, 50);
+		}
+		for(Map.Entry<String, Float> entry:keys.entrySet()){
+			JSONObject json=new JSONObject();
+			json.put("text",entry.getKey());
+			json.put("score", entry.getValue());
+			result.put(json);
+		}
 		return result.toString();
 	}
 }

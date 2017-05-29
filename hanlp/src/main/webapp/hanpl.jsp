@@ -14,6 +14,8 @@
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/jsxnh.css" />
         <script src="js/jsxnhlp.js"></script>
+        <script src="js/cloud.js"></script>
+        <script src="js/g2.js"></script>
 </head>
 <body>
 <div class="container">
@@ -45,7 +47,7 @@
 
             <div class="row reultdiv" id="wordmarkdiv">
                 <div class="col-md-3" style="background-color:#F0F0F0">   
-                    <button type="button" class="btn btn-primary btn-lg btn-block" id="wordmarkbt" style="background-color: transparent">显示图像</button> 
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="wordmarkbt">显示图像</button> 
                     <div id="marktypesint">
                         <h5>词性类别</h5>
                         <ul>
@@ -127,23 +129,24 @@
                     <button type="button" class="btn btn-primary btn-lg btn-block" id="downloadresult" style="margin-top:270px">下载</button>
                 </div>
                 <div class="col-md-10" id="wordfrequencypicdiv" style="background-color:white">
-                   
+                   <div id="wfpd" style="height:600px;width:945px"></div>
                   
                 </div>
             </div>
             <div id="wordclouddiv" class="resultdiv">
-
+                <div id="c1"></div>
             </div>
         </div>
          <div style="background-color:#003333;margin-top:30px">
             <div class="container">
                 <div style="margin-top:10px">
                 <ul class="row">
-                    <li class="col-md-2 col-md-offset-1"><h4 style="color:white">链接</h4></li>
+                    <li class="col-md-2"><h4 style="color:white">链接</h4></li>
                     <li class="col-md-2"><h4><a href="http://v3.bootcss.com/" target="_blank">Bootstrap</a></h4></li>
                     <li class="col-md-2"><h4><a href="https://github.com/hankcs/HanLP" target="_blank">Hanpl</a></h4></li>
                      <li class="col-md-2"><h4><a href="http://echarts.baidu.com" target="_blank">Echarts</a></h4></li>
                     <li class="col-md-2"><h4><a href="https://github.com/qq1679781770/Java/tree/master/hanlp" target="_blank">源码</a></h4></li>
+                     <li class="col-md-2"><h4><a href=https://antv.alipay.com/g2/doc/index.htmltarget="_blank">G2</a></h4></li>
                 </ul>
                  </div>
                 <div>

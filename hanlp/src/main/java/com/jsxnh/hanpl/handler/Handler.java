@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,13 +20,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.jsnxh.hanpl.seg.Seg;
+import com.jsxnh.hanpl.seg.Seg;
 
 import org.json.JSONArray;
 
 @Controller
 public class Handler {
 
+	@Autowired
+	private Seg seg;
 	public static String content="";
 	
 	@RequestMapping(value="/fileupload",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
@@ -68,16 +71,21 @@ public class Handler {
 	public @ResponseBody String Analyse(@RequestBody String str){
 		content=str;
 		System.out.println(content);
-		return new Seg().wordMark(content);	
+		return seg.wordMark(content);	
 	}
 	
-	@RequestMapping(value="/wordmarkdoc",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
+	@RequestMapping(value="/wordmark",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
 	public @ResponseBody String wordMarkdoc(){
-		return new Seg().wordMark(content);	
+		return seg.wordMark(content);	
+	}
+		
+	@RequestMapping(value="/wordfrequency",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
+	public @ResponseBody String wordFrequency(){
+		return seg.wordFrequency(content);
 	}
 	
-	@RequestMapping(value="/wordmarkpic",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
-	public @ResponseBody String wordMarkpic(){
-		return new Seg().wordMark(content);	
+	@RequestMapping(value="/wordcloud",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
+	public @ResponseBody String wordCloud(){
+		return seg.wordCloud(content);
 	}
 }

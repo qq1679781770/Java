@@ -161,12 +161,13 @@ function initwordmarkpic(data) {
 	$('#marktypespic').show();
 }
 function wordmarkdoc() {
+	$('#wordmarkdiv').show();
 	$('#marktypesint').show();
     $('#marktypespic').hide();
 	$('#wordfrequencydiv').hide();
 	$('#wordclouddiv').hide();
 	$('#wordmarkbt').text('显示图像');
-    getJSON('wordmarkdoc', function (data) {
+    getJSON('wordmark', function (data) {
         initwordmarkdoc(data);
     });
 }
@@ -175,26 +176,239 @@ function wordmarkpic() {
 	$('#marktypes').hide();
 	$('#wordmarkbt').text('显示文本');
 	$('#marktypesint').hide();
-	getJSON('wordmarkpic',function(data){
+	getJSON('wordmark',function(data){
 		initwordmarkpic(data);
 	});
 }
-function initwordfrequencydoc(data) {
-
+function initwordfrequencydoc(data) {	
+		var str="";
+		for(var i=0;i<data.length;i++){
+			var word=data[i];
+			str+="<tr><td>"+i+"</td>"+"<td>"+word[0]+"</td>"+"<td>"+word[1]+"</td>"+"<td>"+word[2]+"</td>"+"<td>"+word[3]+"</td></th>";
+		}
+	$('#wordfrequencytable').html(str);
 }
 function initwordfrequencypic(data) {
 
+	var words=[];
+	var num=[];
+	var frequency=[];
+	var tf_idf=[];
+	for(var i=0;i<data.length;i++){
+		var word=data[i];
+		words.push(word[0]);
+		num.push(word[1]);
+		frequency.push(word[2]);
+		tf_idf.push(word[3]);
+	}
+	var myChart=echarts.init(document.getElementById('wfpd'));
+	var colors = ['#5793f3', '#d14a61', '#675bba'];
+	option={
+			 tooltip: {
+			        trigger: 'axis',
+			        axisPointer: {
+			            type: 'cross'
+			        }
+			    },
+			legend: {
+	            data:['频数', '频率', 'tf-idf值']
+	        },
+	        xAxis: [
+	                {
+	                    type : 'category',
+	                    data : words
+	                }
+	            ],
+	            yAxis: [
+	                    {
+	                        type: 'value',
+	                        name: '频数',
+	                        min: 0,
+	                        max:20,
+	                        position: 'left',
+	                        axisLine: {
+	                            lineStyle: {
+	                                color: colors[0]
+	                            }
+	                        },
+	                        axisLabel: {
+	                            formatter: '{value}'
+	                        }
+	                    },
+	                    {
+	                        type: 'value',
+	                        name: '频率',
+	                        min: 0,
+	                        max:0.1,
+	                        position: 'right',
+	                        axisLine: {
+	                            lineStyle: {
+	                                color: colors[1]
+	                            }
+	                        },
+	                        axisLabel: {
+	                            formatter: '{value}'
+	                        }
+	                    },
+	                    {
+	                        type: 'value',
+	                        name: 'td-idf值',
+	                        min: 0,
+	                        max: 0.1,
+	                        position: 'right',
+	                        offset: 40,
+	                        axisLine: {
+	                            lineStyle: {
+	                                color: colors[2]
+	                            }
+	                        },
+	                        axisLabel: {
+	                            formatter: '{value}'
+	                        }
+	                    }
+	                ],
+	                dataZoom: [
+	                           {
+	                               show: true,
+	                               start: 94,
+	                               end: 100
+	                           },
+	                           {
+	                               type: 'inside',
+	                               start: 94,
+	                               end: 100
+	                           },
+	                           {
+	                               show: true,
+	                               yAxisIndex: 0,
+	                               filterMode: 'empty',
+	                               width: 30,
+	                               height: '80%',
+	                               showDataShadow: false,
+	                               left: '93%'
+	                           }
+	                       ],
+	           series:[
+	                   {
+	                	   name:'频数',
+	                	   type:'bar',
+	                	   data:num
+	                   },
+	                   {
+	                	   name:'频率',
+	                	   type:'line',
+	                	   yAxisIndex: 1,
+	                	   data:frequency
+	                   },
+	                   {
+	                	   name:'tf-idf值',
+	                	   type:'line',
+	                	   yAxisIndex: 2,
+	                	   data:tf_idf
+	                   }                   
+	            ]
+	};
+	myChart.setOption(option);
+	
 }
 function wordfrequencydoc() {
 
+	$('#wordfrequencydiv').show();
+	$('#wordmarkdiv').hide();
+	$('#wordclouddiv').hide();
+	$('#wordfrequencypicdiv').hide();
+	$('#wordfrequencydocdiv').show();
+	$('#downloaddiv').show();
+	getJSON('wordfrequency',function(data){
+		initwordfrequencydoc(data);
+	});
 }
 function wordfrequencypic() {
 
+	$('#wordfrequencydiv').show();
+	$('#wordmarkdiv').hide();
+	$('#wordclouddiv').hide();
+	$('#wordfrequencydocdiv').hide();
+	$('#downloaddiv').hide();
+	$('#wordfrequencypicdiv').show();
+	getJSON('wordfrequency',function(data){
+		initwordfrequencypic(data);
+	});
 }
 function wordcloud() {
 
+	$('#c1').html('');
+	$('#wordmarkdiv').hide();
+	$('#wordfrequencydiv').hide();
+	var Util = G2.Util;
+    var Shape = G2.Shape;
+    function getTextAttrs(cfg) {
+        var textAttrs = Util.mix(true, {}, {
+            fillOpacity: cfg.opacity,
+            fontSize: cfg.size,
+            rotate: cfg.origin._origin.rotate,
+            text: cfg.origin._origin.text,
+            textAlign: 'center',
+            fill: cfg.color,
+            textBaseline: 'Alphabetic'
+        }, cfg.style);
+        return textAttrs;
+    }
+    Shape.registShape('point', 'cloud', {
+        drawShape: function (cfg, container) {
+            cfg.points = this.parsePoints(cfg.points);
+            var attrs = getTextAttrs(cfg);
+            var shape = container.addShape('text', {
+                attrs: Util.mix(attrs, {
+                    x: cfg.points[0].x,
+                    y: cfg.points[0].y
+                })
+            });
+            return shape;
+        }
+    });
+	
+    getJSON('wordcloud',function(data){
+    	var cloud = new Cloud({
+            words:data,
+            size:function(words){
+                return words.score*30;
+            },
+            text: function (words) {
+                var text = words.text;
+                return text;
+            }
+        });
+    	cloud.exec(function (texts) {
+            var chart = new G2.Chart({
+                id: 'c1',
+                // canvas的宽高需要和布局宽高一致
+                width: 1140,
+                height: 500,
+                plotCfg: {
+                    margin: 0
+                }
+            });
+            chart.source(texts);
+            chart.coord().reflect();
+            chart.point()
+            .position('x*y')
+            .color('text')
+            .size('size', function (size) {
+             return size;
+           })
+           .shape('cloud')
+           .style({
+               fontStyle: texts[0].style,
+               fontFamily: texts[0].font,
+               fontWeight: texts[0].weight
+            }).tooltip('score');
+            chart.render();
+        });
+    });
+    $('#wordclouddiv').show();
 }
-            $(document).ready(function () {
+ $(document).ready(function () {
                 // $('#fencidiv').hide();
                 //$('#wordmarkdiv').hide();
                 $('#wordfrequencydiv').hide();
@@ -202,6 +416,12 @@ function wordcloud() {
                 $('#marktypespic').hide();
                 $('#analyse').click(function () {
                     var context = $('#input').val();
+                    $('#wordmarkdiv').show();
+                	$('#marktypesint').show();
+                    $('#marktypespic').hide();
+                	$('#wordfrequencydiv').hide();
+                	$('#wordclouddiv').hide();
+                	$('#wordmarkbt').text('显示图像');
                     postJSON('analysefile', context, function (data) {
                     	initwordmarkdoc(data);
                     });
@@ -216,6 +436,22 @@ function wordcloud() {
                 	}else{
                 		wordmarkpic();
                 	}
+                });
+                
+                $('#wordcloud').click(function(){
+                	wordcloud();
+                });
+                
+                $("#wordfrequency").click(function(){
+                	wordfrequencydoc();
+                });
+                
+                $('#wordfrequencypicbt').click(function(){
+                	wordfrequencypic();
+                })
+                
+                $('#wordfrequencydocbt').click(function(){
+                	wordfrequencydoc();
                 });
 
                 $('.file').on("change","input[type='file']",function(){

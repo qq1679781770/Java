@@ -20,7 +20,7 @@ function getJSON(url, data, callback) {
         //alert(r);
         return callback(r);
     }).fail(function (jqXHR, textStatus) {
-        return callback({ 'error': 'http_bad_response', 'data': '' + jqXHR.status, 'message': '网络好像出问题了 (HTTP ' + jqXHR.status + ')' });
+        return callback({ 'error': 'http_bad_response', 'data': '' + jqXHR.status, 'message': '(HTTP ' + jqXHR.status + ')' });
     });
 }
 function postJSON(url, data, callback) {
@@ -39,6 +39,6 @@ function postJSON(url, data, callback) {
         //alert(r);
         return callback(r);
     }).fail(function (jqXHR, textStatus) {
-        return callback({ 'error': 'http_bad_response', 'data': '' + jqXHR.status, 'message': '网络好像出问题了 (HTTP ' + jqXHR.status + ')' });
+        return callback({ 'error': 'http_bad_response', 'data': '' + jqXHR.status, 'message': ' (HTTP ' + jqXHR.status + ')' });
     });
 }
