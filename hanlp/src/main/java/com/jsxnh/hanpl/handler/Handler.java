@@ -4,11 +4,14 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -21,6 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jsxnh.hanpl.seg.Seg;
+
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 import org.json.JSONArray;
 
@@ -87,5 +94,27 @@ public class Handler {
 	@RequestMapping(value="/wordcloud",method=RequestMethod.GET,produces="application/json;charset=UTF-8")
 	public @ResponseBody String wordCloud(){
 		return seg.wordCloud(content);
+	}
+	
+	@RequestMapping("/download")
+	public void download(HttpServletRequest request,HttpServletResponse response){
+		
+		response.setContentType("application/x-excel");  
+        response.setCharacterEncoding("UTF-8");
+		response.setHeader("Content-Disposition", "attachment; filename=jsxnhplresult.xls");
+		try {
+			WritableWorkbook wwb=seg.createxsl(response.getOutputStream(), content);
+			wwb.write();
+			wwb.close();
+		} catch (RowsExceededException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WriteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

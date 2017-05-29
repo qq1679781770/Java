@@ -1,5 +1,8 @@
 package com.jsxnh.hanpl.seg;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +17,17 @@ import com.hankcs.hanlp.summary.TextRankKeyword;
 import com.hankcs.hanlp.tokenizer.NLPTokenizer;
 import com.jsxnh.hanpl.dao.BaseDao;
 import com.jsxnh.hanpl.util.Myterm;
+
+import jxl.Range;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.format.Colour;
+import jxl.write.Label;
+import jxl.write.WritableCell;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 @Service
 public class Seg {
@@ -86,5 +100,35 @@ public class Seg {
 			result.put(json);
 		}
 		return result.toString();
+	}
+	
+	public WritableWorkbook createxsl(OutputStream out,String content) throws IOException, RowsExceededException, WriteException{
+		 WritableWorkbook writableWorkbook=Workbook.createWorkbook(out);
+         WritableSheet wsheet = writableWorkbook.createSheet("Sheet1", 0);
+         Label nc0 = new Label(0, 0,"序号");
+         Label nc1 = new Label(1, 0,"词语");
+         Label nc2 = new Label(2, 0,"频数");
+         Label nc3 = new Label(3, 0,"频率");
+         Label nc4 = new Label(4, 0,"tf-idf");
+         wsheet.addCell(nc0);
+         wsheet.addCell(nc1);
+         wsheet.addCell(nc2);
+         wsheet.addCell(nc3);
+         wsheet.addCell(nc4);
+         JSONArray json=new JSONArray(wordFrequency(content));
+         for(int i=0;i<json.length();i++){
+        	 JSONArray item=json.getJSONArray(i);
+        	 jxl.write.Number num1=new jxl.write.Number(0, i+1, i);
+        	 Label num2=new Label(1, i+1, item.getString(0));
+        	 jxl.write.Number num3=new jxl.write.Number(2, i+1, item.getDouble(1));
+        	 jxl.write.Number num4=new jxl.write.Number(3, i+1, item.getDouble(2));
+        	 jxl.write.Number num5=new jxl.write.Number(4, i+1, item.getDouble(3));
+        	 wsheet.addCell(num1);
+        	 wsheet.addCell(num2);
+        	 wsheet.addCell(num3);
+        	 wsheet.addCell(num4);
+        	 wsheet.addCell(num5);
+         }
+         return writableWorkbook;
 	}
 }

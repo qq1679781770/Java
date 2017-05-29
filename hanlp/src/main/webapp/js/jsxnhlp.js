@@ -453,6 +453,10 @@ function wordcloud() {
                 $('#wordfrequencydocbt').click(function(){
                 	wordfrequencydoc();
                 });
+                
+                $('#downloadresult').click(function(){
+                	window.location.href='download';
+                });
 
                 $('.file').on("change","input[type='file']",function(){
                     

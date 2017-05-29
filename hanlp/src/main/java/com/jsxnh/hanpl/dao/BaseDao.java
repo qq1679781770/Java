@@ -21,7 +21,6 @@ public class BaseDao {
 	public Integer getTotaldoc(){
 		RowMapper<Document> docmapper=new DocumentMapper();
 		String sql="select * from document";
-		@SuppressWarnings("unchecked")
 		List<Document> docs=(List<Document>) jdbctemplate.query(sql, docmapper);
 		return docs.size();
 	}
@@ -29,7 +28,6 @@ public class BaseDao {
 	public Integer docsincludeofWord(String word){
 		RowMapper<Word> wordmapper=new WordMapper();
 		String sql="select * from word where word=?";
-		@SuppressWarnings("unchecked")
 		List<Word> words=(List<Word>) jdbctemplate.query(sql,new Object[]{word} ,wordmapper);
 		return words.size();
 	}
