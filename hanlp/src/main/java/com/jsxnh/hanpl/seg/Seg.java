@@ -1,6 +1,5 @@
 package com.jsxnh.hanpl.seg;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -18,12 +17,10 @@ import com.hankcs.hanlp.tokenizer.NLPTokenizer;
 import com.jsxnh.hanpl.dao.BaseDao;
 import com.jsxnh.hanpl.util.Myterm;
 
-import jxl.Range;
-import jxl.Sheet;
+
+
 import jxl.Workbook;
-import jxl.format.Colour;
 import jxl.write.Label;
-import jxl.write.WritableCell;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;

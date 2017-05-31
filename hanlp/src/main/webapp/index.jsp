@@ -6,11 +6,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>文本分词</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta charset="utf-8">
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jsxnh.js"></script>
         <script src="js/echarts.js"></script>
+        <link rel="icon" href="images/cloud.ico" type="image/x-icon"/>
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/jsxnh.css" />
         <script src="js/jsxnhlp.js"></script>
@@ -145,8 +145,9 @@
                     <li class="col-md-2"><h4><a href="http://v3.bootcss.com/" target="_blank">Bootstrap</a></h4></li>
                     <li class="col-md-2"><h4><a href="https://github.com/hankcs/HanLP" target="_blank">Hanpl</a></h4></li>
                      <li class="col-md-2"><h4><a href="http://echarts.baidu.com" target="_blank">Echarts</a></h4></li>
+                     <li class="col-md-2"><h4><a href="https://antv.alipay.com/g2/doc/index.html" target="_blank">G2</a></h4></li>
                     <li class="col-md-2"><h4><a href="https://github.com/qq1679781770/Java/tree/master/hanlp" target="_blank">源码</a></h4></li>
-                     <li class="col-md-2"><h4><a href=https://antv.alipay.com/g2/doc/index.htmltarget="_blank">G2</a></h4></li>
+                     
                 </ul>
                  </div>
                 <div>
