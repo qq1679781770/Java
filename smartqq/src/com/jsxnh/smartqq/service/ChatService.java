@@ -7,16 +7,16 @@ import com.jsxnh.smartqq.entities.TemporaryMessage;
 
 public interface ChatService {
 
-	//·¢ËÍĞÅÏ¢
+	//å‘é€ä¿¡æ¯
 	public void sendMessage(Integer send_id,Integer receive_id,String content);
-	//½ÓÊÜĞÅÏ¢
+	//æ¥å—ä¿¡æ¯
 	public List<TemporaryMessage> receiveMessage(Integer receive_id); 
-	//±£´æ´ı½ÓÊÕĞÅÏ¢
+	//ä¿å­˜å¾…æ¥æ”¶ä¿¡æ¯
 	public TemporaryMessage receiveMessage(Integer send_id,Integer receive_id);
-	//²éÕÒ´ı½ÓÊÕĞÅÏ¢
+	//æŸ¥æ‰¾å¾…æ¥æ”¶ä¿¡æ¯
 	public boolean findTemporaryMessage(Integer send_id,Integer receive_id);
-	//±£´æÁÄÌì¼ÇÂ¼
+	//ä¿å­˜èŠå¤©è®°å½•
 	public void saveMessage(Integer user1_id,Integer user2_id,String content,Date send_date,Date receive_date);
-	//²éÕÒÓÃ»§´ı½ÓÊÕÏûÏ¢
+	//æŸ¥æ‰¾ç”¨æˆ·å¾…æ¥æ”¶æ¶ˆæ¯
 	public List<TemporaryMessage> findMessages(Integer receive_id);
 }

@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.sql.Date;
 import java.text.ParseException;
@@ -15,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.jsxnh.smartqq.service.CommandService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,11 +34,13 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class ServerThread implements Runnable {
-
+	private final  static String SUUCESS = "success";
+	private final static String FAILURE = "failure";
 	private Socket socket;
 	private UserService userService=null;
 	private FriendService friendService=null;
 	private ChatService chatService=null;
+	private CommandService commandService = null;
 	private ApplicationContext ctx=null;
 	private BufferedReader in=null;
 	private PrintWriter out=null;
@@ -52,6 +57,7 @@ public class ServerThread implements Runnable {
 	    friendService = ctx.getBean(FriendService.class);
 	    userService=ctx.getBean(UserService.class);
 	    chatService=ctx.getBean(ChatService.class);
+	    commandService = ctx.getBean(CommandService.class);
 //	    try{
 //	    	
 //	    }catch(IOException e){
@@ -72,71 +78,18 @@ public class ServerThread implements Runnable {
 			Iterator it=json.keys();
 			String function=it.next().toString();
 			JSONObject functionjson=JSONObject.fromObject(json.get(function));
+			String methodstr = commandService.getFunction(function);
+			Method m = null;
 			String result="";
-			if(function.equals("注册")){
-				result=Register(functionjson);
-			}
-			else if(function.equals("登录")){
-				result=Login(functionjson);
-			}
-			else if(function.equals("更新签名")){
-				result=updateSignature(functionjson);
-			}
-			else if(function.equals("更新信息")){
-				result=updateDatas(functionjson);
-			}
-			else if(function.equals("查找密保问题")){
-				result=findProblem(functionjson);
-			}
-			else if(function.equals("修改密码")){
-				result=modifyPassword(functionjson);
-			}
-			else if(function.equals("修改昵称")){
-				result=updateNickName(functionjson);
-			}
-			else if(function.equals("好友备注")){
-				result=modifyRemark(functionjson);
-			}
-			else if(function.equals("添加分组")){
-				result=addPacket(functionjson);
-			}
-			else if(function.equals("修改分组")){
-				result=modifyPacket(functionjson);
-			}
-			else if(function.equals("删除分组")){
-				result=deletePacket(functionjson);
-			}
-			else if(function.equals("移动分组")){
-				result=movePacket(functionjson);
-			}
-			else if(function.equals("精确查找")){
-				result=findUserById(functionjson);
-			}
-			else if(function.equals("模糊查找")){
-				result=findUsersByNickName(functionjson);
-			}
-			else if(function.equals("登出")){
-				Logout(functionjson);
-			}
-			else if(function.equals("添加好友")){
-				result=addFriend(functionjson);
-			}
-			else if(function.equals("同意添加")){
-				result=agreeAddFriend(functionjson);
-			}
-			else if(function.equals("拒绝添加")){
-				result=disagreeAddFriend(functionjson);
-			}
-			else if(function.equals("发送消息")){
-				result=chatSend(functionjson);
-			}
-			else if(function.equals("接收消息")){
-				try {
-					result=chatReceive(functionjson);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				m = ServerThread.class.getDeclaredMethod(methodstr,JSONObject.class);
+				result = (String) m.invoke(this,functionjson);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
 			}
 			System.out.println(result);
 			out.println(result);
@@ -171,7 +124,7 @@ public class ServerThread implements Runnable {
 	    return strinputstream;
 	}
 
-	//登录undone
+	//鐧诲綍undone
 	private String Login(JSONObject json){
 		this.user_id=(Integer)json.get("user_id");
 		Integer user_id=(Integer)json.get("user_id");
@@ -179,8 +132,8 @@ public class ServerThread implements Runnable {
 		String ip=socket.getInetAddress().getHostAddress();
 		JSONObject result=new JSONObject();
 		if(userService.LogIn(user_id, password, ip)){
-			result.put("loginresult", "登录成功");
-			//个人信息
+			result.put("loginresult",SUUCESS);
+			//涓汉淇℃伅
 			User user=userService.findUserById(user_id);
 			JSONObject user_message=new JSONObject();
 			user_message.put("user_id", user_id);
@@ -197,7 +150,7 @@ public class ServerThread implements Runnable {
 			}
 	        user_message.put("packets",packet);
 			result.put("user", user_message);
-			//朋友列表
+			//鏈嬪弸鍒楄〃
 			JSONArray friend=new JSONArray();
 			for(Packet packet_:packets){
 				List<Friend> frineds=friendService.findPacketFriends(user_id, packet_.getPacket_name());
@@ -257,7 +210,7 @@ public class ServerThread implements Runnable {
 			
 		}
 		else{
-			result.put("loginresult", "登录失败");
+			result.put("loginresult", FAILURE);
 		}
 		return result.toString();
 	}
@@ -284,28 +237,28 @@ public class ServerThread implements Runnable {
     	     user.setMessage((String)json.get("message"));
     	}
     	userService.userRegister(user, (String)json.get("problem"), (String)json.get("answer"));
-    	result.put("registerresult", "注册成功");
+    	result.put("registerresult", SUUCESS);
     	}else{
-    		result.put("registerresult","注册失败");
+    		result.put("registerresult",FAILURE);
     	}
     	return result.toString();
     }
     private String updateNickName(JSONObject json){
     	JSONObject result=new JSONObject();
     	userService.updateNickName((Integer)json.get("user_id"), (String)json.get("nickname"));
-    	result.put("updatenicknameresult", "更新成功");
+    	result.put("updatenicknameresult", "鏇存柊鎴愬姛");
     	return result.toString();
     }
     private String modifyRemark(JSONObject json){
     	JSONObject result=new JSONObject();
     	friendService.modifyRemarkName(json.getInt("user1_id"), json.getInt("user2_id"), json.getString("remarkname"));
-    	result.put("modifyremarkresult", "修改成功");
+    	result.put("modifyremarkresult", "淇敼鎴愬姛");
     	return result.toString();
     }
     private String updateSignature(JSONObject json){
     	userService.updateSignature((Integer)json.get("user_id"), (String)json.get("signature"));
     	JSONObject result=new JSONObject();
-    	result.put("updatesignatureresult", "更新成功");
+    	result.put("updatesignatureresult", "鏇存柊鎴愬姛");
     	return result.toString();
     }
     private String updateDatas(JSONObject json){
@@ -321,7 +274,7 @@ public class ServerThread implements Runnable {
     	}
     	userService.updateData((Integer)json.get("user_id"), datas);
     	JSONObject result=new JSONObject();
-    	result.put("updatedatasresult", "更新成功");
+    	result.put("updatedatasresult", "鏇存柊鎴愬姛");
         return result.toString();
     }
     private String findProblem(JSONObject json){
@@ -340,44 +293,44 @@ public class ServerThread implements Runnable {
     	JSONObject result=new JSONObject();
     	if(userService.checkAnswer((Integer)json.get("user_id"),(String)json.get("answer"))){
     		userService.modifyPassword((Integer)json.get("user_id"),(String)json.get("password"));
-    		result.put("modifypasswordresult", "修改成功");
+    		result.put("modifypasswordresult", SUUCESS);
     	}
     	else{
-    		result.put("modifypasswordresult", "密保错误");
+    		result.put("modifypasswordresult", FAILURE);
     	}
     	return result.toString();
     }
     private String addPacket(JSONObject json){
     	JSONObject result=new JSONObject();
     	userService.addPacket((Integer)json.get("user_id"), (String)json.get("packetname"));
-    	result.put("addpacketresult", "添加成功");
+    	result.put("addpacketresult", SUUCESS);
     	return result.toString();
     }
     private String deletePacket(JSONObject json){
     	JSONObject result=new JSONObject();
     	userService.deletePacket((Integer)json.get("user_id"), (String)json.get("packetname"));
-    	result.put("deletepacketresult", "删除成功");
+    	result.put("deletepacketresult", SUUCESS);
     	return result.toString();
     }
     private String modifyPacket(JSONObject json){
     	JSONObject result=new JSONObject();
     	userService.modifyPacket((Integer)json.get("user_id"),(String)json.get("oldpacketname"),
     			(String)json.get("newpacketname"));
-    	result.put("modifypacketresult", "修改成功");
+    	result.put("modifypacketresult", SUUCESS);
     	return result.toString();
     }
     private String movePacket(JSONObject json){
     	JSONObject result=new JSONObject();
     	friendService.movePacket(json.getInt("user1_id"), json.getInt("user2_id"), json.getString("oldpacketname"), 
     			                 json.getString("newpacketname"));
-    	result.put("movepacketresult", "移动成功");
+    	result.put("movepacketresult", "绉诲姩鎴愬姛");
     	return result.toString();
     }
     private String findUserById(JSONObject json){
     	JSONObject result=new JSONObject();
     	User user=userService.findUserById((Integer)json.get("user_id"));
     	if(user!=null&&friendService.findFriend(user_id, user.getUser_id())==null){
-    		result.put("finduserbyidresult", "查找成功");
+    		result.put("finduserbyidresult", SUUCESS);
     		JSONObject userjson=new JSONObject();
     		userjson.put("user_id", user.getUser_id());
     		userjson.put("nickname", user.getNick_name());
@@ -387,7 +340,7 @@ public class ServerThread implements Runnable {
     		result.put("user", userjson);
     	}
     	else{
-    		result.put("finduserbyidresult", "查找失败");
+    		result.put("finduserbyidresult", FAILURE);
     	}
     	return result.toString();
     }
@@ -395,7 +348,7 @@ public class ServerThread implements Runnable {
     	JSONObject result=new JSONObject();
     	List<User> users=userService.findUsersByNickName((String)json.get("nickname"));
     	if(users.size()>0){
-    		result.put("finduserbynicknameresult", "查找成功");
+    		result.put("finduserbynicknameresult", SUUCESS);
     		JSONArray usersarray=new JSONArray();
     		for(User user_:users){
     			if(friendService.findFriend(user_id, user_.getUser_id())!=null){
@@ -411,7 +364,7 @@ public class ServerThread implements Runnable {
     		}
     		result.put("users", usersarray);
     	}else{
-    		result.put("finduserbunicknameresult","查找失败");
+    		result.put("finduserbunicknameresult",FAILURE);
     	}
     	return result.toString();
     }
@@ -428,12 +381,12 @@ public class ServerThread implements Runnable {
     		JSONObject addjson=new JSONObject();
     		addjson.put("addfriend", json);
     		sendMessage((Integer)json.get("user2_id"),addjson.toString());
-    		result.put("addfriendresult","等待添加");
+    		result.put("addfriendresult","绛夊緟娣诲姞");
     	}
     	else{
     		friendService.addTemporaryFriend((Integer)json.get("user1_id"),
     				(Integer)json.get("user2_id"), (String)json.get("packetname"));
-    		result.put("addfriendresult", "等待上线");
+    		result.put("addfriendresult", "绛夊緟涓婄嚎");
     	}
     	return result.toString();
     }
@@ -457,9 +410,9 @@ public class ServerThread implements Runnable {
 //    		json.put("signature1", user2.getSignature());
 //    	}
     	JSONObject result=new JSONObject();
-    	result.put("agreeaddfriendresult", "添加成功");
+    	result.put("agreeaddfriendresult", "娣诲姞鎴愬姛");
     	JSONObject message=new JSONObject();
-    	message.put("agreeaddfriendresult", "添加成功");
+    	message.put("agreeaddfriendresult", "娣诲姞鎴愬姛");
     	message.put("agreeaddfriend", json);
     	sendMessage((Integer)json.get("user1_id"), message.toString());
     	return result.toString();
@@ -470,9 +423,9 @@ public class ServerThread implements Runnable {
     		friendService.deleteTemporaryFriend((Integer)json.get("user1_id"),(Integer)json.get("user2_id"));
     	}
     	JSONObject result=new JSONObject();
-    	result.put("disagreeaddfriendresult", "拒绝成功");
+    	result.put("disagreeaddfriendresult", "鎷掔粷鎴愬姛");
     	JSONObject message=new JSONObject();
-    	message.put("disagreeaddfriendresult", "拒绝添加");
+    	message.put("disagreeaddfriendresult", "鎷掔粷娣诲姞");
     	message.put("disagreeaddfriend", json);
         sendMessage((Integer)json.get("user1_id"), message.toString());
     	return result.toString();

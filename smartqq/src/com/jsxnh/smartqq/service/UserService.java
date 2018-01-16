@@ -7,36 +7,36 @@ import com.jsxnh.smartqq.entities.User;
 
 public interface UserService {
 
-	//ÓÃ»§×¢²á
+	//ç”¨æˆ·æ³¨å†Œ
 	public void userRegister(User user,String problem,String answer);
-	//¾«È·²éÕÒÓÃ»§
+	//ç²¾ç¡®æŸ¥æ‰¾ç”¨æˆ·
 	public User findUserById(Integer user_id);
-	//Ä£ºı²éÕÒÓÃ»§
+	//æ¨¡ç³ŠæŸ¥æ‰¾ç”¨æˆ·
 	public List<User> findUsersByNickName(String nickname);
-	//¸üĞÂÓÃ»§×´Ì¬
+	//æ›´æ–°ç”¨æˆ·çŠ¶æ€
 	public int updateUserStatus(Integer user_id);
-	//¸üĞÂÓÃ»§ĞÅÏ¢
+	//æ›´æ–°ç”¨æˆ·ä¿¡æ¯
 	public int updateData(Integer user_id,HashMap<String,String> datas);
-	//¸üĞÂ¸öĞÔÇ©Ãû
+	//æ›´æ–°ä¸ªæ€§ç­¾å
 	public int updateSignature(Integer user_id,String signature);
-	//ĞŞ¸ÄÃÜÂë
+	//ä¿®æ”¹å¯†ç 
 	public int modifyPassword(Integer user_id,String password);
-	//ĞŞ¸ÄêÇ³Æ
+	//ä¿®æ”¹æ˜µç§°
 	public int updateNickName(Integer user_id,String nickname);
-	//Ôö¼Ó·Ö×é
+	//å¢åŠ åˆ†ç»„
 	public int addPacket(Integer user_id,String packet_name);
-	//ĞŞ¸Ä·Ö×éÃû×Ö
+	//ä¿®æ”¹åˆ†ç»„åå­—
 	public int modifyPacket(Integer user_id,String old_packetname,String new_packetname);
-	//É¾³ı·Ö×é
+	//åˆ é™¤åˆ†ç»„
 	public int deletePacket(Integer user_id,String packet_name);
-	//È·ÈÏÃÜÂë
+	//ç¡®è®¤å¯†ç 
 	public boolean checkPassword(Integer user_id,String password);
-	//È·ÈÏÃÜ±£ÎÊÌâ
+	//ç¡®è®¤å¯†ä¿é—®é¢˜
 	public boolean checkAnswer(Integer user_id,String answer);
-	//²éÕÒÃÜ±£ÎÊÌâ
+	//æŸ¥æ‰¾å¯†ä¿é—®é¢˜
 	public String  findProblem(Integer user_id);
-	//µÇÂ¼
+	//ç™»å½•
 	public boolean LogIn(Integer user_id,String password,String ip);
-	//µÇ³ö
+	//ç™»å‡º
 	public void LogOut(Integer user_id);
 }

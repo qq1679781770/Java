@@ -8,26 +8,26 @@ import com.jsxnh.smartqq.entities.TemporaryFriend;
 
 public interface FriendService {
 
-	//Ìí¼ÓºÃÓÑ
+	//æ·»åŠ å¥½å‹
 	public void addFriend(Integer user1_id,Integer user2_id,String packet1_name,String packet2_name);
-	//É¾³ıºÃÓÑ
+	//åˆ é™¤å¥½å‹
 	public void delete(Integer user1_id,Integer user2_id);
-	//ÒÆ¶¯ºÃÓÑ·Ö×é
+	//ç§»åŠ¨å¥½å‹åˆ†ç»„
 	public void movePacket(Integer user1_id,Integer user2_id,String packet1_name,String packet2_name);
-	//²éÕÒÓÃ»§ºÃÓÑ
+	//æŸ¥æ‰¾ç”¨æˆ·å¥½å‹
 	public List<Friend> findFriends(Integer user_id);
-	//²éÕÒÄ³¸ö·Ö×éµÄºÃÓÑ
+	//æŸ¥æ‰¾æŸä¸ªåˆ†ç»„çš„å¥½å‹
 	public List<Friend> findPacketFriends(Integer user_id,String packet_name);
-	//ĞŞ¸Ä±¸×¢Ãû
+	//ä¿®æ”¹å¤‡æ³¨å
 	public void modifyRemarkName(Integer user1_id,Integer user2_id,String remarkname);
-	//µÈ´ıÌí¼ÓºÃÓÑ
+	//ç­‰å¾…æ·»åŠ å¥½å‹
 	public void addTemporaryFriend(Integer user1_id,Integer user2_id,String packet_name);
-	//¾Ü¾øÌí¼ÓºÃÓÑ
+	//æ‹’ç»æ·»åŠ å¥½å‹
 	public void deleteTemporaryFriend(Integer user1_id,Integer user2_id);
-	//²éÕÒºÃÓÑÌí¼Ó
+	//æŸ¥æ‰¾å¥½å‹æ·»åŠ 
 	public List<TemporaryFriend> findTemporaryFriends(Integer user_id); 
-	//²éÕÒÓÃ»§´ıÌí¼ÓºÃÓÑ
+	//æŸ¥æ‰¾ç”¨æˆ·å¾…æ·»åŠ å¥½å‹
 	public List<TemporaryFriend>  findTemporaryFriend(Integer user1_id,Integer user2_id);
-	//²éÕÒÓÃ»§ÊÇ·ñÒÑ¾­³ÉÎªÅóÓÑ
+	//æŸ¥æ‰¾ç”¨æˆ·æ˜¯å¦å·²ç»æˆä¸ºæœ‹å‹
 	public Friend findFriend(Integer user1_id,Integer user2_id);
 }

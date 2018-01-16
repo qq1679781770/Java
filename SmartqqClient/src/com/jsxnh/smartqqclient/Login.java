@@ -8,28 +8,13 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class Login extends JFrame{
  
@@ -61,7 +46,7 @@ public class Login extends JFrame{
 	}
 	
 	public void lunch(){
-		this.setSize(437,340);
+		this.setSize(480,420);
 		Toolkit toolkit=Toolkit.getDefaultToolkit();
 		Dimension screensize=toolkit.getScreenSize();
 		int screenwidth=(int)screensize.getWidth();
@@ -88,6 +73,7 @@ public class Login extends JFrame{
 		container.add(headlbbg);
 		
 		userField=new JTextField(1000);
+		/**
 		userField.setBorder(BorderFactory.createLineBorder(Color.black));
 		userField.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e){
@@ -99,10 +85,10 @@ public class Login extends JFrame{
 			public void mouseExited(MouseEvent e){
 				userField.setBorder(BorderFactory.createLineBorder(Color.black));
 			}
-		});
+		});**/
 		
 		passwordField=new JPasswordField(1000);
-		passwordField.setBorder(BorderFactory.createLineBorder(Color.black));
+		//passwordField.setBorder(BorderFactory.createLineBorder(Color.black));
 		passwordField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e){
 				if(e.getKeyCode()==10){
@@ -110,6 +96,7 @@ public class Login extends JFrame{
 				}
 			}
 		});
+		/**
 		passwordField.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e){
 				passwordField.setBorder(BorderFactory.createLineBorder(Color.red));
@@ -120,14 +107,14 @@ public class Login extends JFrame{
 			public void mouseExited(MouseEvent e){
 				passwordField.setBorder(BorderFactory.createLineBorder(Color.black));
 			}
-		});
-		userField.setFont(new Font("¿¬Ìå",Font.BOLD,19));
+		});**/
+		userField.setFont(new Font("å®‹ä½“",Font.BOLD,19));
 		userField.setForeground(Color.black);
-		userField.setToolTipText("ÇëÊäÈëÓÃ»§Ãû");
-		passwordField.setFont(new Font("¿¬Ìå",Font.BOLD,19));
+		userField.setToolTipText("è¯·è¾“å…¥è´¦å·");
+		passwordField.setFont(new Font("å®‹ä½“",Font.BOLD,19));
 		passwordField.setForeground(Color.black);
-		passwordField.setEchoChar('¡ñ');
-		passwordField.setToolTipText("ÇëÊäÈëÃÜÂë");
+		//passwordField.setEchoChar("");
+		passwordField.setToolTipText("è¯·è¾“å…¥å¯†ç ");
 		passwordField.requestFocus(true);
 		userField.setBounds(140, 197,174, 28);
 		passwordField.setBounds(140, 230, 174, 28);
@@ -171,9 +158,9 @@ public class Login extends JFrame{
 		container.add(register);
 		container.add(findbackpassword);
 		
-		JLabel loginlb=new JLabel("°² È« µÇ Â¼");
+		JLabel loginlb=new JLabel("ç™»      å½•");
 		loginlb.setForeground(Color.white);
-		loginlb.setFont(new Font("ËÎÌå",Font.BOLD,19));
+		loginlb.setFont(new Font("å®‹ä½“",Font.BOLD,19));
 		login=new JButton();
 		login.setIcon(new ImageIcon("images\\button_blue_normal.png"));
 		login.setRolloverIcon(new ImageIcon("images\\button_blue_hover.png"));
@@ -191,7 +178,7 @@ public class Login extends JFrame{
 		login.setBounds(110, 288, 237, 48);
 		container.add(loginlb);
 		container.add(login);
-		
+		/**
 		close=new JButton();
 		close.setIcon(new ImageIcon("images\\close.png"));
 		close.setRolloverIcon(new ImageIcon("images\\close_hover.png"));
@@ -210,7 +197,7 @@ public class Login extends JFrame{
 		min.setRolloverIcon(new ImageIcon("images\\min_hover.png"));
 		min.setPressedIcon(new ImageIcon("images\\min_press.png"));
 		min.setBorder(null);
-		min.setToolTipText("×îĞ¡»¯");
+		min.setToolTipText("æœ€å°åŒ–");
 		min.setFocusPainted(false);
 		min.setContentAreaFilled(false);
 		min.addActionListener(new ActionListener() {
@@ -225,6 +212,7 @@ public class Login extends JFrame{
 		close.setBounds(400,5, 27, 19);
 		container.add(min);
 		container.add(close);
+		 **/
 		backgournd bg=new backgournd();
 		bg.setImage(this.getToolkit().getImage("images\\loginbg.png"));
 		bg.setBounds(0, 0, 437, 340);
@@ -234,6 +222,28 @@ public class Login extends JFrame{
 		this.setIconImage(this.getToolkit().getImage("images\\title.png"));
 		this.setUndecorated(true);
 		this.setAlwaysOnTop(true);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				System.exit(0);
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				System.exit(0);
+			}
+		});
 		setVisible(true);
 	}
 	
@@ -241,11 +251,11 @@ public class Login extends JFrame{
 		String id=userField.getText();
 		char[] password=passwordField.getPassword();
 		if(!id.matches("\\d+")){
-			JOptionPane.showMessageDialog(this, "ÓÃ»§ÃûÎªÊı×Ö");
+			JOptionPane.showMessageDialog(this, "è¯·è¾“å…¥æ­£ç¡®çš„è´¦å·æ ¼å¼");
 			return;
 		}
 		if(password.equals("")){
-			JOptionPane.showMessageDialog(this, "ÃÜÂë²»ÄÜÎª¿Õ");
+			JOptionPane.showMessageDialog(this, "è¯·è¾“å…¥å¯†ç ");
 			return;
 		}
 		SendtoServer.login(Integer.parseInt(id), String.valueOf(password));
@@ -265,7 +275,7 @@ public class Login extends JFrame{
 			messages.remove(LoginSuccessMessage);
 			setVisible(false);
 		}else{
-			JOptionPane.showMessageDialog(this, "ÓÃ»§Ãû²»´æÔÚ»òÃÜÂë´íÎó");
+			JOptionPane.showMessageDialog(this, "ç”¨æˆ·ä¸å­˜åœ¨æˆ–å¯†ç é”™è¯¯");
 			messages.remove(LoginFailureMessage);
 		}
 	}
@@ -287,7 +297,7 @@ public class Login extends JFrame{
 			
 		}
 		public void lunch(){
-            this.setSize(550, 600);
+            this.setSize(600, 600);
             this.setLayout(null);
             Toolkit toolkit=Toolkit.getDefaultToolkit();
     		Dimension screensize=toolkit.getScreenSize();
@@ -306,86 +316,86 @@ public class Login extends JFrame{
     			}
     		});
     		
-    		Font font=new Font("¿¬Ìå",Font.BOLD,19);
-    		JLabel userlabel=new JLabel("ÕË    ºÅ");
+    		Font font=new Font("å®‹ä½“",Font.BOLD,19);
+    		JLabel userlabel=new JLabel("è´¦    å·");
     		userlabel.setFont(font);
     		user_id=new JTextField(1000);
-    		user_id.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//user_id.setBorder(BorderFactory.createLineBorder(Color.blue));
     		user_id.setFont(font);
     		userlabel.setBounds(120, 50, 86,28);
     		user_id.setBounds(210, 50, 174, 28);
     		con.add(userlabel);
     		con.add(user_id);
-    		JLabel password1label=new JLabel("ÊäÈëÃÜÂë");
+    		JLabel password1label=new JLabel("å¯†    ç ");
     		password1label.setFont(font);
     		password1=new JPasswordField(1000);
-    		password1.setEchoChar('¡ñ');
-    		password1.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//password1.setEchoChar('.');
+    		//password1.setBorder(BorderFactory.createLineBorder(Color.blue));
     		password1.setFont(font);
     		password1label.setBounds(120, 83, 86, 28);
     		password1.setBounds(210, 83, 174,28);
     		con.add(password1label);
     		con.add(password1);
-    		JLabel password2label=new JLabel("ÖØ¸´ÃÜÂë");
+    		JLabel password2label=new JLabel("é‡å¤å¯†ç ");
     		password2label.setFont(font);
     		password2=new JPasswordField(1000);
-    		password2.setEchoChar('¡ñ');
-    		password2.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//password2.setEchoChar('.');
+    		//password2.setBorder(BorderFactory.createLineBorder(Color.blue));
     		password2.setFont(font);
     		password2label.setBounds(120, 116, 86, 28);
     		password2.setBounds(210, 116, 174,28);
     		con.add(password2label);
     		con.add(password2);
-    		JLabel nicknamelabel=new JLabel("êÇ    ³Æ");
+    		JLabel nicknamelabel=new JLabel("æ˜µ    ç§°");
     		nicknamelabel.setFont(font);
     		nickname=new JTextField(1000);
     		nickname.setFont(font);
-    		nickname.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//nickname.setBorder(BorderFactory.createLineBorder(Color.blue));
     		nicknamelabel.setBounds(120, 149, 86, 28);
     		nickname.setBounds(210, 149, 174, 28);
     		con.add(nicknamelabel);
     		con.add(nickname);
-    		JLabel problemlabel=new JLabel("ÃÜ±£ÎÊÌâ");
+    		JLabel problemlabel=new JLabel("å¯†ä¿é—®é¢˜");
     		problemlabel.setFont(font);
     		problem=new JTextField(1000);
     		problem.setFont(font);
-    		problem.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//problem.setBorder(BorderFactory.createLineBorder(Color.blue));
     		problemlabel.setBounds(120, 182, 86, 28);
     		problem.setBounds(210, 182, 174, 28);
     		con.add(problemlabel);
     		con.add(problem);
-    		JLabel answerlabel=new JLabel("ÃÜ±£´ğ°¸");
+    		JLabel answerlabel=new JLabel("é—®é¢˜ç­”æ¡ˆ");
     		answerlabel.setFont(font);
     		answer=new JTextField(1000);
     		answer.setFont(font);
-    		answer.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//answer.setBorder(BorderFactory.createLineBorder(Color.blue));
     		answerlabel.setBounds(120, 215, 86, 28);
     		answer.setBounds(210, 215,174, 28);
     		con.add(answerlabel);
     		con.add(answer);
-    		JLabel namelabel=new JLabel("ÕæÊµĞÕÃû");
+    		JLabel namelabel=new JLabel("çœŸå®å§“å");
     		namelabel.setFont(font);
     		name=new JTextField(1000);
     		name.setFont(font);
-    		name.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//name.setBorder(BorderFactory.createLineBorder(Color.blue));
     		namelabel.setBounds(120, 248, 86, 28);
     		name.setBounds(210, 248, 174, 28);
     		con.add(namelabel);
     		con.add(name);
-    		JLabel agelabel=new JLabel("Äê    Áä");
+    		JLabel agelabel=new JLabel("å¹´    é¾„");
     		agelabel.setFont(font);
     		age=new JTextField(1000);
     		age.setFont(font);
-    		age.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//age.setBorder(BorderFactory.createLineBorder(Color.blue));
     		agelabel.setBounds(120, 281, 86, 28);
     		age.setBounds(210, 281, 174, 28);
     		con.add(agelabel);
     		con.add(age);
-    		JLabel messagelabel=new JLabel("±¸×¢ĞÅÏ¢");
+    		JLabel messagelabel=new JLabel("å¤‡    æ³¨");
     		messagelabel.setFont(font);
     		message=new JTextArea();
     		message.setFont(font);
-    		message.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//message.setBorder(BorderFactory.createLineBorder(Color.blue));
     		message.setLineWrap(true);
     		messagelabel.setBounds(120, 314, 86, 28);
     		message.setBounds(210, 314, 174,84);
@@ -406,19 +416,19 @@ public class Login extends JFrame{
 					if(user_id.getText().equals("")||password1.getPassword().length==0||password2.getPassword().length==0||
 							nickname.getText().equals("")||problem.getText().equals("")||answer.getText().equals("")||age.getText().equals("")||
 							name.getText().equals("")||message.getText().equals("")){
-						JOptionPane.showMessageDialog(Register.this, "ÇëÌîĞ´ÍêÕû");
+						JOptionPane.showMessageDialog(Register.this, "è¯·å¡«å†™å®Œæˆ");
 						return;
 					}
 					if(!String.valueOf(password1.getPassword()).equals(String.valueOf(password2.getPassword()))){
-						JOptionPane.showMessageDialog(Register.this, "Á½´ÎÃÜÂë²»ÏàµÈ");
+						JOptionPane.showMessageDialog(Register.this, "ç¬¬ä¸€æ¬¡ä¸ç¬¬äºŒæ¬¡å¯†ç ä¸ç›¸ç­‰");
 						return;
 					}
 					if(!user_id.getText().matches("\\d+")){
-						JOptionPane.showMessageDialog(Register.this, "ÓÃ»§idÎªÊı×Ö");
+						JOptionPane.showMessageDialog(Register.this, "è´¦å·åº”ä¸ºæ•°å­—");
 						return;
 					}
 					if(!age.getText().matches("\\d+")){
-						JOptionPane.showMessageDialog(Register.this,"ÄêÁäÎªÊı×Ö");
+						JOptionPane.showMessageDialog(Register.this,"å¹´é¾„åº”ä¸ºæ•°å­—");
 						return;
 					}
 					SendtoServer.register(Integer.parseInt(user_id.getText()), String.valueOf(password1.getPassword()), nickname.getText(),
@@ -432,15 +442,17 @@ public class Login extends JFrame{
 						}
 					}
 					if(messages.containsKey(RegisterSuccessMessage)){
-						JOptionPane.showMessageDialog(Register.this, "×¢²á³É¹¦");
+						JOptionPane.showMessageDialog(Register.this, "æ³¨å†ŒæˆåŠŸ");
 						messages.remove(RegisterSuccessMessage);
+						Register.this.setVisible(false);
+						Login.this.setVisible(true);
 					}else{
-						JOptionPane.showMessageDialog(Register.this, "×¢²áÊ§°Ü£¬ÒÑÓĞid");
+						JOptionPane.showMessageDialog(Register.this, "è´¦å·å·²è¢«æ³¨å†Œ");
 					}
 				}
 			});
     		con.add(this.register);
-    		
+    		/**
     		JButton subclose=new JButton();
     		subclose.setIcon(new ImageIcon("images\\close.png"));
     		subclose.setRolloverIcon(new ImageIcon("images\\close_hover.png"));
@@ -455,13 +467,20 @@ public class Login extends JFrame{
     			}
     		});
     		subclose.setBounds(523, 5, 27, 19);
-    		con.add(subclose);
+    		con.add(subclose);**/
 			backgournd bg=new backgournd();
 			bg.setImage(this.getToolkit().getImage("images\\registerbg.jpg"));
 			bg.setBounds(0, 0,550, 600);
 			con.add(bg);
 			con.repaint();
 			this.setUndecorated(true);
+			this.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e) {
+					Register.this.dispose();
+					Login.this.setVisible(true);
+				}
+			});
 			setVisible(true);
 		}
 	}
@@ -478,7 +497,7 @@ public class Login extends JFrame{
         }
          
         public void lunch(){
-        	this.setSize(500, 400);
+        	this.setSize(550, 400);
             this.setLayout(null);
             Toolkit toolkit=Toolkit.getDefaultToolkit();
     		Dimension screensize=toolkit.getScreenSize();
@@ -491,18 +510,18 @@ public class Login extends JFrame{
     			}
     		});
     		this.addMouseMotionListener(new MouseMotionAdapter() {
-    			public void mouseDragged(MouseEvent e){
-    				Point newpoint=e.getLocationOnScreen();
+						public void mouseDragged(MouseEvent e){
+							Point newpoint=e.getLocationOnScreen();
     				setLocation(newpoint.x-point.x, newpoint.y-point.y);
     			}
     		});
     		
-    		Font font=new Font("¿¬Ìå",Font.BOLD,19);
-    		JLabel userlabel=new JLabel("ÊäÈëÕËºÅ");
+    		Font font=new Font("å®‹ä½“",Font.BOLD,19);
+    		JLabel userlabel=new JLabel("è´¦    å·");
     		userlabel.setFont(font);
     		user_id=new JTextField(1000);
     		user_id.setFont(font);
-    		user_id.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//user_id.setBorder(BorderFactory.createLineBorder(Color.blue));
     		findproblem=new JButton();
     		findproblem.setIcon(new ImageIcon("images\\findproblem.jpg"));
     		findproblem.setRolloverIcon(new ImageIcon("images\\findproblem_hover.jpg"));
@@ -514,7 +533,7 @@ public class Login extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if(!user_id.getText().matches("\\d+")){
-						JOptionPane.showMessageDialog(FindbackPassword.this, "ÕËºÅÎªÊı×Ö");
+						JOptionPane.showMessageDialog(FindbackPassword.this, "è¾“å…¥æ­£ç¡®çš„è´¦å·");
 						return;
 					}
 					SendtoServer.findProblem(Integer.parseInt(user_id.getText()));
@@ -527,10 +546,10 @@ public class Login extends JFrame{
 						}
 					}
 					if(messages.containsKey(FindProblemSuccessMessage)){
-						problem.setText(messages.get(FindProblemSuccessMessage)+"?");
+						problem.setText(messages.get(FindProblemSuccessMessage));
 						messages.remove(FindProblemSuccessMessage);
 					}else{
-						JOptionPane.showMessageDialog(FindbackPassword.this, "Ã»ÓĞÕËºÅ");
+						JOptionPane.showMessageDialog(FindbackPassword.this, "è´¦å·ä¸å­˜åœ¨");
 						problem.setText("");
 						messages.remove(FindProblemFailureMessage);
 					}					
@@ -542,7 +561,7 @@ public class Login extends JFrame{
     		con.add(userlabel);
     		con.add(user_id);
     		con.add(findproblem);
-    		JLabel problemlabel=new JLabel("ÃÜ±£ÎÊÌâ");
+    		JLabel problemlabel=new JLabel("å¯†ä¿é—®é¢˜");
     		problemlabel.setFont(font);
     		problem=new JLabel();
     		problem.setFont(font);
@@ -550,39 +569,39 @@ public class Login extends JFrame{
     		problem.setBounds(190, 83, 174, 28);
     		con.add(problemlabel);
     		con.add(problem);
-    		JLabel answerlabel=new JLabel("ÊäÈë´ğ°¸");
+    		JLabel answerlabel=new JLabel("é—®é¢˜ç­”æ¡ˆ");
     		answerlabel.setFont(font);
     		answer=new JTextField(1000);
     		answer.setFont(font);
-    		answer.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//answer.setBorder(BorderFactory.createLineBorder(Color.blue));
     		answerlabel.setBounds(100, 116, 86, 28);
     		answer.setBounds(190, 116, 174, 28);
     		con.add(answerlabel);
     		con.add(answer);
-    		JLabel password1label=new JLabel("ĞÂÃÜÂë");
+    		JLabel password1label=new JLabel("å¯†    ç ");
     		password1label.setFont(font);
     		password1=new JPasswordField(1000);
     		password1.setFont(font);
-    		password1.setEchoChar('¡ñ');
-    		password1.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//password1.setEchoChar('.');
+    		//password1.setBorder(BorderFactory.createLineBorder(Color.blue));
     		password1label.setBounds(100, 149, 86, 28);
     		password1.setBounds(190, 149, 174, 28);
     		con.add(password1label);
     		con.add(password1);
-    		JLabel password2label=new JLabel("È·ÈÏÃÜÂë");
+    		JLabel password2label=new JLabel("é‡å¤å¯†ç ");
     		password2label.setFont(font);
     		password2=new JPasswordField(1000);
     		password2.setFont(font);
-    		password2.setEchoChar('¡ñ');
-    		password2.setBorder(BorderFactory.createLineBorder(Color.blue));
+    		//password2.setEchoChar('.');
+    		//password2.setBorder(BorderFactory.createLineBorder(Color.blue));
     		password2label.setBounds(100,182 , 86, 28);
     		password2.setBounds(190, 182, 174, 28);
     		con.add(password2label);
     		con.add(password2);
     		
-    		JLabel modifylb=new JLabel("ĞŞ ¸Ä ÃÜ Âë");
+    		JLabel modifylb=new JLabel("ä¿® æ”¹ å¯† ç ");
     		modifylb.setForeground(Color.white);
-    		modifylb.setFont(new Font("ËÎÌå",Font.BOLD,19));
+    		modifylb.setFont(new Font("å®‹ä½“",Font.BOLD,19));
     		modify=new JButton();
     		modify.setIcon(new ImageIcon("images\\button_blue_normal.png"));
     		modify.setRolloverIcon(new ImageIcon("images\\button_blue_hover.png"));
@@ -595,11 +614,11 @@ public class Login extends JFrame{
     			public void actionPerformed(ActionEvent e) {			
     				if(user_id.getText().equals("")||answer.getText().equals("")||password1.getPassword().length==0||
     						password2.getPassword().length==0){
-    					JOptionPane.showMessageDialog(FindbackPassword.this, "ÇëÌîĞ´ÍêÕû");
+    					JOptionPane.showMessageDialog(FindbackPassword.this, "è¯·å¡«å†™å®Œæˆ");
     					return;
     				}
     				if(!String.valueOf(password1.getPassword()).equals(String.valueOf(password2.getPassword()))){
-    					JOptionPane.showMessageDialog(FindbackPassword.this, "ÃÜÂë²»Ò»ÖÂ");
+    					JOptionPane.showMessageDialog(FindbackPassword.this, "ä¸¤æ¬¡å¯†ç ä¸ç›¸ç­‰");
     					return;
     				}
     				SendtoServer.modifyPassword(Integer.parseInt(user_id.getText()), answer.getText(), String.valueOf(password1.getPassword()));
@@ -612,10 +631,12 @@ public class Login extends JFrame{
 						}
 					}
     				if(messages.containsKey(ModifyPasswordSuccessMessage)){
-    					JOptionPane.showMessageDialog(FindbackPassword.this, "ĞŞ¸Ä³É¹¦");
+    					JOptionPane.showMessageDialog(FindbackPassword.this, "ä¿®æ”¹å¯†ç æˆåŠŸ");
     					messages.remove(ModifyPasswordSuccessMessage);
+    					FindbackPassword.this.setVisible(false);
+    					Login.this.setVisible(true);
     				}else{
-    					JOptionPane.showMessageDialog(FindbackPassword.this, "ÃÜ±£´íÎó");
+    					JOptionPane.showMessageDialog(FindbackPassword.this, "å¯†ä¿ç­”æ¡ˆé”™è¯¯");
     					messages.remove(ModifyPasswordFailureMessage);
     				}
     			}
@@ -624,7 +645,7 @@ public class Login extends JFrame{
     		modify.setBounds(162, 226,237, 48);
     		con.add(modifylb);
     		con.add(modify);
-    		
+    		/**
     		JButton subclose=new JButton();
     		subclose.setIcon(new ImageIcon("images\\close.png"));
     		subclose.setRolloverIcon(new ImageIcon("images\\close_hover.png"));
@@ -639,13 +660,21 @@ public class Login extends JFrame{
     			}
     		});
     		subclose.setBounds(473, 5, 27, 19);
-    		con.add(subclose);
+    		con.add(subclose);**/
     		backgournd bg=new backgournd();
 			bg.setImage(this.getToolkit().getImage("images\\registerbg.jpg"));
 			bg.setBounds(0, 0,500, 400);
 			con.add(bg);
 			con.repaint();
 			this.setUndecorated(true);
+			this.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e) {
+					super.windowClosing(e);
+					FindbackPassword.this.dispose();
+					Login.this.setVisible(true);
+				}
+			});
 			setVisible(true);
         }
 	}
@@ -667,6 +696,13 @@ public class Login extends JFrame{
 		}
 	}
 	public static void main(String[] args) {
+		try {
+			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+			UIManager.put("Tree.rowHeight",42);
+		}
+		catch(Exception e) {
+			//TODO exception
+		}
 		new Login().lunch();
 	}
 }

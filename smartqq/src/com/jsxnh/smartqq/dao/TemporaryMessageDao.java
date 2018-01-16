@@ -6,11 +6,11 @@ import com.jsxnh.smartqq.entities.TemporaryMessage;
 
 public interface TemporaryMessageDao {
 
-	//Ìí¼ÓÁÙÊ±ĞÅÏ¢
+	//æ·»åŠ ä¸´æ—¶ä¿¡æ¯
 	public void addMessage(TemporaryMessage temporarymessage);
-	//½ÓÊÜĞÅÏ¢Ê±É¾³ı¼ÇÂ¼
+	//æ¥å—ä¿¡æ¯æ—¶åˆ é™¤è®°å½•
 	public void deleteMessage(TemporaryMessage temporarymessage);
-	//²éÕÒÓÃ»§½ÓÊÕµÄÏûÏ¢
+	//æŸ¥æ‰¾ç”¨æˆ·æ¥æ”¶çš„æ¶ˆæ¯
 	public List<TemporaryMessage> findMessages(Integer receive_id);
 	
 	public TemporaryMessage findMessage(Integer user1_id,Integer user2_id);

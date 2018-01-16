@@ -7,18 +7,18 @@ import com.jsxnh.smartqq.entities.User;
 
 public interface FriendDao {
 
-	//Ñ°ÕÒÓÃ»§Ä³¸ö·Ö×éµÄÅóÓÑ
+	//å¯»æ‰¾ç”¨æˆ·æŸä¸ªåˆ†ç»„çš„æœ‹å‹
 	public List<Friend> findFriends(User user,Packet packet);
-	//Ìí¼ÓÅóÓÑ
+	//æ·»åŠ æœ‹å‹
 	public void addFriend(User user1,User user2,Packet packet1,Packet packet2);
-	//É¾³ıÅóÓÑ
+	//åˆ é™¤æœ‹å‹
 	public void deleteFriend(User user1,User user2);
-	//ÒÆ¶¯·Ö×é
+	//ç§»åŠ¨åˆ†ç»„
 	public void movePacket(User user,Packet old_packet, Packet packet);
-	//Ñ°ÕÒºÃÓÑ
+	//å¯»æ‰¾å¥½å‹
 	public Friend findFriend(User user1,User user2);
-	//Ñ°ÕÒÓÃ»§ºÃÓÑ
+	//å¯»æ‰¾ç”¨æˆ·å¥½å‹
 	public List<Friend> findAllFriends(User user);
-	//ĞŞ¸Ä±¸×¢
+	//ä¿®æ”¹å¤‡æ³¨
 	public void modifyRemarkName(User user1,User user2,String remarkname);
 }

@@ -6,8 +6,8 @@ import com.jsxnh.smartqq.entities.Signature;
 
 public interface SignatureDao {
 
-	//Ìí¼Ó¸öĞÔÇ©Ãû¼ÇÂ¼
+	//æ·»åŠ ä¸ªæ€§ç­¾åè®°å½•
 	public void addSigatureDao(Signature signature);
-	//²éÕÒÓÃ»§µÄ¸öĞÔÇ©Ãû¼ÇÂ¼
+	//æŸ¥æ‰¾ç”¨æˆ·çš„ä¸ªæ€§ç­¾åè®°å½•
 	public List<Signature> findSignatureByid(Integer user_id);
 }

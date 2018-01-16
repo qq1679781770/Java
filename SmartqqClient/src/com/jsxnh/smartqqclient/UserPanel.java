@@ -43,18 +43,18 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
+import javax.swing.tree.*;
 
+import com.jsxnh.component.CellRenderer;
+import com.jsxnh.component.FriendNode;
+import com.jsxnh.component.FriendTreeUI;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class UserPanel extends JFrame{
 
 	/*
-	 * ĞÅÏ¢±êÊ¶·û
+	 * ä¿¡æ¯æ ‡è¯†ç¬¦
 	 * */
 	public final static Integer UpdateNicknameMessage=0,UpdateSignatureMessage=1,UpdateDatasMessage=2,
 			                    DeletePacketMessage=3,AddPacketMessage=4,ModifyPacketMessage=5,
@@ -66,10 +66,10 @@ public class UserPanel extends JFrame{
 	
 	private User user;
 	private Map<String, LinkedList<Friend>> friends=new HashMap<>();
-	private Map<Integer, String> messages=new HashMap<Integer, String>();//ÏûÏ¢map
+	private Map<Integer, String> messages=new HashMap<Integer, String>();//æ¶ˆæ¯map
 	private Map<Integer, ChatPanel> chatpanels=new HashMap<>();
-	private JTree friendsTree;//ÅóÓÑÁĞ±íÊ÷
-	private DefaultMutableTreeNode root;
+	private JTree friendsTree;//æœ‹å‹åˆ—è¡¨æ ‘
+	private FriendNode root;
 	private JScrollPane jsPanel;
 	private Container con=this.getContentPane();
 	private JLabel nickname,signature,weather;
@@ -80,8 +80,9 @@ public class UserPanel extends JFrame{
 	private JMenuBar modify;
 	private Friend currentfriend;
 	private String currentpacket;
-	private DefaultMutableTreeNode currentnode;
+	private FriendNode currentnode;
 	private JPopupMenu popupmenu;
+	private Integer x,y;
 	
 	public JLabel getMsgLb(){
 		return this.MSGLb;
@@ -104,7 +105,7 @@ public class UserPanel extends JFrame{
 	}
 	
 	/*
-	 * ³õÊ¼»¯ÓÃ»§ºÍÅóÓÑĞÅÏ¢
+	 * åˆå§‹åŒ–ç”¨æˆ·å’Œæœ‹å‹ä¿¡æ¯
 	 * */
 	private void initUserandFriend(String str){
 		JSONObject json=JSONObject.fromObject(str);
@@ -156,12 +157,12 @@ public class UserPanel extends JFrame{
 	}
 	
 	public void initRoot(){
-		//³õÊ¼»¯ÅóÓÑÊ÷
-		root=new DefaultMutableTreeNode();
+		//åˆå§‹åŒ–æœ‹å‹æ ‘
+		root=new FriendNode(new ImageIcon("images/headimg.png"),"root","root");
 		for(Map.Entry<String, LinkedList<Friend>> entry:friends.entrySet()){
-			DefaultMutableTreeNode packetname=new DefaultMutableTreeNode(entry.getKey());
+			FriendNode packetname=new FriendNode(new ImageIcon("images/arrow_right.png"),entry.getKey()+"("+entry.getValue().size()+")",entry.getKey());
 			for(Friend friend_:entry.getValue()){
-				packetname.add(new DefaultMutableTreeNode(friend_));
+				packetname.add(new FriendNode(new ImageIcon("images/headimg.png"),friend_.getNickname(),friend_.getSignature(),friend_));
 			}
 			root.add(packetname);
 		}
@@ -170,9 +171,9 @@ public class UserPanel extends JFrame{
 	public void lunch(String str){
 		initUserandFriend(str);
 		this.setLayout(null);
-		this.setSize(284, 674);
+		this.setSize(338, 758);
 		/*
-		 * ¿ÉÒÆ¶¯
+		 * å¯ç§»åŠ¨
 		 * */
 		this.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e){
@@ -186,14 +187,14 @@ public class UserPanel extends JFrame{
 			}
 		});
 		
-		//êÇ³Æ
+		//æ˜µç§°
 		nickname=new JLabel();
 		nickname.setText(user.getNickname());
-		nickname.setFont(new Font("Î¢ÈíÑÅºÚ",Font.BOLD,12));
+		nickname.setFont(new Font("å¾®è½¯é›…é»‘",Font.BOLD,12));
 		nickname.setForeground(Color.black);
 		nickname.setBounds(79, 37, 80, 17);
 		con.add(nickname);
-		//Í·Ïñ
+		//å¤´åƒ
 		headimg=new JLabel(new ImageIcon("images\\headimg2.jpg"));
 		headimglb=new JLabel(new ImageIcon("images\\headimgbg.png"));
 		headimg.setBounds(11, 41, 61, 60);
@@ -208,10 +209,10 @@ public class UserPanel extends JFrame{
 				headimglb.setBorder(BorderFactory.createLineBorder(new Color(199,21,133 ),20));
 				}
 		});
-		//¸öĞÔÇ©Ãû
+		//ä¸ªæ€§ç­¾å
 		signature=new JLabel();
 		signature.setText(user.getSignature());
-		signature.setFont(new Font("Î¢ÈíÑÅºÚ",Font.PLAIN,12));
+		signature.setFont(new Font("å¾®è½¯é›…é»‘",Font.PLAIN,12));
 		signature.setForeground(Color.black);
 		signature.setBounds(79, 54, 200, 20);
 		con.add(signature);
@@ -220,9 +221,9 @@ public class UserPanel extends JFrame{
 		weather.setBounds(220, 30, 60, 50);
 		con.add(weather);
 		
-		searchtf=new JTextField("ËÑË÷ÕËºÅ£¬êÇ³Æ");
+		searchtf=new JTextField("æœç´¢è´¦å·ï¼Œæ˜µç§°");
 		searchtf.setBorder(null);
-		searchtf.setFont(new Font("¿¬Ìå",Font.PLAIN,14));
+		searchtf.setFont(new Font("æ¥·ä½“",Font.PLAIN,14));
 		searchtf.setForeground(Color.darkGray);
 		searchtf.setBackground(new Color(248,248,255));
         searchtf.addMouseListener(new MouseAdapter() {	
@@ -237,7 +238,7 @@ public class UserPanel extends JFrame{
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				//searchtf.setText("ËÑË÷ÕËºÅ£¬êÇ³Æ");
+				//searchtf.setText("æœç´¢è´¦å·ï¼Œæ˜µç§°");
 			}
 		});
         searchbt=new JButton();
@@ -269,7 +270,7 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(FindUserByIdFailureMessage)){
-						JOptionPane.showMessageDialog(UserPanel.this, "ÎŞÕËºÅ");
+						JOptionPane.showMessageDialog(UserPanel.this, "æ— è´¦å·");
 						messages.remove(FindUserByIdFailureMessage);
 					}else{						
 						new addFriendbyidFrame().lunch(messages.get(FindUserByIdSuccessMessage));
@@ -286,7 +287,7 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(FindUserByNicknameFailureMessage)){
-						JOptionPane.showMessageDialog(UserPanel.this, "ÎŞÕËºÅ");
+						JOptionPane.showMessageDialog(UserPanel.this, "æ— è´¦å·");
 						messages.remove(FindUserByNicknameFailureMessage);
 					}else{
 						new addFriendbynicknameFrame().lunch(messages.get(FindUserByNicknameSuccessMessage));
@@ -307,13 +308,27 @@ public class UserPanel extends JFrame{
 		friendsTree=new JTree();
 		friendsTree.setVisible(true);
 		friendsTree.setModel(model);
-		//»ñÈ¡µã»÷·Ö×é¶ÔÏó»òÅóÓÑ¶ÔÏó
+		friendsTree.setRootVisible(false);
+		friendsTree.setCellRenderer(new CellRenderer());
+		friendsTree.setUI(new FriendTreeUI());
+		//è·å–ç‚¹å‡»åˆ†ç»„å¯¹è±¡æˆ–æœ‹å‹å¯¹è±¡
 		friendsTree.addTreeSelectionListener(new TreeSelectionListener() {
 			
 			@Override
 			public void valueChanged(TreeSelectionEvent e) {
+				FriendNode node=(FriendNode) friendsTree.getLastSelectedPathComponent();
+				TreePath path = friendsTree.getSelectionPath();
+				if(path != null) {
+					if(friendsTree.isCollapsed(path)){
+						friendsTree.expandPath(path);
+					}else{
+						friendsTree.collapsePath(path);
+					}
+					// å±•å¼€èŠ‚ç‚¹
+				}
+
 				// TODO Auto-generated method stub
-				DefaultMutableTreeNode node=(DefaultMutableTreeNode)friendsTree.getLastSelectedPathComponent();
+
 				if(node==null){
 					return;
 				}
@@ -326,36 +341,44 @@ public class UserPanel extends JFrame{
 				}else{
 					currentpacket=(String)node.getUserObject();
 				}
-				
-				
+				friendsTree.clearSelection();
+
 			}
 		});
 		jsPanel.setViewportView(friendsTree);
 		friendsTree.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e){
 				if(e.isPopupTrigger()){
+					x = e.getX();
+					y = e.getY();
 					popupmenu.show(friendsTree, e.getX(), e.getY());
 				}
 			}
-			public void mouseReleased(MouseEvent e)
-		   {
+			public void mouseReleased(MouseEvent e) {
 				if(e.isPopupTrigger()){
+					x = e.getX();
+					y = e.getY();
 					popupmenu.show(friendsTree, e.getX(), e.getY());
 				}
 		   }
 		});
 		con.add(jsPanel);
-		//ÓÒ»÷²Ëµ¥
+		//å³å‡»èœå•
 		popupmenu=new JPopupMenu();
 		popupmenu.setVisible(true);
-		JMenuItem deletepacket=new JMenuItem("É¾³ı·Ö×é");
+		JMenuItem deletepacket=new JMenuItem("åˆ é™¤åˆ†ç»„");
 		deletepacket.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				if(currentpacket==null||currentnode.equals("")){
+					JOptionPane.showMessageDialog(UserPanel.this, "è¯·é€‰æ‹©åˆ é™¤çš„åˆ†ç»„");
+					return;
+				}
 				if(friends.get(currentpacket).size()>0){
-					JOptionPane.showMessageDialog(UserPanel.this, "ÇëÉ¾³ı¿ÕµÄ·Ö×é");
+					JOptionPane.showMessageDialog(UserPanel.this, "è¯·åˆ é™¤ç©ºçš„åˆ†ç»„");
+					currentpacket = null;
 					return;
 				}
 				SendtoServer.deletePacket(user.getUser_id(), currentpacket);
@@ -371,14 +394,16 @@ public class UserPanel extends JFrame{
 					messages.remove(DeletePacketMessage);
 					user.getPackets().remove(currentpacket);
 					friends.remove(currentpacket);
-					JOptionPane.showMessageDialog(UserPanel.this, "É¾³ı³É¹¦");
+					JOptionPane.showMessageDialog(UserPanel.this, "åˆ é™¤æˆåŠŸ");
 					root.remove(currentnode);
 					friendsTree.setModel(new DefaultTreeModel(root));
 					jsPanel.repaint();
+					currentpacket = null;
+					currentnode = null;
 				}
 			}
 		});
-		JMenuItem addpacket=new JMenuItem("Ôö¼Ó·Ö×é");
+		JMenuItem addpacket=new JMenuItem("å¢åŠ åˆ†ç»„");
 		addpacket.addActionListener(new ActionListener() {
 			
 			@Override
@@ -387,8 +412,8 @@ public class UserPanel extends JFrame{
 				new addpacketFrame().lunch();
 			}
 		});
-		JMenuItem modifypacket=new JMenuItem("ĞŞ¸Ä·Ö×é");
-		//ĞŞ¸Ä·Ö×é¼àÌıÊÂ¼ş
+		JMenuItem modifypacket=new JMenuItem("ä¿®æ”¹åˆ†ç»„");
+		//ä¿®æ”¹åˆ†ç»„ç›‘å¬äº‹ä»¶
 		modifypacket.addActionListener(new ActionListener() {
 			
 			@Override
@@ -398,7 +423,7 @@ public class UserPanel extends JFrame{
 			}
 			
 		});
-		JMenuItem movepacket=new JMenuItem("ÒÆ¶¯·Ö×é");
+		JMenuItem movepacket=new JMenuItem("ç§»åŠ¨åˆ†ç»„");
 		movepacket.addActionListener(new ActionListener() {
 			
 			@Override
@@ -407,7 +432,7 @@ public class UserPanel extends JFrame{
 				new movepacketFrame().lunch();
 			}
 		});
-		JMenuItem modifyremark=new JMenuItem("ĞŞ¸Ä±¸×¢");
+		JMenuItem modifyremark=new JMenuItem("ä¿®æ”¹å¤‡æ³¨");
 		modifyremark.addActionListener(new ActionListener() {
 			
 			@Override
@@ -416,7 +441,7 @@ public class UserPanel extends JFrame{
 				new modifyremarkFrame().lunch();
 			}
 		});
-		JMenuItem friendmessage=new JMenuItem("²é¿´×ÊÁÏ");
+		JMenuItem friendmessage=new JMenuItem("æŸ¥çœ‹èµ„æ–™");
 		friendmessage.addActionListener(new ActionListener() {
 			
 			@Override
@@ -425,7 +450,7 @@ public class UserPanel extends JFrame{
 				new friendmessageFrame();
 			}
 		});
-		JMenuItem chatwith=new JMenuItem("·¢ËÍÏûÏ¢");
+		JMenuItem chatwith=new JMenuItem("å‘é€æ¶ˆæ¯");
 		chatwith.addActionListener(new ActionListener() {
 			
 			@Override
@@ -436,7 +461,7 @@ public class UserPanel extends JFrame{
 				chatpanel.lunch(UserPanel.this, currentfriend, "");
 			}
 		});
-		JMenuItem shownickname=new JMenuItem("ÏÔÊ¾êÇ³Æ");
+		JMenuItem shownickname=new JMenuItem("æ˜¾ç¤ºæ˜µç§°");
 		shownickname.addActionListener(new ActionListener() {
 			
 			@Override
@@ -455,7 +480,7 @@ public class UserPanel extends JFrame{
 				jsPanel.validate();
 			}
 		});
-		JMenuItem showremark=new JMenuItem("ÏÔÊ¾±¸×¢");
+		JMenuItem showremark=new JMenuItem("æ˜¾ç¤ºå¤‡æ³¨");
 		showremark.addActionListener(new ActionListener() {
 			
 			@Override
@@ -491,10 +516,10 @@ public class UserPanel extends JFrame{
 		
 		
 		modify=new JMenuBar();		
-		JMenu edit=new JMenu("±à¼­×ÊÁÏ");
-		JMenuItem editnickname=new JMenuItem("ĞŞ¸ÄêÇ³Æ");
-		JMenuItem editsignature=new JMenuItem("ĞŞ¸ÄÇ©Ãû");
-		JMenuItem editdatas=new JMenuItem("ĞŞ¸Ä×ÊÁÏ");
+		JMenu edit=new JMenu("ç¼–è¾‘èµ„æ–™");
+		JMenuItem editnickname=new JMenuItem("ä¿®æ”¹æ˜µç§°");
+		JMenuItem editsignature=new JMenuItem("ä¿®æ”¹ç­¾å");
+		JMenuItem editdatas=new JMenuItem("ä¿®æ”¹èµ„æ–™");
 		editnickname.addActionListener(new ActionListener() {
 			
 			@Override
@@ -528,9 +553,9 @@ public class UserPanel extends JFrame{
 		con.add(modify);
 		
 		MSGLb=new JLabel();
-		MSGLb.setFont(new Font("ËÎÌå",Font.PLAIN,14));
+		MSGLb.setFont(new Font("å®‹ä½“",Font.PLAIN,14));
 		MSGLb.setForeground(Color.white);
-		MSGLb.setText("ÎŞÏûÏ¢");
+		MSGLb.setText("æ— æ¶ˆæ¯");
 		MSGLb.setBounds(107, 0, 60, 18);
 		MSGBt=new JButton();
 		MSGBt.setBorder(null);
@@ -544,13 +569,13 @@ public class UserPanel extends JFrame{
 				if(messages.containsKey(AddFriendMessage)){
 					new acceptaddfriendFrame().lunch(messages.get(AddFriendMessage));
 					messages.remove(AddFriendMessage);
-					MSGLb.setText("ÎŞÏûÏ¢");
+					MSGLb.setText("æ— æ¶ˆæ¯");
 				}
 				else if(messages.containsKey(AgreeAddFriendMessage)){
-					if(!messages.get(AgreeAddFriendMessage).equals("Ìí¼Ó³É¹¦")){
+					if(!messages.get(AgreeAddFriendMessage).equals("æ·»åŠ æˆåŠŸ")){
 						JSONObject addfriend=JSONObject.fromObject(messages.get(AgreeAddFriendMessage)).getJSONObject("agreeaddfriend");
 						Integer user_id=addfriend.getInt("user2_id");
-						JOptionPane.showMessageDialog(UserPanel.this, String.valueOf(user_id)+"Í¬ÒâÌí¼Ó");
+						JOptionPane.showMessageDialog(UserPanel.this, String.valueOf(user_id)+"åŒæ„æ·»åŠ ");
 						Friend newFriend=new Friend();
 						newFriend.setUser_id(user_id);
 						newFriend.setNickname(addfriend.getString("nickname2"));
@@ -566,16 +591,16 @@ public class UserPanel extends JFrame{
 						jsPanel.repaint();
 						jsPanel.validate();
 						messages.remove(AgreeAddFriendMessage);
-						MSGLb.setText("ÎŞÏûÏ¢");
+						MSGLb.setText("æ— æ¶ˆæ¯");
 					}
 				}
 				else if(messages.containsKey(DisagreeFriendMessage)){
-					if(!messages.get(DisagreeFriendMessage).equals("¾Ü¾ø³É¹¦")){
+					if(!messages.get(DisagreeFriendMessage).equals("æ‹’ç»æˆåŠŸ")){
 						JSONObject disagreejson=JSONObject.fromObject(messages.get(DisagreeFriendMessage)).getJSONObject("disagreeaddfriend");
 						Integer user_id=disagreejson.getInt("user2_id");
-						JOptionPane.showMessageDialog(UserPanel.this, String.valueOf(user_id)+"¾Ü¾øÌí¼Ó");
+						JOptionPane.showMessageDialog(UserPanel.this, String.valueOf(user_id)+"æ‹’ç»æ·»åŠ ");
 						messages.remove(DisagreeFriendMessage);
-						MSGLb.setText("ÎŞÏûÏ¢");
+						MSGLb.setText("æ— æ¶ˆæ¯");
 					}
 				}
 				else if(messages.containsKey(ChatMessage)){
@@ -584,7 +609,7 @@ public class UserPanel extends JFrame{
 					chatpanels.put(message.getInt("user1_id"), chatpanel);
 					chatpanel.lunch(UserPanel.this, null, message.toString());			
 					messages.remove(ChatMessage);
-					MSGLb.setText("ÎŞÏûÏ¢");
+					MSGLb.setText("æ— æ¶ˆæ¯");
 				}
 			}
 		});
@@ -612,7 +637,7 @@ public class UserPanel extends JFrame{
 		min.setRolloverIcon(new ImageIcon("images\\Mainmin_hover.png"));
 		min.setPressedIcon(new ImageIcon("images\\Mainmin_press.png"));
 		min.setBorder(null);
-		min.setToolTipText("×îĞ¡»¯");
+		min.setToolTipText("æœ€å°åŒ–");
 		min.setFocusPainted(false);
 		min.setContentAreaFilled(false);
 		min.addActionListener(new ActionListener() {
@@ -646,7 +671,7 @@ public class UserPanel extends JFrame{
 	}
 	
 	/*
-	 * ĞŞ¸ÄêÇ³ÆÃæ°å
+	 * ä¿®æ”¹æ˜µç§°é¢æ¿
 	 */
 	private class nicknameFrame extends JFrame{
 		private JTextField subnickname;
@@ -660,7 +685,7 @@ public class UserPanel extends JFrame{
 			this.setSize(300, 150);
 			subnickname=new JTextField(1000);
 			subnickname.setBorder(BorderFactory.createLineBorder(Color.blue));
-			confirm=new JButton("È·ÈÏĞŞ¸Ä");
+			confirm=new JButton("ç¡®è®¤ä¿®æ”¹");
 			subnickname.setBounds(1, 20, 174, 28);
 			confirm.setBounds(181, 20, 86, 28);	
 			confirm.addActionListener(new ActionListener() {
@@ -669,7 +694,7 @@ public class UserPanel extends JFrame{
 					// TODO Auto-generated method stub
 					String text=subnickname.getText();
 					if(text.equals("")){
-						JOptionPane.showMessageDialog(nicknameFrame.this, "êÇ³Æ²»ÄÜÎª¿Õ");
+						JOptionPane.showMessageDialog(nicknameFrame.this, "æ˜µç§°ä¸èƒ½ä¸ºç©º");
 						return;
 					}
 					SendtoServer.updateNickname(user.getUser_id(), text);
@@ -684,7 +709,7 @@ public class UserPanel extends JFrame{
 					if(messages.containsKey(UpdateNicknameMessage)){
 						user.setNickname(text);
 						nickname.setText(text);
-						JOptionPane.showMessageDialog(nicknameFrame.this, "ĞŞ¸Ä³É¹¦");
+						JOptionPane.showMessageDialog(nicknameFrame.this, "ä¿®æ”¹æˆåŠŸ");
 						messages.remove(UpdateNicknameMessage);
 					}
 				}
@@ -696,7 +721,7 @@ public class UserPanel extends JFrame{
 	}
 	
 	/**
-	 * ĞŞ¸Ä¸öĞÔÇ©ÃûÃæ°å
+	 * ä¿®æ”¹ä¸ªæ€§ç­¾åé¢æ¿
 	 *
 	 */
 	private class signatureFrame extends JFrame{
@@ -711,7 +736,7 @@ public class UserPanel extends JFrame{
 			this.setSize(300, 150);
 			subsignature=new JTextField(1000);
 			subsignature.setBorder(BorderFactory.createLineBorder(Color.blue));
-			confirm=new JButton("È·ÈÏĞŞ¸Ä");
+			confirm=new JButton("ç¡®è®¤ä¿®æ”¹");
 			subsignature.setBounds(1, 20, 174, 28);
 			confirm.setBounds(181, 20, 86, 28);	
 			confirm.addActionListener(new ActionListener() {
@@ -731,7 +756,7 @@ public class UserPanel extends JFrame{
 					if(messages.containsKey(UpdateSignatureMessage)){
 						user.setSignature(text);
 						signature.setText(text);
-						JOptionPane.showMessageDialog(signatureFrame.this, "ĞŞ¸Ä³É¹¦");
+						JOptionPane.showMessageDialog(signatureFrame.this, "ä¿®æ”¹æˆåŠŸ");
 						messages.remove(UpdateSignatureMessage);
 					}
 				}
@@ -743,7 +768,7 @@ public class UserPanel extends JFrame{
 	}
 	
 	/*
-	 * ĞŞ¸ÄĞÅÏ¢Ãæ°å
+	 * ä¿®æ”¹ä¿¡æ¯é¢æ¿
 	 * */
 	
 	private class datasFrame extends JFrame{
@@ -758,8 +783,8 @@ public class UserPanel extends JFrame{
 		public void lunch(){
 			setLayout(null);
 			setSize(350, 280);
-			Font font=new Font("¿¬Ìå",Font.BOLD,19);
-			namelabel=new JLabel("ÕæÊµĞÕÃû");
+			Font font=new Font("æ¥·ä½“",Font.BOLD,19);
+			namelabel=new JLabel("çœŸå®å§“å");
 			namelabel.setFont(font);
 			nametf=new JTextField(1000);
 			if(user.getName()!=null){
@@ -770,7 +795,7 @@ public class UserPanel extends JFrame{
 			nametf.setBounds(110, 20, 174, 28);
 			container.add(namelabel);
 			container.add(nametf);
-			agelabel=new JLabel("Äê    Áä");
+			agelabel=new JLabel("å¹´    é¾„");
 			agelabel.setFont(font);
 			agetf=new JTextField(1000);
 			if(user.getAge()!=null){
@@ -781,7 +806,7 @@ public class UserPanel extends JFrame{
 			agetf.setBounds(110, 53, 174, 28);
 			container.add(agelabel);
 			container.add(agetf);
-			messagelabel=new JLabel("±¸×¢ĞÅÏ¢");
+			messagelabel=new JLabel("å¤‡æ³¨ä¿¡æ¯");
 			messagelabel.setFont(font);
 			messagetf=new JTextArea();
 			messagetf.setLineWrap(true);
@@ -792,7 +817,7 @@ public class UserPanel extends JFrame{
 			messagetf.setBounds(110, 86, 174, 84);
 			container.add(messagelabel);
 			container.add(messagetf);
-			confirm=new JButton("È·ÈÏĞŞ¸Ä");
+			confirm=new JButton("ç¡®è®¤ä¿®æ”¹");
 			confirm.setBounds(120, 180, 100, 30);
 			confirm.addActionListener(new ActionListener() {
 				
@@ -803,7 +828,7 @@ public class UserPanel extends JFrame{
 					String agestr=agetf.getText();
 					String messagestr=messagetf.getText();
 					if(!agestr.matches("\\d+")){
-					    JOptionPane.showMessageDialog(datasFrame.this, "ÄêÁäÎªÊı×Ö");
+					    JOptionPane.showMessageDialog(datasFrame.this, "å¹´é¾„ä¸ºæ•°å­—");
 					    return;
 					}
 					SendtoServer.updateDatas(user.getUser_id(), namestr, Integer.parseInt(agestr), messagestr);
@@ -820,7 +845,7 @@ public class UserPanel extends JFrame{
 						user.setAge(Integer.parseInt(agestr));
 						user.setMessage(messagestr);
 						messages.remove(UpdateDatasMessage);
-						JOptionPane.showMessageDialog(datasFrame.this, "ĞŞ¸Ä³É¹¦");
+						JOptionPane.showMessageDialog(datasFrame.this, "ä¿®æ”¹æˆåŠŸ");
 					}
 				}
 			});
@@ -835,12 +860,13 @@ public class UserPanel extends JFrame{
 		private Container container=this.getContentPane();
 		public void lunch(){
 			this.setLayout(null);
-			this.setSize(300, 150);
-			this.setTitle("Ìí¼Ó·Ö×é");
+			this.setSize(360, 150);
+			container.setBackground(new Color(180,188,192));
+			this.setTitle("æ·»åŠ åˆ†ç»„");
 			addpackettf=new JTextField(1000);
-			addpackettf.setBorder(BorderFactory.createLineBorder(Color.blue));
-			addpackettf.setBounds(1, 20, 124, 28);
-			confirm=new JButton("È·ÈÏÌí¼Ó");
+			//addpackettf.setBorder(BorderFactory.createLineBorder(Color.blue));
+			addpackettf.setBounds(20, 20, 124, 28);
+			confirm=new JButton("ç¡®è®¤æ·»åŠ ");
 			confirm.setBounds(181, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				
@@ -849,11 +875,11 @@ public class UserPanel extends JFrame{
 					// TODO Auto-generated method stub
 					String str=addpackettf.getText();
 					if(str.equals("")){
-						JOptionPane.showMessageDialog(UserPanel.this, "ÇëÊäÈë·Ö×é");
+						JOptionPane.showMessageDialog(UserPanel.this, "è¯·è¾“å…¥åˆ†ç»„");
 						return;
 					}
 					if(friends.containsKey(str)){
-						JOptionPane.showMessageDialog(UserPanel.this, "ÇëÊäÈë²»Í¬·Ö×é");
+						JOptionPane.showMessageDialog(UserPanel.this, "è¯·è¾“å…¥ä¸åŒåˆ†ç»„");
 						return;
 					}
 					SendtoServer.addPacket(user.getUser_id(), str);
@@ -867,11 +893,11 @@ public class UserPanel extends JFrame{
 					}
 					if(messages.containsKey(AddPacketMessage)){
 						addpacketFrame.this.dispose();
-						JOptionPane.showMessageDialog(UserPanel.this, "Ìí¼Ó³É¹¦");
+						JOptionPane.showMessageDialog(UserPanel.this, "æ·»åŠ æˆåŠŸ");
 						messages.remove(AddPacketMessage);
 						friends.put(str, new LinkedList<Friend>());
 						user.getPackets().add(str);
-						root.add(new DefaultMutableTreeNode(str));
+						root.add(new FriendNode(new ImageIcon("images/arrow_right.png"),str+"(0)",str));
 						friendsTree.setModel(new DefaultTreeModel(root));
 						jsPanel.setViewportView(friendsTree);
 						jsPanel.repaint();
@@ -882,6 +908,14 @@ public class UserPanel extends JFrame{
 			});
 			container.add(addpackettf);
 			container.add(confirm);
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,360, 150);
+			container.add(bg);
+			container.repaint();
+			if(x!=null) {
+				this.setLocation(x, y);
+			}
 			this.setVisible(true);
 		}
 	}
@@ -892,22 +926,26 @@ public class UserPanel extends JFrame{
 		private Container container=this.getContentPane();
 		public void lunch(){
 			this.setLayout(null);
-			this.setSize(300, 150);
-			this.setTitle("ĞŞ¸Ä·Ö×é");
+			this.setSize(360, 150);
+			this.setTitle("ä¿®æ”¹åˆ†ç»„");
 			packettf=new JTextField(1000);
-			packettf.setBorder(BorderFactory.createLineBorder(Color.blue));
-			packettf.setBounds(1, 20, 174, 28);
+			//packettf.setBorder(BorderFactory.createLineBorder(Color.blue));
+			packettf.setBounds(20, 20, 124, 28);
 			packettf.setText(currentpacket);
-			confirm=new JButton("È·ÈÏĞŞ¸Ä");
+			confirm=new JButton("ç¡®è®¤ä¿®æ”¹");
 			confirm.setBounds(181, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
+					if(currentpacket==null){
+						JOptionPane.showMessageDialog(UserPanel.this, "è¯·é€‰æ‹©åˆ†ç»„");
+						return;
+					}
 					String str=packettf.getText();
 					if(packettf.getText().equals("")){
-						JOptionPane.showMessageDialog(UserPanel.this, "²»Îª¿Õ");
+						JOptionPane.showMessageDialog(UserPanel.this, "ä¸ä¸ºç©º");
 						return;
 					}
 					SendtoServer.modifyPacket(user.getUser_id(), currentpacket, packettf.getText());
@@ -920,21 +958,31 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(ModifyPacketMessage)){
-						JOptionPane.showMessageDialog(UserPanel.this, "ĞŞ¸Ä³É¹¦");
+						modifypacketFrame.this.dispose();
+						JOptionPane.showMessageDialog(UserPanel.this, "ä¿®æ”¹æˆåŠŸ");
 						messages.remove(ModifyPacketMessage);
 						user.getPackets().remove(currentpacket);
 						user.getPackets().add(str);
 						LinkedList<Friend> friends_=friends.get(currentpacket);
 						friends.remove(currentpacket);
 						friends.put(str, friends_);
-						currentnode.setUserObject(str);
-						currentpacket=str;
+						initRoot();
+						friendsTree.setModel(new DefaultTreeModel(root));
+						jsPanel.setViewportView(friendsTree);
 						jsPanel.repaint();
+						jsPanel.validate();
+						currentnode = null;
+						currentpacket = null;
 					}
 				}
 			});
 			container.add(packettf);
 			container.add(confirm);
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,360, 150);
+			container.add(bg);
+			container.repaint();
 			setVisible(true);
 		}
 	}
@@ -947,8 +995,8 @@ public class UserPanel extends JFrame{
 		public friendmessageFrame(){
 			setSize(330, 280);
 			setLayout(null);
-			Font font=new Font("¿¬Ìå",Font.BOLD,19);
-			nicknamelb=new JLabel("êÇ    ³Æ");
+			Font font=new Font("æ¥·ä½“",Font.BOLD,19);
+			nicknamelb=new JLabel("æ˜µ    ç§°");
 			nicknamelb.setFont(font);
 			nicknametextlb=new JLabel();
 			nicknametextlb.setFont(font);
@@ -957,7 +1005,7 @@ public class UserPanel extends JFrame{
 			nicknametextlb.setBounds(160, 50, 200, 28);
 			container.add(nicknamelb);
 			container.add(nicknametextlb);
-			user_idlb=new JLabel("ÕË    ºÅ");
+			user_idlb=new JLabel("è´¦    å·");
 			user_idlb.setFont(font);
 			user_idtextlb=new JLabel();
 			user_idtextlb.setFont(font);
@@ -966,7 +1014,7 @@ public class UserPanel extends JFrame{
 			user_idtextlb.setBounds(160, 88, 200, 28);
 			container.add(user_idlb);
 			container.add(user_idtextlb);
-			signaturelb=new JLabel("¸öĞÔÇ©Ãû");
+			signaturelb=new JLabel("ä¸ªæ€§ç­¾å");
 			signaturelb.setFont(font);
 			signaturetextlb=new JLabel();
 			signaturetextlb.setFont(font);
@@ -977,18 +1025,18 @@ public class UserPanel extends JFrame{
 			signaturetextlb.setBounds(160, 121, 200, 28);
 			container.add(signaturelb);
 			container.add(signaturetextlb);
-			statuslb=new JLabel("×´    Ì¬");
+			statuslb=new JLabel("çŠ¶    æ€");
 			statuslb.setFont(font);
 			statustextlb=new JLabel();
 			statustextlb.setFont(font);
 			if(currentfriend.getStatus().equals(1)){
-				statustextlb.setText("ÔÚÏß");
+				statustextlb.setText("åœ¨çº¿");
 			}else{
-				statustextlb.setText("ÀëÏß");
+				statustextlb.setText("ç¦»çº¿");
 			}
 			statuslb.setBounds(50, 154, 86, 28);
 			statustextlb.setBounds(160, 154, 200, 28);
-			remarklb=new JLabel("±¸    ×¢");
+			remarklb=new JLabel("å¤‡    æ³¨");
 			remarklb.setFont(font);
 			remarktextlb=new JLabel();
 			remarktextlb.setFont(font);
@@ -1012,13 +1060,13 @@ public class UserPanel extends JFrame{
 		public void lunch(){
 			this.setSize(300, 150);
 			this.setLayout(null);
-			this.setTitle("ĞŞ¸Ä±¸×¢");
+			this.setTitle("ä¿®æ”¹å¤‡æ³¨");
 			remarktf=new JTextField(1000);
 			remarktf.setBorder(BorderFactory.createLineBorder(Color.black));
 			if(currentfriend.getRemarkname()!=null){
 				remarktf.setText(currentfriend.getRemarkname());
 			}
-			confirm=new JButton("È·ÈÏĞŞ¸Ä");
+			confirm=new JButton("ç¡®è®¤ä¿®æ”¹");
 			remarktf.setBounds(1, 20, 174, 28);
 			confirm.setBounds(181, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
@@ -1028,7 +1076,7 @@ public class UserPanel extends JFrame{
 					// TODO Auto-generated method stub
 					String str=remarktf.getText();
 					if(remarktf.getText().equals("")){
-						JOptionPane.showMessageDialog(modifyremarkFrame.this, "ÇëÌîĞ´±¸×¢");
+						JOptionPane.showMessageDialog(modifyremarkFrame.this, "è¯·å¡«å†™å¤‡æ³¨");
 						return;
 					}
 					SendtoServer.modifyRemark(user.getUser_id(), currentfriend.getUser_id(),str );
@@ -1042,7 +1090,7 @@ public class UserPanel extends JFrame{
 					}
 					if(messages.containsKey(ModifyRemarkMessage)){
 						messages.remove(ModifyRemarkMessage);
-						JOptionPane.showMessageDialog(UserPanel.this, "ĞŞ¸Ä³É¹¦");
+						JOptionPane.showMessageDialog(UserPanel.this, "ä¿®æ”¹æˆåŠŸ");
 						LinkedList<Friend> friends_=friends.get(currentfriend.getPacket());
 						for(Friend item:friends_){
 							if(item.equals(currentfriend)){
@@ -1070,11 +1118,11 @@ public class UserPanel extends JFrame{
 		public void lunch(){
 			setSize(250, 150);
 			setLayout(null);
-			setTitle("ÒÆ¶¯·Ö×é");
+			setTitle("ç§»åŠ¨åˆ†ç»„");
 			String[] packets=user.getPackets().toArray(new String[0]);
 			packetbox=new JComboBox<>(packets);
 			packetbox.setBounds(1, 20, 86, 28);
-			confirm=new JButton("È·ÈÏÒÆ¶¯");
+			confirm=new JButton("ç¡®è®¤ç§»åŠ¨");
 			confirm.setBounds(100, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				
@@ -1094,7 +1142,7 @@ public class UserPanel extends JFrame{
 					}
 					if(messages.containsKey(MovePacketMessage)){
 						messages.remove(MovePacketMessage);
-						JOptionPane.showMessageDialog(UserPanel.this, "ÒÆ¶¯³É¹¦");
+						JOptionPane.showMessageDialog(UserPanel.this, "ç§»åŠ¨æˆåŠŸ");
 						friends.get(oldpacket).remove(currentfriend);
 						currentfriend.setPacket(packet_);
 						friends.get(packet_).add(currentfriend);
@@ -1121,9 +1169,9 @@ public class UserPanel extends JFrame{
 			Integer user_id=userjson.getInt("user_id");
 			String nickanme=userjson.getString("nickname");
 			setLayout(null);
-			setSize(300, 300);
-			Font font=new Font("¿¬Ìå",Font.BOLD,19);
-			user_idlb=new JLabel("ÕË   ºÅ");
+			setSize(360, 300);
+			Font font=new Font("æ¥·ä½“",Font.BOLD,19);
+			user_idlb=new JLabel("è´¦    å·:");
 			user_idlb.setFont(font);
 			user_idtextlb=new JLabel();
 			user_idtextlb.setFont(font);
@@ -1132,7 +1180,7 @@ public class UserPanel extends JFrame{
 			user_idtextlb.setBounds(130, 40, 150, 28);
 			container.add(user_idlb);
 			container.add(user_idtextlb);
-			nicknamelb=new JLabel("êÇ    ³Æ");
+			nicknamelb=new JLabel("æ˜µ    ç§°:");
 			nicknamelb.setFont(font);
 			nicknametextlb=new JLabel();
 			nicknametextlb.setFont(font);
@@ -1141,17 +1189,23 @@ public class UserPanel extends JFrame{
 			nicknametextlb.setBounds(130, 73, 150, 28);
 			container.add(nicknamelb);
 			container.add(nicknametextlb);
-			add=new JButton("È·ÈÏÌí¼Ó");
+			add=new JButton("ç¡®è®¤æ·»åŠ ");
 			add.setBounds(80, 120, 120, 28);
 			add.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
+					addFriendbyidFrame.this.dispose();
 					new addFriendFrame().lunch(user_id);
 				}
 			});
 			container.add(add);
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,360, 300);
+			container.add(bg);
+			container.repaint();
 			setVisible(true);
 		}
 	}
@@ -1167,11 +1221,11 @@ public class UserPanel extends JFrame{
 			Integer size=usersjson.size();
 			setSize(500, 33*size+100);
 			setLayout(null);
-			Font font=new Font("¿¬Ìå",Font.BOLD,19);
+			Font font=new Font("æ¥·ä½“",Font.BOLD,19);
 			
-			user_idlb=new JLabel("ÕË      ºÅ");
+			user_idlb=new JLabel("è´¦      å·");
 			user_idlb.setFont(font);
-			nicknamelb=new JLabel("êÇ      ³Æ");
+			nicknamelb=new JLabel("æ˜µ      ç§°");
 			nicknamelb.setFont(font);
 			user_idlb.setBounds(40, 40, 120, 28);
 			nicknamelb.setBounds(165, 40, 150, 28);
@@ -1190,7 +1244,7 @@ public class UserPanel extends JFrame{
 				nicknametextlb[i].setText(item.getString("nickname"));
 				nicknametextlb[i].setFont(font);
 				nicknametextlb[i].setBounds(165, 40+33*i, 150, 28);
-				confirm[i]=new JButton("È·ÈÏÌí¼Ó");
+				confirm[i]=new JButton("ç¡®è®¤æ·»åŠ ");
 				confirm[i].setBounds(320, 40+33*i, 120, 28);
 				confirm[i].addActionListener(new MyactionListener());
 				container.add(user_idtextlb[i]);
@@ -1220,14 +1274,14 @@ public class UserPanel extends JFrame{
 		private JButton confirm;
 		private Container container=this.getContentPane();
 		public void lunch(Integer user_id){
-			setSize(250, 150);
+			setSize(320, 150);
 			setLayout(null);
-			setTitle("Ìí¼ÓºÃÓÑ");
+			setTitle("æ·»åŠ å¥½å‹");
 			String[] packets=user.getPackets().toArray(new String[0]);
 			packetbox=new JComboBox<>(packets);
-			packetbox.setBounds(1, 20, 86, 28);
-			confirm=new JButton("È·ÈÏÌí¼Ó");
-			confirm.setBounds(100, 20, 86, 28);
+			packetbox.setBounds(20, 20, 86, 28);
+			confirm=new JButton("ç¡®è®¤æ·»åŠ ");
+			confirm.setBounds(126, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				
 				@Override
@@ -1244,6 +1298,7 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(AddFriendResultMessage)){
+						addFriendFrame.this.dispose();
 						JOptionPane.showMessageDialog(UserPanel.this, messages.get(AddFriendResultMessage));
 						messages.remove(AddFriendResultMessage);
 					}
@@ -1251,6 +1306,11 @@ public class UserPanel extends JFrame{
 			});
 			container.add(packetbox);
 			container.add(confirm);
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,320, 150);
+			container.add(bg);
+			container.repaint();
 			setVisible(true);
 		}
 	}
@@ -1264,17 +1324,17 @@ public class UserPanel extends JFrame{
 			JSONObject jobject=JSONObject.fromObject(json);
 			Integer  user_id=jobject.getInt("user1_id");
 			setLayout(null);
-			setSize(250, 150);
-			setTitle("Ìí¼ÓºÃÓÑ");
-			Font font=new Font("¿¬Ìå",Font.BOLD,19);
-			user_idlb=new JLabel("ÕË  ºÅ");
+			setSize(320, 150);
+			setTitle("æ·»åŠ å¥½å‹");
+			Font font=new Font("æ¥·ä½“",Font.BOLD,19);
+			user_idlb=new JLabel("è´¦  å·");
 			user_idlb.setFont(font);
 			user_idtextlb=new JLabel();
 			user_idtextlb.setFont(font);
 			user_idtextlb.setText(String.valueOf(user_id));
 			user_idlb.setBounds(20, 20, 86, 28);
 			user_idtextlb.setBounds(110, 20, 174, 18);
-			agree=new JButton("Í¬ÒâÌí¼Ó");
+			agree=new JButton("åŒæ„æ·»åŠ ");
 			agree.setBounds(30, 53, 80, 28);
 			agree.addActionListener(new ActionListener() {
 				
@@ -1284,7 +1344,7 @@ public class UserPanel extends JFrame{
 					new agreeaddfriendFrame().lunch(json);
 				}
 			});
-			disagree=new JButton("¾Ü¾øÌí¼Ó");
+			disagree=new JButton("æ‹’ç»æ·»åŠ ");
 			disagree.setBounds(110, 53, 80, 28);
 			disagree.addActionListener(new ActionListener() {
 				
@@ -1301,8 +1361,8 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(DisagreeFriendMessage)){
-						if(messages.get(DisagreeFriendMessage).equals("¾Ü¾ø³É¹¦")){
-							JOptionPane.showMessageDialog(UserPanel.this, "¾Ü¾ø³É¹¦");
+						if(messages.get(DisagreeFriendMessage).equals("æ‹’ç»æˆåŠŸ")){
+							JOptionPane.showMessageDialog(UserPanel.this, "æ‹’ç»æˆåŠŸ");
 							messages.remove(DisagreeFriendMessage);
 						}
 					}
@@ -1312,6 +1372,11 @@ public class UserPanel extends JFrame{
 			container.add(user_idtextlb);
 			container.add(agree);
 			container.add(disagree);
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,320, 150);
+			container.add(bg);
+			container.repaint();
 			setVisible(true);
 		}
 	}
@@ -1324,11 +1389,11 @@ public class UserPanel extends JFrame{
 			JSONObject userjson=JSONObject.fromObject(json);
 			setSize(250, 150);
 			setLayout(null);
-			setTitle("Ìí¼ÓºÃÓÑ");
+			setTitle("æ·»åŠ å¥½å‹");
 			String[] packets=user.getPackets().toArray(new String[0]);
 			packetbox=new JComboBox<>(packets);
 			packetbox.setBounds(1, 20, 86, 28);
-			confirm=new JButton("È·ÈÏÌí¼Ó");
+			confirm=new JButton("ç¡®è®¤æ·»åŠ ");
 			confirm.setBounds(100, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				
@@ -1347,9 +1412,9 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(AgreeAddFriendMessage)){
-						if(messages.get(AgreeAddFriendMessage).equals("Ìí¼Ó³É¹¦")){
+						if(messages.get(AgreeAddFriendMessage).equals("æ·»åŠ æˆåŠŸ")){
 							messages.remove(AgreeAddFriendMessage);
-							JOptionPane.showMessageDialog(UserPanel.this, "Ìí¼Ó³É¹¦");
+							JOptionPane.showMessageDialog(UserPanel.this, "æ·»åŠ æˆåŠŸ");
 							Friend friend_=new Friend();
 							friend_.setUser_id(userjson.getInt("user1_id"));
 							friend_.setNickname(userjson.getString("nickname1"));

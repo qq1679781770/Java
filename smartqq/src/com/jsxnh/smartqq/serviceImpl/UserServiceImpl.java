@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 		passwordAnswer.setProblem(problem);
 		passwordAnswer.setAnswer(answer);
 		Packet packet=new Packet();
-		packet.setPacket_name("Ä¬ÈÏ·Ö×é");
+		packet.setPacket_name("é»˜è®¤åˆ†ç»„");
 		passwordAnswerDao.addPasswordAnswer(passwordAnswer);
 		userDao.register(user);
 		userDao.addPacket(user, packet);

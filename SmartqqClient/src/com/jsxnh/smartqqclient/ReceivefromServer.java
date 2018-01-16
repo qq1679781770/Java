@@ -10,6 +10,8 @@ import java.util.Date;
 import net.sf.json.JSONObject;
 
 public class ReceivefromServer extends Thread{
+	private final static String SUCCESS = "success";
+	private final static String FAILURE = "failure";
 	private Socket socket;
 	private Login login;
 	private UserPanel user;
@@ -45,7 +47,7 @@ public class ReceivefromServer extends Thread{
 				JSONObject json=JSONObject.fromObject(str);
 				if(json.containsKey("registerresult")){
 					String result=json.getString("registerresult");
-					if(result.equals("注册成功")){
+					if(result.equals(SUCCESS)){
 						login.notifyall(Login.RegisterSuccessMessage, result);
 					}else{
 						login.notifyall(Login.RegisterFailureMessage, result);
@@ -53,7 +55,7 @@ public class ReceivefromServer extends Thread{
 				}
 				else if(json.containsKey("loginresult")){
 					String result=json.getString("loginresult");
-					if(result.equals("登录成功")){
+					if(result.equals(SUCCESS)){
 						login.notifyall(Login.LoginSuccessMessage,json.toString());
 					}else{
 						login.notifyall(Login.LoginFailureMessage, result);
@@ -61,7 +63,7 @@ public class ReceivefromServer extends Thread{
 				}
 				else if(json.containsKey("modifypasswordresult")){
 					String result=json.getString("modifypasswordresult");
-					if(result.equals("修改成功")){
+					if(result.equals(SUCCESS)){
 						login.notifyall(Login.ModifyPasswordSuccessMessage, result);
 					}else{
 						login.notifyall(Login.ModifyPasswordFailureMessage, result);

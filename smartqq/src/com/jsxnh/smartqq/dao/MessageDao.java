@@ -6,9 +6,9 @@ import com.jsxnh.smartqq.entities.Message;
 
 public interface MessageDao {
 
-	//Ìí¼ÓÁÄÌì¼ÇÂ¼
+	//æ·»åŠ èŠå¤©è®°å½•
 	public void addMessage(Message message);
-	//²éÕÒÁÄÌì¼ÇÂ¼
+	//æŸ¥æ‰¾èŠå¤©è®°å½•
 	public List<Message> findMessages(Integer send_id,Integer receive_id);
 	
 }

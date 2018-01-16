@@ -26,7 +26,7 @@ public class SendtoServer{
 		json.put("user_id", id);
 		json.put("password", password);
 		JSONObject loginjson=new JSONObject();
-		loginjson.put("µÇÂ¼", json);
+		loginjson.put("command2", json);
 		write.println(loginjson.toString());
 		write.flush();
 		
@@ -42,7 +42,7 @@ public class SendtoServer{
 		JSONObject json=new JSONObject();
 		json.put("user_id", user_id);
 		JSONObject logoutjson=new JSONObject();
-		logoutjson.put("µÇ³ö", json);
+		logoutjson.put("ç™»å‡º", json);
 		write.println(logoutjson.toString());
 		write.flush();
     }
@@ -64,7 +64,7 @@ public class SendtoServer{
 		json.put("problem", problem);
 		json.put("answer", answer);
 		JSONObject registerjson=new JSONObject();
-		registerjson.put("×¢²á", json);
+		registerjson.put("command1", json);
 		write.println(registerjson.toString());
 		write.flush();
 	}
@@ -80,7 +80,7 @@ public class SendtoServer{
 		json.put("user_id", user_id);
 		json.put("nickname",nickname);
 		JSONObject updatejson=new JSONObject();
-		updatejson.put("ĞŞ¸ÄêÇ³Æ",json);
+		updatejson.put("ä¿®æ”¹æ˜µç§°",json);
 		write.println(updatejson.toString());
 		write.flush();
 	}
@@ -96,7 +96,7 @@ public class SendtoServer{
 		json.put("user_id", user_id);
 		json.put("signature",signature);
 		JSONObject updatejson=new JSONObject();
-		updatejson.put("¸üĞÂÇ©Ãû", json);
+		updatejson.put("æ›´æ–°ç­¾å", json);
 		write.println(updatejson.toString());
 		write.flush();
 	}
@@ -114,7 +114,7 @@ public class SendtoServer{
 		json.put("age", age);
 		json.put("message", message);
 		JSONObject updatejson=new JSONObject();
-		updatejson.put("¸üĞÂĞÅÏ¢", json);
+		updatejson.put("æ›´æ–°ä¿¡æ¯", json);
 		write.println(updatejson.toString());
 		write.flush();
 	}
@@ -129,7 +129,7 @@ public class SendtoServer{
 		JSONObject json=new JSONObject();
 		json.put("user_id", user_id);
 		JSONObject findjson=new JSONObject();
-		findjson.put("²éÕÒÃÜ±£ÎÊÌâ", json);
+		findjson.put("command5", json);
 		write.println(findjson.toString());
 		write.flush();
 	}
@@ -146,7 +146,7 @@ public class SendtoServer{
 		json.put("answer", answer);
 		json.put("password", password);
 		JSONObject modifyjson=new JSONObject();
-		modifyjson.put("ĞŞ¸ÄÃÜÂë", json);
+		modifyjson.put("command6", json);
 		write.println(modifyjson.toString());
 		write.flush();
 	}
@@ -163,7 +163,7 @@ public class SendtoServer{
 		json.put("user2_id", user2_id);
 		json.put("remarkname", remarkname);
 		JSONObject modifyjson=new JSONObject();
-		modifyjson.put("ºÃÓÑ±¸×¢", json);
+		modifyjson.put("å¥½å‹å¤‡æ³¨", json);
 		write.println(modifyjson.toString());
 		write.flush();
 	}
@@ -179,7 +179,7 @@ public class SendtoServer{
 		json.put("user_id", user_id);
 		json.put("packetname", packetname);
 		JSONObject addjson=new JSONObject();
-		addjson.put("Ìí¼Ó·Ö×é", json);
+		addjson.put("command9", json);
 		write.println(addjson.toString());
 		write.flush();
 	}
@@ -195,7 +195,7 @@ public class SendtoServer{
 		json.put("user_id", user_id);
 		json.put("packetname", packetname);
 		JSONObject addjson=new JSONObject();
-		addjson.put("É¾³ı·Ö×é", json);
+		addjson.put("command11", json);
 		write.println(addjson.toString());
 		write.flush();
 	}
@@ -212,7 +212,7 @@ public class SendtoServer{
 		json.put("oldpacketname", oldpacketname);
 		json.put("newpacketname", newpacketname);
 		JSONObject modifyjson=new JSONObject();
-		modifyjson.put("ĞŞ¸Ä·Ö×é",json);
+		modifyjson.put("command10",json);
 		write.println(modifyjson.toString());
 		write.flush();
 	}
@@ -230,7 +230,7 @@ public class SendtoServer{
 		json.put("oldpacketname", oldpacketname);
 		json.put("newpacketname", newpacketname);
 		JSONObject movejson=new JSONObject();
-		movejson.put("ÒÆ¶¯·Ö×é",json);
+		movejson.put("ç§»åŠ¨åˆ†ç»„",json);
 		write.println(movejson.toString());
 		write.flush();
 	}
@@ -245,7 +245,7 @@ public class SendtoServer{
 		JSONObject json=new JSONObject();
 		json.put("user_id", user_id);
 		JSONObject findjson=new JSONObject();
-		findjson.put("¾«È·²éÕÒ", json);
+		findjson.put("command13", json);
 		write.println(findjson.toString());
 		write.flush();
 	}
@@ -260,7 +260,7 @@ public class SendtoServer{
 		JSONObject json=new JSONObject();
 		json.put("nickname", nickname);
 		JSONObject findjson=new JSONObject();
-		findjson.put("Ä£ºı²éÕÒ", json);
+		findjson.put("command14", json);
 		write.println(findjson.toString());
 		write.flush();
 	}
@@ -277,7 +277,7 @@ public class SendtoServer{
 		json.put("user2_id", user2_id);
 		json.put("packetname", packetname);
 		JSONObject addjson=new JSONObject();
-		addjson.put("Ìí¼ÓºÃÓÑ", json);
+		addjson.put("command16", json);
 		write.println(addjson.toString());
 		write.flush();
 	}
@@ -295,7 +295,7 @@ public class SendtoServer{
 		json.put("packet1_name", packet1_name);
 		json.put("packet2_name", packet2_name);
 		JSONObject agreefriend=new JSONObject();
-		agreefriend.put("Í¬ÒâÌí¼Ó", json);
+		agreefriend.put("åŒæ„æ·»åŠ ", json);
 		write.println(agreefriend);
 		write.flush();
 	}
@@ -311,7 +311,7 @@ public class SendtoServer{
 		json.put("user1_id", user1_id);
 		json.put("user2_id", user2_id);
 		JSONObject disagree=new JSONObject();
-		disagree.put("¾Ü¾øÌí¼Ó", json);
+		disagree.put("æ‹’ç»æ·»åŠ ", json);
 		write.println(disagree.toString());
 		write.flush();
 	}
@@ -330,7 +330,7 @@ public class SendtoServer{
 		json.put("content",content);
 		json.put("send_time", send_time);
 		JSONObject sendjson=new JSONObject();
-		sendjson.put("·¢ËÍÏûÏ¢", json);
+		sendjson.put("å‘é€æ¶ˆæ¯", json);
 		write.println(sendjson.toString());
 		write.flush();
 	}
@@ -349,7 +349,7 @@ public class SendtoServer{
 		json.put("send_time", send_time);
 		json.put("receive_time", receive_time);
 		JSONObject receivejson=new JSONObject();
-		receivejson.put("½ÓÊÕÏûÏ¢", json);
+		receivejson.put("æ¥æ”¶æ¶ˆæ¯", json);
 		write.println(receivejson.toString());
 		write.flush();
 	}	

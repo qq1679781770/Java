@@ -7,27 +7,27 @@ import com.jsxnh.smartqq.entities.User;
 
 public interface UserDao {
 
-	// ¸ù¾İÓÃ»§Ãû²éÕÒÓÃ»§
+	// æ ¹æ®ç”¨æˆ·åæŸ¥æ‰¾ç”¨æˆ·
 	public User findbyid(Integer user_id);
-	// ¸ù¾İêÇ³ÆÄ£ºı²éÑ¯ÓÃ»§
+	// æ ¹æ®æ˜µç§°æ¨¡ç³ŠæŸ¥è¯¢ç”¨æˆ·
 	public List<User> findbyname(String nickname);
-	// ÓÃ»§×¢²á
+	// ç”¨æˆ·æ³¨å†Œ
 	public void register(User user);
-	// ¸üĞÂÓÃ»§×´Ì¬
+	// æ›´æ–°ç”¨æˆ·çŠ¶æ€
 	public int updatestatus(User user);
-	//¸üĞÂÓÃ»§ĞÅÏ¢
+	//æ›´æ–°ç”¨æˆ·ä¿¡æ¯
 	public int updateNickName(User user);
-	//¸üĞÂ¸öĞÔÇ©Ãû
+	//æ›´æ–°ä¸ªæ€§ç­¾å
 	public int updateSignature(User user);
-	//ĞŞ¸ÄÃÜÂë
+	//ä¿®æ”¹å¯†ç 
 	public int updatePassword(User user);
-	//ÑéÖ¤ÃÜÂë
+	//éªŒè¯å¯†ç 
 	public boolean checkPassword(User user);
-	//ĞŞ¸ÄĞÅÏ¢
+	//ä¿®æ”¹ä¿¡æ¯
 	public int updateData(User user);
-	//Ìí¼Ó·Ö×é
+	//æ·»åŠ åˆ†ç»„
 	public int addPacket(User user,Packet packet);
-	//É¾³ı·Ö×é
+	//åˆ é™¤åˆ†ç»„
 	public int deletePacket(User user,Packet packet);
 	
 }
