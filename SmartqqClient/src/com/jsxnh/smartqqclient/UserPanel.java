@@ -11,11 +11,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -548,8 +545,8 @@ public class UserPanel extends JFrame{
 		edit.add(editsignature);
 		edit.add(editdatas);
 		modify.add(edit);
-		modify.setBounds(167, 0, 60, 18);
-		modify.setBorder(null);
+		modify.setBounds(167, 0, 80, 20);
+		//modify.setBorder(null);
 		con.add(modify);
 		
 		MSGLb=new JLabel();
@@ -569,9 +566,8 @@ public class UserPanel extends JFrame{
 				if(messages.containsKey(AddFriendMessage)){
 					new acceptaddfriendFrame().lunch(messages.get(AddFriendMessage));
 					messages.remove(AddFriendMessage);
-					MSGLb.setText("无消息");
 				}
-				else if(messages.containsKey(AgreeAddFriendMessage)){
+				if(messages.containsKey(AgreeAddFriendMessage)){
 					if(!messages.get(AgreeAddFriendMessage).equals("添加成功")){
 						JSONObject addfriend=JSONObject.fromObject(messages.get(AgreeAddFriendMessage)).getJSONObject("agreeaddfriend");
 						Integer user_id=addfriend.getInt("user2_id");
@@ -591,32 +587,31 @@ public class UserPanel extends JFrame{
 						jsPanel.repaint();
 						jsPanel.validate();
 						messages.remove(AgreeAddFriendMessage);
-						MSGLb.setText("无消息");
 					}
 				}
-				else if(messages.containsKey(DisagreeFriendMessage)){
+				if(messages.containsKey(DisagreeFriendMessage)){
 					if(!messages.get(DisagreeFriendMessage).equals("拒绝成功")){
 						JSONObject disagreejson=JSONObject.fromObject(messages.get(DisagreeFriendMessage)).getJSONObject("disagreeaddfriend");
 						Integer user_id=disagreejson.getInt("user2_id");
 						JOptionPane.showMessageDialog(UserPanel.this, String.valueOf(user_id)+"拒绝添加");
 						messages.remove(DisagreeFriendMessage);
-						MSGLb.setText("无消息");
 					}
 				}
-				else if(messages.containsKey(ChatMessage)){
+				if(messages.containsKey(ChatMessage)){
 					JSONObject message=JSONObject.fromObject(messages.get(ChatMessage));					
 					ChatPanel chatpanel=new ChatPanel();
 					chatpanels.put(message.getInt("user1_id"), chatpanel);
 					chatpanel.lunch(UserPanel.this, null, message.toString());			
 					messages.remove(ChatMessage);
-					MSGLb.setText("无消息");
+
 				}
+				MSGLb.setText("无消息");
 			}
 		});
 		MSGBt.setBounds(107, 0, 60, 18);
 		con.add(MSGLb);
 		con.add(MSGBt);
-		
+		/**
 		close=new JButton();
 		close.setIcon(new ImageIcon("images\\Mainclose.png"));
 		close.setRolloverIcon(new ImageIcon("images\\Mainclose_hover.png"));
@@ -651,7 +646,30 @@ public class UserPanel extends JFrame{
 		min.setBounds(227,-2 ,28, 20);
 		close.setBounds(255, -2, 28, 20);
 		con.add(close);
-		con.add(min);
+		con.add(min);**/
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				SendtoServer.logout(user.getUser_id());
+                try {
+                    SendtoServer.socket.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                System.exit(0);
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				SendtoServer.logout(user.getUser_id());
+                try {
+                    SendtoServer.socket.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                System.exit(0);
+			}
+		});
 		backgournd bg=new backgournd();
 		bg.setImage(this.getToolkit().getImage("images\\mainbg.png"));
 		bg.setBounds(0, 0, 284, 674);
@@ -1176,8 +1194,8 @@ public class UserPanel extends JFrame{
 			user_idtextlb=new JLabel();
 			user_idtextlb.setFont(font);
 			user_idtextlb.setText(String.valueOf(user_id));
-			user_idlb.setBounds(40, 40, 86, 28);
-			user_idtextlb.setBounds(130, 40, 150, 28);
+			user_idlb.setBounds(40, 40, 100, 28);
+			user_idtextlb.setBounds(150, 40, 150, 28);
 			container.add(user_idlb);
 			container.add(user_idtextlb);
 			nicknamelb=new JLabel("昵    称:");
@@ -1185,8 +1203,8 @@ public class UserPanel extends JFrame{
 			nicknametextlb=new JLabel();
 			nicknametextlb.setFont(font);
 			nicknametextlb.setText(nickanme);
-			nicknamelb.setBounds(40, 73, 86, 28);
-			nicknametextlb.setBounds(130, 73, 150, 28);
+			nicknamelb.setBounds(40, 73, 100, 28);
+			nicknametextlb.setBounds(150, 73, 150, 28);
 			container.add(nicknamelb);
 			container.add(nicknametextlb);
 			add=new JButton("确认添加");
@@ -1324,7 +1342,7 @@ public class UserPanel extends JFrame{
 			JSONObject jobject=JSONObject.fromObject(json);
 			Integer  user_id=jobject.getInt("user1_id");
 			setLayout(null);
-			setSize(320, 150);
+			setSize(320, 220);
 			setTitle("添加好友");
 			Font font=new Font("楷体",Font.BOLD,19);
 			user_idlb=new JLabel("账  号");
@@ -1333,24 +1351,26 @@ public class UserPanel extends JFrame{
 			user_idtextlb.setFont(font);
 			user_idtextlb.setText(String.valueOf(user_id));
 			user_idlb.setBounds(20, 20, 86, 28);
-			user_idtextlb.setBounds(110, 20, 174, 18);
+			user_idtextlb.setBounds(110, 20, 174, 28);
 			agree=new JButton("同意添加");
-			agree.setBounds(30, 53, 80, 28);
+			agree.setBounds(20, 60, 80, 28);
 			agree.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
+                    acceptaddfriendFrame.this.dispose();
 					new agreeaddfriendFrame().lunch(json);
 				}
 			});
 			disagree=new JButton("拒绝添加");
-			disagree.setBounds(110, 53, 80, 28);
+			disagree.setBounds(160, 60, 80, 28);
 			disagree.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
+                    acceptaddfriendFrame.this.dispose();
 					SendtoServer.disagreeAddFriend(user_id,jobject.getInt("user2_id"));
 					synchronized (UserPanel.this) {
 						try {
@@ -1374,7 +1394,7 @@ public class UserPanel extends JFrame{
 			container.add(disagree);
 			background bg=new background();
 			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
-			bg.setBounds(0, 0,320, 150);
+			bg.setBounds(0, 0,320, 220);
 			container.add(bg);
 			container.repaint();
 			setVisible(true);
@@ -1387,14 +1407,14 @@ public class UserPanel extends JFrame{
 		private Container container=this.getContentPane();
 		public void lunch(String  json){
 			JSONObject userjson=JSONObject.fromObject(json);
-			setSize(250, 150);
+			setSize(320, 150);
 			setLayout(null);
 			setTitle("添加好友");
 			String[] packets=user.getPackets().toArray(new String[0]);
 			packetbox=new JComboBox<>(packets);
-			packetbox.setBounds(1, 20, 86, 28);
+			packetbox.setBounds(20, 20, 86, 28);
 			confirm=new JButton("确认添加");
-			confirm.setBounds(100, 20, 86, 28);
+			confirm.setBounds(120, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				
 				@Override
@@ -1413,6 +1433,7 @@ public class UserPanel extends JFrame{
 					}
 					if(messages.containsKey(AgreeAddFriendMessage)){
 						if(messages.get(AgreeAddFriendMessage).equals("添加成功")){
+						    agreeaddfriendFrame.this.dispose();
 							messages.remove(AgreeAddFriendMessage);
 							JOptionPane.showMessageDialog(UserPanel.this, "添加成功");
 							Friend friend_=new Friend();
@@ -1435,6 +1456,11 @@ public class UserPanel extends JFrame{
 			});
 			container.add(packetbox);
 			container.add(confirm);
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,320, 150);
+			container.add(bg);
+			container.repaint();
 			setVisible(true);
 		}
 	}

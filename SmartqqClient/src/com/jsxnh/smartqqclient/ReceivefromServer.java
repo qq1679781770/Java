@@ -40,11 +40,12 @@ public class ReceivefromServer extends Thread{
 	}
 	
 	public void run() {
-		while(true){
-			try{
+		try{
+			while(true){
 				BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String str=new String(in.readLine());
 				JSONObject json=JSONObject.fromObject(str);
+				System.out.println(json);
 				if(json.containsKey("registerresult")){
 					String result=json.getString("registerresult");
 					if(result.equals(SUCCESS)){
@@ -102,7 +103,7 @@ public class ReceivefromServer extends Thread{
 					user.notifyall(UserPanel.ModifyRemarkMessage, json.getString("modifyremarkresult"));
 				}
 				else if(json.containsKey("addfriend")){
-					user.getMsgLb().setText("ÓĞÏûÏ¢");
+					user.getMsgLb().setText("æœ‰æ¶ˆæ¯");
 					user.injectMessage(UserPanel.AddFriendMessage, json.getJSONObject("addfriend").toString());
 				}
 				else if(json.containsKey("addfriendresult")){
@@ -110,7 +111,7 @@ public class ReceivefromServer extends Thread{
 				}
 				else if(json.containsKey("agreeaddfriendresult")){
 					if(json.containsKey("agreeaddfriend")){
-						user.getMsgLb().setText("ÓĞÏûÏ¢");
+						user.getMsgLb().setText("æœ‰æ¶ˆæ¯");
 						user.injectMessage(UserPanel.AgreeAddFriendMessage, json.toString());
 					}else{
 						user.notifyall(UserPanel.AgreeAddFriendMessage, json.getString("agreeaddfriendresult"));
@@ -118,7 +119,7 @@ public class ReceivefromServer extends Thread{
 				}
 				else if(json.containsKey("disagreeaddfriendresult")){
 					if(json.containsKey("disagreeaddfriend")){
-						user.getMsgLb().setText("ÓĞÏûÏ¢");
+						user.getMsgLb().setText("æœ‰æ¶ˆæ¯");
 						user.injectMessage(UserPanel.DisagreeFriendMessage, json.toString());
 					}else{
 						user.notifyall(UserPanel.DisagreeFriendMessage, json.getString("disagreeaddfriendresult"));
@@ -147,13 +148,14 @@ public class ReceivefromServer extends Thread{
 						user.getchatpanels().get(message.getInt("user1_id")).appendMessage(message);
 					}
 					else{
-						user.getMsgLb().setText("ÓĞÏûÏ¢");
+						user.getMsgLb().setText("æœ‰æ¶ˆæ¯");
 						user.injectMessage(UserPanel.ChatMessage, json.getJSONObject("sendchat").toString());
 					}					
 				}
-			}catch(IOException e){
-				e.printStackTrace();
+
 			}
+		}catch(IOException e){
+			e.printStackTrace();
 		}
 	}
 	

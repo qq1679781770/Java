@@ -67,8 +67,9 @@ public class ServerThread implements Runnable {
 		
 	@Override
 	public void run() {
+		try {
 		while(true){
-		try {		
+
 			in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			JSONObject json=JSONObject.fromObject(doread(in));
 			//in.close();
@@ -92,13 +93,24 @@ public class ServerThread implements Runnable {
 				e.printStackTrace();
 			}
 			System.out.println(result);
-			out.println(result);
-			out.flush();
+			if (!result.equals("success")) {
+				out.println(result);
+				out.flush();
+			}
+
 //			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-        
+		}
+		catch (IOException e) {
+			TCPServer.getserverThreads().remove(this);
+			if(!socket.isClosed()){
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			e.printStackTrace();
 		}
 	}
 	
@@ -214,8 +226,9 @@ public class ServerThread implements Runnable {
 		}
 		return result.toString();
 	}
-	private void   Logout(JSONObject json){
+	private String   Logout(JSONObject json){
 		userService.LogOut((Integer)json.get("user_id"));
+		return "success";
 	}
     private String Register(JSONObject json){
     	JSONObject result=new JSONObject();
@@ -480,6 +493,7 @@ public class ServerThread implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println(message);
     	write.println(message);
     	write.flush();
     }

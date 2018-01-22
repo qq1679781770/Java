@@ -42,7 +42,7 @@ public class SendtoServer{
 		JSONObject json=new JSONObject();
 		json.put("user_id", user_id);
 		JSONObject logoutjson=new JSONObject();
-		logoutjson.put("登出", json);
+		logoutjson.put("command15", json);
 		write.println(logoutjson.toString());
 		write.flush();
     }
@@ -295,7 +295,7 @@ public class SendtoServer{
 		json.put("packet1_name", packet1_name);
 		json.put("packet2_name", packet2_name);
 		JSONObject agreefriend=new JSONObject();
-		agreefriend.put("同意添加", json);
+		agreefriend.put("command17", json);
 		write.println(agreefriend);
 		write.flush();
 	}
@@ -311,7 +311,7 @@ public class SendtoServer{
 		json.put("user1_id", user1_id);
 		json.put("user2_id", user2_id);
 		JSONObject disagree=new JSONObject();
-		disagree.put("拒绝添加", json);
+		disagree.put("command18", json);
 		write.println(disagree.toString());
 		write.flush();
 	}
