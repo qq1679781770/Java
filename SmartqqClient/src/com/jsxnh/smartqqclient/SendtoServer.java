@@ -80,7 +80,7 @@ public class SendtoServer{
 		json.put("user_id", user_id);
 		json.put("nickname",nickname);
 		JSONObject updatejson=new JSONObject();
-		updatejson.put("修改昵称",json);
+		updatejson.put("command7",json);
 		write.println(updatejson.toString());
 		write.flush();
 	}
@@ -96,7 +96,7 @@ public class SendtoServer{
 		json.put("user_id", user_id);
 		json.put("signature",signature);
 		JSONObject updatejson=new JSONObject();
-		updatejson.put("更新签名", json);
+		updatejson.put("command3", json);
 		write.println(updatejson.toString());
 		write.flush();
 	}
@@ -114,7 +114,7 @@ public class SendtoServer{
 		json.put("age", age);
 		json.put("message", message);
 		JSONObject updatejson=new JSONObject();
-		updatejson.put("更新信息", json);
+		updatejson.put("command4", json);
 		write.println(updatejson.toString());
 		write.flush();
 	}
@@ -163,7 +163,7 @@ public class SendtoServer{
 		json.put("user2_id", user2_id);
 		json.put("remarkname", remarkname);
 		JSONObject modifyjson=new JSONObject();
-		modifyjson.put("好友备注", json);
+		modifyjson.put("command8", json);
 		write.println(modifyjson.toString());
 		write.flush();
 	}
@@ -230,7 +230,7 @@ public class SendtoServer{
 		json.put("oldpacketname", oldpacketname);
 		json.put("newpacketname", newpacketname);
 		JSONObject movejson=new JSONObject();
-		movejson.put("移动分组",json);
+		movejson.put("command12",json);
 		write.println(movejson.toString());
 		write.flush();
 	}
@@ -330,7 +330,7 @@ public class SendtoServer{
 		json.put("content",content);
 		json.put("send_time", send_time);
 		JSONObject sendjson=new JSONObject();
-		sendjson.put("发送消息", json);
+		sendjson.put("command19", json);
 		write.println(sendjson.toString());
 		write.flush();
 	}
@@ -349,7 +349,7 @@ public class SendtoServer{
 		json.put("send_time", send_time);
 		json.put("receive_time", receive_time);
 		JSONObject receivejson=new JSONObject();
-		receivejson.put("接收消息", json);
+		receivejson.put("command20", json);
 		write.println(receivejson.toString());
 		write.flush();
 	}	

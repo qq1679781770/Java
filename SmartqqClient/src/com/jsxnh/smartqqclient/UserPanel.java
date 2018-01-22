@@ -5,12 +5,7 @@
 
 package com.jsxnh.smartqqclient;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -159,7 +154,7 @@ public class UserPanel extends JFrame{
 		for(Map.Entry<String, LinkedList<Friend>> entry:friends.entrySet()){
 			FriendNode packetname=new FriendNode(new ImageIcon("images/arrow_right.png"),entry.getKey()+"("+entry.getValue().size()+")",entry.getKey());
 			for(Friend friend_:entry.getValue()){
-				packetname.add(new FriendNode(new ImageIcon("images/headimg.png"),friend_.getNickname(),friend_.getSignature(),friend_));
+				packetname.add(new FriendNode(new ImageIcon("images/headimg.png"),friend_.toString(),friend_.getSignature(),friend_));
 			}
 			root.add(packetname);
 		}
@@ -335,8 +330,10 @@ public class UserPanel extends JFrame{
 				}
 				if(node.getUserObject() instanceof Friend){
 					currentfriend=(Friend)node.getUserObject();
+					currentpacket = null;
 				}else{
 					currentpacket=(String)node.getUserObject();
+					currentfriend = null;
 				}
 				friendsTree.clearSelection();
 
@@ -426,6 +423,10 @@ public class UserPanel extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+                if(currentfriend==null){
+                    JOptionPane.showMessageDialog(UserPanel.this, "选择要移动的好友");
+                    return;
+                }
 				new movepacketFrame().lunch();
 			}
 		});
@@ -435,6 +436,10 @@ public class UserPanel extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+                if(currentfriend==null){
+                    JOptionPane.showMessageDialog(UserPanel.this, "选择好友");
+                    return;
+                }
 				new modifyremarkFrame().lunch();
 			}
 		});
@@ -444,6 +449,10 @@ public class UserPanel extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+                if(currentfriend==null){
+                    JOptionPane.showMessageDialog(UserPanel.this, "选择好友");
+                    return;
+                }
 				new friendmessageFrame();
 			}
 		});
@@ -453,6 +462,10 @@ public class UserPanel extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+                if(currentfriend==null){
+                    JOptionPane.showMessageDialog(UserPanel.this, "选择好友");
+                    return;
+                }
 				ChatPanel chatpanel=new ChatPanel();
 				chatpanels.put(currentfriend.getUser_id(), chatpanel);
 				chatpanel.lunch(UserPanel.this, currentfriend, "");
@@ -603,7 +616,6 @@ public class UserPanel extends JFrame{
 					chatpanels.put(message.getInt("user1_id"), chatpanel);
 					chatpanel.lunch(UserPanel.this, null, message.toString());			
 					messages.remove(ChatMessage);
-
 				}
 				MSGLb.setText("无消息");
 			}
@@ -700,12 +712,13 @@ public class UserPanel extends JFrame{
 		}		
 		public void lunch(){
 			this.setLayout(null);
-			this.setSize(300, 150);
+			this.setSize(360, 150);
 			subnickname=new JTextField(1000);
-			subnickname.setBorder(BorderFactory.createLineBorder(Color.blue));
+			//subnickname.setBorder(BorderFactory.createLineBorder(Color.blue));
+            subnickname.setText(user.getNickname());
 			confirm=new JButton("确认修改");
-			subnickname.setBounds(1, 20, 174, 28);
-			confirm.setBounds(181, 20, 86, 28);	
+			subnickname.setBounds(20, 20, 174, 28);
+			confirm.setBounds(200, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -725,6 +738,7 @@ public class UserPanel extends JFrame{
 						}
 					}					
 					if(messages.containsKey(UpdateNicknameMessage)){
+					    nicknameFrame.this.dispose();
 						user.setNickname(text);
 						nickname.setText(text);
 						JOptionPane.showMessageDialog(nicknameFrame.this, "修改成功");
@@ -734,6 +748,11 @@ public class UserPanel extends JFrame{
 			});
 			container.add(subnickname);
 			container.add(confirm);
+            background bg=new background();
+            bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+            bg.setBounds(0, 0,360, 150);
+            container.add(bg);
+            container.repaint();
 			this.setVisible(true);
 		}
 	}
@@ -751,12 +770,13 @@ public class UserPanel extends JFrame{
 		}		
 		public void lunch(){
 			this.setLayout(null);
-			this.setSize(300, 150);
+			this.setSize(360, 150);
 			subsignature=new JTextField(1000);
-			subsignature.setBorder(BorderFactory.createLineBorder(Color.blue));
+			//subsignature.setBorder(BorderFactory.createLineBorder(Color.blue));
+            subsignature.setText(user.getSignature());
 			confirm=new JButton("确认修改");
-			subsignature.setBounds(1, 20, 174, 28);
-			confirm.setBounds(181, 20, 86, 28);	
+			subsignature.setBounds(20, 20, 174, 28);
+			confirm.setBounds(200, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -772,6 +792,7 @@ public class UserPanel extends JFrame{
 						}
 					}					
 					if(messages.containsKey(UpdateSignatureMessage)){
+					    signatureFrame.this.dispose();
 						user.setSignature(text);
 						signature.setText(text);
 						JOptionPane.showMessageDialog(signatureFrame.this, "修改成功");
@@ -781,6 +802,11 @@ public class UserPanel extends JFrame{
 			});
 			container.add(subsignature);
 			container.add(confirm);
+            background bg=new background();
+            bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+            bg.setBounds(0, 0,360, 150);
+            container.add(bg);
+            container.repaint();
 			this.setVisible(true);
 		}
 	}
@@ -800,7 +826,7 @@ public class UserPanel extends JFrame{
 		}
 		public void lunch(){
 			setLayout(null);
-			setSize(350, 280);
+			setSize(380, 300);
 			Font font=new Font("楷体",Font.BOLD,19);
 			namelabel=new JLabel("真实姓名");
 			namelabel.setFont(font);
@@ -808,7 +834,7 @@ public class UserPanel extends JFrame{
 			if(user.getName()!=null){
 				nametf.setText(user.getName());
 			}
-			nametf.setBorder(BorderFactory.createLineBorder(Color.blue));
+			//nametf.setBorder(BorderFactory.createLineBorder(Color.blue));
 			namelabel.setBounds(20, 20, 86, 28);
 			nametf.setBounds(110, 20, 174, 28);
 			container.add(namelabel);
@@ -819,7 +845,7 @@ public class UserPanel extends JFrame{
 			if(user.getAge()!=null){
 				agetf.setText(String.valueOf(user.getAge()));
 			}
-			agetf.setBorder(BorderFactory.createLineBorder(Color.blue));
+			//agetf.setBorder(BorderFactory.createLineBorder(Color.blue));
 			agelabel.setBounds(20, 53, 86, 28);
 			agetf.setBounds(110, 53, 174, 28);
 			container.add(agelabel);
@@ -859,6 +885,7 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(UpdateDatasMessage)){
+					    datasFrame.this.dispose();
 						user.setName(namestr);
 						user.setAge(Integer.parseInt(agestr));
 						user.setMessage(messagestr);
@@ -868,6 +895,11 @@ public class UserPanel extends JFrame{
 				}
 			});
 			container.add(confirm);
+            background bg=new background();
+            bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+            bg.setBounds(0, 0,380, 300);
+            container.add(bg);
+            container.repaint();
 			this.setVisible(true);
 		}
 	}
@@ -1011,7 +1043,7 @@ public class UserPanel extends JFrame{
 		               remarklb,remarktextlb;
 		private Container container=this.getContentPane();
 		public friendmessageFrame(){
-			setSize(330, 280);
+			setSize(430, 350);
 			setLayout(null);
 			Font font=new Font("楷体",Font.BOLD,19);
 			nicknamelb=new JLabel("昵    称");
@@ -1036,11 +1068,16 @@ public class UserPanel extends JFrame{
 			signaturelb.setFont(font);
 			signaturetextlb=new JLabel();
 			signaturetextlb.setFont(font);
-			if(currentfriend.getSignature()!=null){
-				signaturetextlb.setText(currentfriend.getSignature());
-			}
+
 			signaturelb.setBounds(50, 121, 86, 28);
-			signaturetextlb.setBounds(160, 121, 200, 28);
+			signaturetextlb.setBounds(160, 121, 200, 56);
+            if(currentfriend.getSignature()!=null){
+                try {
+                    JlabelSetText(signaturetextlb,currentfriend.getSignature());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 			container.add(signaturelb);
 			container.add(signaturetextlb);
 			statuslb=new JLabel("状    态");
@@ -1052,8 +1089,8 @@ public class UserPanel extends JFrame{
 			}else{
 				statustextlb.setText("离线");
 			}
-			statuslb.setBounds(50, 154, 86, 28);
-			statustextlb.setBounds(160, 154, 200, 28);
+			statuslb.setBounds(50, 187, 86, 28);
+			statustextlb.setBounds(160, 187, 200, 28);
 			remarklb=new JLabel("备    注");
 			remarklb.setFont(font);
 			remarktextlb=new JLabel();
@@ -1061,32 +1098,62 @@ public class UserPanel extends JFrame{
 			if(currentfriend.getRemarkname()!=null){
 				remarktextlb.setText(currentfriend.getRemarkname());
 			}
-			remarklb.setBounds(50, 187, 86, 28);
-			remarktextlb.setBounds(160, 187,200, 28);			
+			remarklb.setBounds(50, 220, 86, 28);
+			remarktextlb.setBounds(160, 220,200, 28);
 			container.add(statuslb);
 			container.add(statustextlb);
 			container.add(remarklb);
 			container.add(remarktextlb);
+            background bg=new background();
+            bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+            bg.setBounds(0, 0,430, 350);
+            container.add(bg);
+            container.repaint();
 			setVisible(true);
 			
 		}
+
+        void JlabelSetText(JLabel jLabel, String longString)
+                throws InterruptedException {
+            StringBuilder builder = new StringBuilder("<html>");
+            char[] chars = longString.toCharArray();
+            FontMetrics fontMetrics = jLabel.getFontMetrics(jLabel.getFont());
+            int start = 0;
+            int len = 0;
+            while (start + len < longString.length()) {
+                while (true) {
+                    len++;
+                    if (start + len > longString.length())break;
+                    if (fontMetrics.charsWidth(chars, start, len)
+                            > jLabel.getWidth()) {
+                        break;
+                    }
+                }
+                builder.append(chars, start, len-1).append("<br/>");
+                start = start + len - 1;
+                len = 0;
+            }
+            builder.append(chars, start, longString.length()-start);
+            builder.append("</html>");
+            jLabel.setText(builder.toString());
+        }
 	}
 	
 	private class modifyremarkFrame extends JFrame{
 		private JTextField remarktf;
 		private JButton confirm;
 		public void lunch(){
-			this.setSize(300, 150);
+			this.setSize(320, 180);
 			this.setLayout(null);
 			this.setTitle("修改备注");
 			remarktf=new JTextField(1000);
-			remarktf.setBorder(BorderFactory.createLineBorder(Color.black));
+			//remarktf.setBorder(BorderFactory.createLineBorder(Color.black));
 			if(currentfriend.getRemarkname()!=null){
 				remarktf.setText(currentfriend.getRemarkname());
 			}
 			confirm=new JButton("确认修改");
-			remarktf.setBounds(1, 20, 174, 28);
-			confirm.setBounds(181, 20, 86, 28);
+			remarktf.setBounds(20, 20, 174, 28);
+			confirm.setBounds(200, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				
 				@Override
@@ -1107,6 +1174,7 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(ModifyRemarkMessage)){
+					    modifyremarkFrame.this.dispose();
 						messages.remove(ModifyRemarkMessage);
 						JOptionPane.showMessageDialog(UserPanel.this, "修改成功");
 						LinkedList<Friend> friends_=friends.get(currentfriend.getPacket());
@@ -1125,6 +1193,11 @@ public class UserPanel extends JFrame{
 			});
 			this.getContentPane().add(remarktf);
 			this.getContentPane().add(confirm);
+            background bg=new background();
+            bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+            bg.setBounds(0, 0,320, 180);
+            this.getContentPane().add(bg);
+            this.getContentPane().repaint();
 			this.setVisible(true);
 		}
 	}
@@ -1134,19 +1207,20 @@ public class UserPanel extends JFrame{
 		private JButton confirm;
 		private Container container=this.getContentPane();
 		public void lunch(){
-			setSize(250, 150);
+			setSize(300, 150);
 			setLayout(null);
 			setTitle("移动分组");
 			String[] packets=user.getPackets().toArray(new String[0]);
 			packetbox=new JComboBox<>(packets);
-			packetbox.setBounds(1, 20, 86, 28);
+			packetbox.setBounds(20, 20, 86, 28);
 			confirm=new JButton("确认移动");
-			confirm.setBounds(100, 20, 86, 28);
+			confirm.setBounds(120, 20, 86, 28);
 			confirm.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
+
 					String packet_=(String) packetbox.getSelectedItem();
 					String oldpacket=currentfriend.getPacket();
 					SendtoServer.movePacket(user.getUser_id(), currentfriend.getUser_id(), currentfriend.getPacket(), packet_);
@@ -1159,6 +1233,7 @@ public class UserPanel extends JFrame{
 						}
 					}
 					if(messages.containsKey(MovePacketMessage)){
+					    movepacketFrame.this.dispose();
 						messages.remove(MovePacketMessage);
 						JOptionPane.showMessageDialog(UserPanel.this, "移动成功");
 						friends.get(oldpacket).remove(currentfriend);
@@ -1169,11 +1244,18 @@ public class UserPanel extends JFrame{
 						jsPanel.setViewportView(friendsTree);
 						jsPanel.repaint();
 						jsPanel.validate();
+						currentfriend = null;
+						currentnode = null;
 					}
 				}
 			});
 			container.add(packetbox);
 			container.add(confirm);
+            background bg=new background();
+            bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+            bg.setBounds(0, 0,300, 150);
+            container.add(bg);
+            container.repaint();
 			setVisible(true);
 		}
 	}

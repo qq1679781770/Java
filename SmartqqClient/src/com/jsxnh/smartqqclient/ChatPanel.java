@@ -9,11 +9,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -73,7 +70,7 @@ public class ChatPanel extends JFrame{
 			this.user_id=message.getInt("user1_id");
 		}
 		this.setLayout(null);
-		this.setSize(555, 535);
+		this.setSize(590, 620);
 		Toolkit toolkit=Toolkit.getDefaultToolkit();
 		Dimension screensize=toolkit.getScreenSize();
 		int screenwidth=(int)screensize.getWidth();
@@ -90,6 +87,7 @@ public class ChatPanel extends JFrame{
 				setLocation(newpoint.x-point.x, newpoint.y-point.y);
 			}
 		});
+		/**
 		min=new JButton();
 		min.setIcon(new ImageIcon("images\\dialog\\min.png"));
 		min.setPressedIcon(new ImageIcon("images\\dialog\\min_p.png"));
@@ -125,7 +123,20 @@ public class ChatPanel extends JFrame{
 			}
 		});
 		con.add(close);
-		
+		**/
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				userpanel.getchatpanels().remove(ChatPanel.this.user_id);
+				ChatPanel.this.dispose();
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				userpanel.getchatpanels().remove(ChatPanel.this.user_id);
+				ChatPanel.this.dispose();
+			}
+		});
 		sendmessagebt=new JButton();
 		sendmessagebt.setIcon(new ImageIcon("images\\dialog\\fasong.png"));
 		sendmessagebt.setRolloverIcon(new ImageIcon("images\\dialog\\fasong_hover.png"));
@@ -163,12 +174,12 @@ public class ChatPanel extends JFrame{
 		title_img.setBounds(11, 11, 44, 44);
 		con.add(title_img);
 		user_nickname=new JLabel();
-		user_nickname.setBounds(56, 12, 60, 20);
+		user_nickname.setBounds(56, 12, 300, 20);
 		user_nickname.setFont(new Font("楷体",Font.BOLD,19));
 		user_nickname.setText(friend.getNickname());
 		con.add(user_nickname);
 		user_signature=new JLabel();
-		user_signature.setBounds(60,33,300,20);
+		user_signature.setBounds(60,33,400,20);
 		user_signature.setFont(new Font("楷体",Font.PLAIN,12));
 		if(friend.getSignature()!=null){
 			user_signature.setText(friend.getSignature());
@@ -189,6 +200,7 @@ public class ChatPanel extends JFrame{
 		showmessage.setBorder(null);
 		showmessage.setLineWrap(true);
 		showmessage.setFont(font);
+		showmessage.setEditable(false);
 		if(message!=null){
 			appendMessage(message);
 		}

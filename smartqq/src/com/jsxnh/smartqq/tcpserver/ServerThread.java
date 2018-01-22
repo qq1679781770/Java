@@ -68,13 +68,12 @@ public class ServerThread implements Runnable {
 	@Override
 	public void run() {
 		try {
-		while(true){
-
 			in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			out=new PrintWriter(socket.getOutputStream());
+		while(true){
 			JSONObject json=JSONObject.fromObject(doread(in));
 			//in.close();
 			System.out.println(json);
-			out=new PrintWriter(socket.getOutputStream());
 			@SuppressWarnings("rawtypes")
 			Iterator it=json.keys();
 			String function=it.next().toString();
@@ -259,19 +258,19 @@ public class ServerThread implements Runnable {
     private String updateNickName(JSONObject json){
     	JSONObject result=new JSONObject();
     	userService.updateNickName((Integer)json.get("user_id"), (String)json.get("nickname"));
-    	result.put("updatenicknameresult", "更新成功");
+    	result.put("updatenicknameresult", SUUCESS);
     	return result.toString();
     }
     private String modifyRemark(JSONObject json){
     	JSONObject result=new JSONObject();
     	friendService.modifyRemarkName(json.getInt("user1_id"), json.getInt("user2_id"), json.getString("remarkname"));
-    	result.put("modifyremarkresult", "修改成功");
+    	result.put("modifyremarkresult", SUUCESS);
     	return result.toString();
     }
     private String updateSignature(JSONObject json){
     	userService.updateSignature((Integer)json.get("user_id"), (String)json.get("signature"));
     	JSONObject result=new JSONObject();
-    	result.put("updatesignatureresult", "更新成功");
+    	result.put("updatesignatureresult", SUUCESS);
     	return result.toString();
     }
     private String updateDatas(JSONObject json){
@@ -287,7 +286,7 @@ public class ServerThread implements Runnable {
     	}
     	userService.updateData((Integer)json.get("user_id"), datas);
     	JSONObject result=new JSONObject();
-    	result.put("updatedatasresult", "更新成功");
+    	result.put("updatedatasresult", SUUCESS);
         return result.toString();
     }
     private String findProblem(JSONObject json){
@@ -336,7 +335,7 @@ public class ServerThread implements Runnable {
     	JSONObject result=new JSONObject();
     	friendService.movePacket(json.getInt("user1_id"), json.getInt("user2_id"), json.getString("oldpacketname"), 
     			                 json.getString("newpacketname"));
-    	result.put("movepacketresult", "移动成功");
+    	result.put("movepacketresult", SUUCESS);
     	return result.toString();
     }
     private String findUserById(JSONObject json){
@@ -477,7 +476,9 @@ public class ServerThread implements Runnable {
     }
     
     private void sendMessage(Integer user_id,String message){
+
     	List<ServerThread>serverThreads=TCPServer.getserverThreads();
+		System.out.println(serverThreads.size());
     	for(ServerThread serverThread:serverThreads){
     		if(serverThread.getUser_id().equals(user_id)){
     			serverThread.convertMessage(message);
