@@ -1,5 +1,6 @@
 package com.jsxnh.smartqq.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.jsxnh.smartqq.entities.TemporaryMessage;
@@ -13,8 +14,10 @@ public interface TemporaryMessageDao {
 	//查找用户接收的消息
 	public List<TemporaryMessage> findMessages(Integer receive_id);
 	
-	public TemporaryMessage findMessage(Integer user1_id,Integer user2_id);
+	public TemporaryMessage findMessage(Integer user1_id, Integer user2_id, String send_time);
 	
 	public void deleteTemporaryMessage(TemporaryMessage temporarymessage);
+
+	public TemporaryMessage findMessageById(Integer id);
 	
 }

@@ -50,8 +50,8 @@ public class ChatServiceImpl implements ChatService{
 	}
 
 	@Override
-	public TemporaryMessage receiveMessage(Integer send_id, Integer receive_id) {
-		TemporaryMessage temporaryMessage= temporaryMessageDao.findMessage(send_id, receive_id);
+	public TemporaryMessage receiveMessage(Integer send_id, Integer receive_id,String send_time) {
+		TemporaryMessage temporaryMessage= temporaryMessageDao.findMessage(send_id, receive_id,send_time);
 		Message message=new Message();
 		message.setContent(temporaryMessage.getContent());
 		message.setSend_id(temporaryMessage.getSend_id());
@@ -63,9 +63,11 @@ public class ChatServiceImpl implements ChatService{
 		return temporaryMessage;
 	}
 
+
+
 	@Override
-	public boolean findTemporaryMessage(Integer send_id, Integer receive_id) {
-		if(temporaryMessageDao.findMessage(send_id,receive_id)!=null)
+	public boolean findTemporaryMessage(Integer send_id, Integer receive_id,String send_time) {
+		if(temporaryMessageDao.findMessage(send_id,receive_id,send_time)!=null)
 			return true;
 		return false;
 	}
@@ -85,6 +87,20 @@ public class ChatServiceImpl implements ChatService{
 	public List<TemporaryMessage> findMessages(Integer receive_id) {
 		return temporaryMessageDao.findMessages(receive_id);
 	}
-	
-	
+
+	@Override
+	public TemporaryMessage receiveMessageById(Integer id) {
+		TemporaryMessage temporaryMessage= temporaryMessageDao.findMessageById(id);
+		Message message=new Message();
+		message.setContent(temporaryMessage.getContent());
+		message.setSend_id(temporaryMessage.getSend_id());
+		message.setSend_time(temporaryMessage.getSend_time());
+		message.setReceive_id(temporaryMessage.getReceive());
+		message.setReceive_time(new Date());
+		messageDao.addMessage(message);
+		temporaryMessageDao.deleteTemporaryMessage(temporaryMessage);
+		return temporaryMessage;
+	}
+
+
 }

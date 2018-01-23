@@ -12,10 +12,7 @@ import java.net.Socket;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.jsxnh.smartqq.service.CommandService;
 import org.springframework.context.ApplicationContext;
@@ -101,7 +98,7 @@ public class ServerThread implements Runnable {
 		}
 		}
 		catch (IOException e) {
-			TCPServer.getserverThreads().remove(this);
+			TCPServer.getServerThreadMap().remove(user_id);
 			if(!socket.isClosed()){
 				try {
 					socket.close();
@@ -138,6 +135,7 @@ public class ServerThread implements Runnable {
 	//登录undone
 	private String Login(JSONObject json){
 		this.user_id=(Integer)json.get("user_id");
+		TCPServer.getServerThreadMap().put(user_id,this);
 		Integer user_id=(Integer)json.get("user_id");
 		String password=(String)json.get("password");
 		String ip=socket.getInetAddress().getHostAddress();
@@ -213,15 +211,41 @@ public class ServerThread implements Runnable {
 			
 			List<TemporaryMessage> temporaryMessages=chatService.findMessages(user_id);
 			if(temporaryMessages.size()>0){
+				SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				JSONArray messages=new JSONArray();
-				for(TemporaryMessage tem:temporaryMessages){
-					JSONObject message=new JSONObject();
-					message.put("user1_id", tem.getSend_id());
-					message.put("user2_id", tem.getReceive());
-					message.put("sendtime", tem.getSend_time());
-					message.put("content", tem.getContent());
+				Map<Integer,ArrayList<TemporaryMessage>> m = new HashMap<>();
+				for(TemporaryMessage t:temporaryMessages){
+					if(m.containsKey(t.getSend_id())){
+						m.get(t.getSend_id()).add(t);
+					}else{
+						ArrayList<TemporaryMessage> l = new ArrayList<>();
+						l.add(t);
+						m.put(t.getSend_id(),l);
+					}
+				}
+				for(Integer key:m.keySet()){
+					JSONObject message = new JSONObject();
+					User user1=userService.findUserById(m.get(key).get(0).getSend_id());
+					message.put("user1_id",user1.getUser_id());
+					message.put("nickname1",user1.getNick_name());
+					message.put("status1",user1.getStatus());
+					message.put("user2_id",user_id);
+					if(user1.getSignature()!=null){
+						message.put("signature1",user1.getSignature());
+					}
+					JSONArray contents = new JSONArray();
+					for(TemporaryMessage tm:m.get(key)){
+						JSONObject j = new JSONObject();
+						j.put("user1_id",tm.getSend_id());
+						j.put("user2_id",tm.getReceive());
+						j.put("send_time",df.format(tm.getSend_time()));
+						j.put("content",tm.getContent());
+						contents.add(j);
+					}
+					message.put("contents",contents);
 					messages.add(message);
 				}
+
 				result.put("chatMessages", messages);
 			}
 			
@@ -233,6 +257,7 @@ public class ServerThread implements Runnable {
 	}
 	private String   Logout(JSONObject json){
 		userService.LogOut((Integer)json.get("user_id"));
+		TCPServer.getServerThreadMap().remove(user_id);
 		return "success";
 	}
     private String Register(JSONObject json){
@@ -476,8 +501,8 @@ public class ServerThread implements Runnable {
     private String chatReceive(JSONObject json) throws ParseException{
     	JSONObject result=new JSONObject();
     	SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    	if(chatService.findTemporaryMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"))){
-    		chatService.receiveMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"));
+    	if(chatService.findTemporaryMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"),json.getString("send_time"))){
+    		chatService.receiveMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"),json.getString("send_time"));
     	}else{
     		chatService.saveMessage((Integer)json.get("user1_id"),(Integer)json.get("user2_id"), 
     				(String)json.get("content"),df.parse(json.getString("send_time")),
@@ -488,14 +513,10 @@ public class ServerThread implements Runnable {
     
     private void sendMessage(Integer user_id,String message){
 
-    	List<ServerThread>serverThreads=TCPServer.getserverThreads();
-		System.out.println(serverThreads.size());
-    	for(ServerThread serverThread:serverThreads){
-    		if(serverThread.getUser_id().equals(user_id)){
-    			serverThread.convertMessage(message);
-    			break;
-    		}
-    	}
+		ServerThread s = TCPServer.getServerThreadMap().get(user_id);
+		if(s!=null){
+			s.convertMessage(message);
+		}
     }
     public void convertMessage(String message){
     	PrintWriter write=null;

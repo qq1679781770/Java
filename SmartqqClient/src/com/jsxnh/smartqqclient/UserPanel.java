@@ -54,7 +54,7 @@ public class UserPanel extends JFrame{
 			                    AddFriendResultMessage=9,AgreeAddFriendMessage=10,DisagreeFriendMessage=11,
 			                    FindUserByIdSuccessMessage=12,FindUserByNicknameSuccessMessage=13,
 			                    FindUserByIdFailureMessage=14,FindUserByNicknameFailureMessage=15,
-			                    ChatMessage=16,LoginAddFriend=17;
+			                    ChatMessage=16,LoginAddFriend=17,LoginMessages=18;
 	
 	private User user;
 	private Map<String, LinkedList<Friend>> friends=new HashMap<>();
@@ -621,6 +621,31 @@ public class UserPanel extends JFrame{
 					new acceptaddfriendFrame2().lunch(messages.get(LoginAddFriend));
 					messages.remove(LoginAddFriend);
 				}
+				if(messages.containsKey(LoginMessages)){
+					JSONArray mess = JSONArray.fromObject(messages.get(LoginMessages));
+					for(int i=0;i<mess.size();i++){
+						JSONObject j = mess.getJSONObject(i);
+						ChatPanel chatpanel=new ChatPanel();
+						chatpanels.put(j.getInt("user1_id"), chatpanel);
+						Friend f = new Friend();
+						f.setUser_id(j.getInt("user1_id"));
+						f.setNickname(j.getString("nickname1"));
+						if(j.containsKey("signature1")){
+							f.setSignature(j.getString("signature1"));
+						}
+						f.setStatus(j.getInt("status1"));
+						chatpanel.lunch(UserPanel.this,f,"");
+						JSONArray contents = j.getJSONArray("contents");
+						for(int ii=0;ii<contents.size();ii++){
+							JSONObject message = contents.getJSONObject(ii);
+							SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+							SendtoServer.receiveChat(message.getInt("user1_id"), message.getInt("user2_id"), message.getString("content"),
+									message.getString("send_time"), df.format(new Date()));
+							chatpanel.appendMessage(message);
+						}
+					}
+					messages.remove(LoginMessages);
+				}
 				MSGLb.setText("无消息");
 			}
 		});
@@ -698,6 +723,10 @@ public class UserPanel extends JFrame{
 		if(json.containsKey("addFriends")){
 			getMsgLb().setText("有消息");
 			injectMessage(LoginAddFriend,json.getJSONArray("addFriends").toString());
+		}
+		if(json.containsKey("chatMessages")){
+			getMsgLb().setText("有消息");
+			injectMessage(LoginMessages,json.getJSONArray("chatMessages").toString());
 		}
 	}
 	
