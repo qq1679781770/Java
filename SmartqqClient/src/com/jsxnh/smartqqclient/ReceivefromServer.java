@@ -152,7 +152,6 @@ public class ReceivefromServer extends Thread{
 						user.injectMessage(UserPanel.ChatMessage, json.getJSONObject("sendchat").toString());
 					}					
 				}
-
 			}
 		}catch(IOException e){
 			e.printStackTrace();

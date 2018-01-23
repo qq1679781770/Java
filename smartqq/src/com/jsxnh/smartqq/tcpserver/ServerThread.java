@@ -197,6 +197,12 @@ public class ServerThread implements Runnable {
 				JSONArray addFriends=new JSONArray();
 				for(TemporaryFriend tem:temporaryFriends){
 					JSONObject addFriend=new JSONObject();
+					User user1=userService.findUserById(tem.getUser1_id());
+					addFriend.put("nickname1", user1.getNick_name());
+					addFriend.put("status1", user1.getStatus());
+					if(user1.getSignature()!=null){
+						addFriend.put("signature1", user1.getSignature());
+					}
 					addFriend.put("user1_id", tem.getUser1_id());
 					addFriend.put("user2_id", tem.getUser2_id());
 					addFriend.put("packet1_name", tem.getPacket_name());
@@ -410,7 +416,7 @@ public class ServerThread implements Runnable {
     		friendService.deleteTemporaryFriend((Integer)json.get("user1_id"),(Integer)json.get("user2_id"));
     	}
     	User user2=userService.findUserById(json.getInt("user2_id"));
-//    	User user1=userService.findUserById(json.getInt("user1_id"));
+    	User user1=userService.findUserById(json.getInt("user1_id"));
 //    	json.put("nickname1", user1.getNick_name());
     	json.put("nickname2", user2.getNick_name());
     	json.put("status2", user2.getStatus());
@@ -426,7 +432,9 @@ public class ServerThread implements Runnable {
     	JSONObject message=new JSONObject();
     	message.put("agreeaddfriendresult", "添加成功");
     	message.put("agreeaddfriend", json);
-    	sendMessage((Integer)json.get("user1_id"), message.toString());
+    	if(user1.getStatus()==1){
+			sendMessage((Integer)json.get("user1_id"), message.toString());
+		}
     	return result.toString();
     }
     
@@ -439,7 +447,10 @@ public class ServerThread implements Runnable {
     	JSONObject message=new JSONObject();
     	message.put("disagreeaddfriendresult", "拒绝添加");
     	message.put("disagreeaddfriend", json);
-        sendMessage((Integer)json.get("user1_id"), message.toString());
+		User user1=userService.findUserById(json.getInt("user1_id"));
+		if(user1.getStatus()==1){
+			sendMessage((Integer)json.get("user1_id"), message.toString());
+		}
     	return result.toString();
     }
     

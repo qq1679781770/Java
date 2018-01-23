@@ -54,7 +54,7 @@ public class UserPanel extends JFrame{
 			                    AddFriendResultMessage=9,AgreeAddFriendMessage=10,DisagreeFriendMessage=11,
 			                    FindUserByIdSuccessMessage=12,FindUserByNicknameSuccessMessage=13,
 			                    FindUserByIdFailureMessage=14,FindUserByNicknameFailureMessage=15,
-			                    ChatMessage=16;
+			                    ChatMessage=16,LoginAddFriend=17;
 	
 	private User user;
 	private Map<String, LinkedList<Friend>> friends=new HashMap<>();
@@ -145,7 +145,7 @@ public class UserPanel extends JFrame{
 			}
 			this.friends.put(packetname, friendslist);
 		}
-		
+
 	}
 	
 	public void initRoot(){
@@ -617,6 +617,10 @@ public class UserPanel extends JFrame{
 					chatpanel.lunch(UserPanel.this, null, message.toString());			
 					messages.remove(ChatMessage);
 				}
+				if(messages.containsKey(LoginAddFriend)){
+					new acceptaddfriendFrame2().lunch(messages.get(LoginAddFriend));
+					messages.remove(LoginAddFriend);
+				}
 				MSGLb.setText("无消息");
 			}
 		});
@@ -690,7 +694,11 @@ public class UserPanel extends JFrame{
 		this.setUndecorated(true);
 //		this.setAlwaysOnTop(true);
 		this.setVisible(true);
-		
+		JSONObject json = JSONObject.fromObject(str);
+		if(json.containsKey("addFriends")){
+			getMsgLb().setText("有消息");
+			injectMessage(LoginAddFriend,json.getJSONArray("addFriends").toString());
+		}
 	}
 	
 	public void notifyall(Integer messageid,String str){
@@ -1319,7 +1327,7 @@ public class UserPanel extends JFrame{
 		public void lunch(String json){
 			JSONArray usersjson=JSONArray.fromObject(json);
 			Integer size=usersjson.size();
-			setSize(500, 33*size+100);
+			setSize(560, 33*size+200);
 			setLayout(null);
 			Font font=new Font("楷体",Font.BOLD,19);
 			
@@ -1327,8 +1335,8 @@ public class UserPanel extends JFrame{
 			user_idlb.setFont(font);
 			nicknamelb=new JLabel("昵      称");
 			nicknamelb.setFont(font);
-			user_idlb.setBounds(40, 40, 120, 28);
-			nicknamelb.setBounds(165, 40, 150, 28);
+			user_idlb.setBounds(40, 40, 150, 28);
+			nicknamelb.setBounds(200, 40, 150, 28);
 			container.add(user_idlb);
 			container.add(nicknamelb);
 			user_idtextlb=new JLabel[size];
@@ -1339,18 +1347,23 @@ public class UserPanel extends JFrame{
 				user_idtextlb[i]=new JLabel();
 				user_idtextlb[i].setText(String.valueOf(item.getInt("user_id")));
 				user_idtextlb[i].setFont(font);
-				user_idtextlb[i].setBounds(40, 40+33*i, 120,28);
+				user_idtextlb[i].setBounds(40, 40+33*(i+1), 150,28);
 				nicknametextlb[i]=new JLabel();
 				nicknametextlb[i].setText(item.getString("nickname"));
 				nicknametextlb[i].setFont(font);
-				nicknametextlb[i].setBounds(165, 40+33*i, 150, 28);
+				nicknametextlb[i].setBounds(200, 40+33*(i+1), 150, 28);
 				confirm[i]=new JButton("确认添加");
-				confirm[i].setBounds(320, 40+33*i, 120, 28);
+				confirm[i].setBounds(370, 40+33*(i+1), 120, 28);
 				confirm[i].addActionListener(new MyactionListener());
 				container.add(user_idtextlb[i]);
 				container.add(nicknametextlb[i]);
 				container.add(confirm[i]);
 			}
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,560, 33*size+200);
+			container.add(bg);
+			container.repaint();
 			setVisible(true);
 		}
 		
@@ -1481,6 +1494,187 @@ public class UserPanel extends JFrame{
 			container.repaint();
 			setVisible(true);
 		}
+	}
+
+	private class acceptaddfriendFrame2 extends JFrame{
+		private JLabel[] user_idlb;
+		private JLabel user_lb,operator_lb;
+		private JButton[] agree;
+
+		public JButton[] getAgree() {
+			return agree;
+		}
+
+		public void setAgree(JButton[] agree) {
+			this.agree = agree;
+		}
+
+		public JButton[] getDisagree() {
+			return disagree;
+		}
+
+		public void setDisagree(JButton[] disagree) {
+			this.disagree = disagree;
+		}
+
+		private JButton[] disagree;
+		private Container container=this.getContentPane();
+		private JSONArray array;
+		public void lunch(String json){
+			JSONArray jsonarray = JSONArray.fromObject(json);
+			array = jsonarray;
+			Integer size=jsonarray.size();
+			setSize(550, 33*size+200);
+			setLayout(null);
+			Font font=new Font("楷体",Font.BOLD,19);
+			user_lb = new JLabel("账号");
+			user_lb.setFont(font);
+			operator_lb = new JLabel("操作");
+			operator_lb.setFont(font);
+			user_lb.setBounds(40,40,150,28);
+			operator_lb.setBounds(210,40,250,28);
+			container.add(user_lb);
+			container.add(operator_lb);
+			user_idlb = new JLabel[size];
+			agree = new JButton[size];
+			disagree = new JButton[size];
+			for(int i =0;i<size;i++){
+				JSONObject item = jsonarray.getJSONObject(i);
+				user_idlb[i] = new JLabel();
+				user_idlb[i].setText(String.valueOf(item.getInt("user1_id")));
+				user_idlb[i].setFont(font);
+				user_idlb[i].setBounds(40,73+33*i,150,28);
+				agree[i] = new JButton("确认添加");
+				agree[i].setBounds(210,73+33*i,120,28);
+				disagree[i] = new JButton("拒绝添加");
+				disagree[i].setBounds(340,73+33*i,120,28);
+				agree[i].addActionListener(new agreeActionListener());
+				disagree[i].addActionListener(new disagreeActionListener());
+				container.add(user_idlb[i]);
+				container.add(agree[i]);
+				container.add(disagree[i]);
+			}
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,550, 33*size+200);
+			container.add(bg);
+			container.repaint();
+			setVisible(true);
+		}
+
+		public class agreeActionListener implements ActionListener{
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(int i=0;i<agree.length;i++){
+					if(e.getSource()==agree[i]){
+						JSONObject jobject = array.getJSONObject(i);
+						new agreeaddfriendFrame2().lunch(jobject.toString(),i);
+						break;
+					}
+				}
+			}
+		}
+
+		public class disagreeActionListener implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(int i=0;i<disagree.length;i++){
+					if(e.getSource()==disagree[i]){
+						JSONObject jobject = array.getJSONObject(i);
+						SendtoServer.disagreeAddFriend(jobject.getInt("user1_id"),jobject.getInt("user2_id"));
+						synchronized (UserPanel.this) {
+							try {
+								UserPanel.this.wait();
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+						if(messages.containsKey(DisagreeFriendMessage)){
+							if(messages.get(DisagreeFriendMessage).equals("拒绝成功")){
+								JOptionPane.showMessageDialog(UserPanel.this, "拒绝成功");
+								messages.remove(DisagreeFriendMessage);
+								disagree[i].setText("已拒绝");
+								disagree[i].setEnabled(false);
+								agree[i].setEnabled(false);
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		public class agreeaddfriendFrame2 extends JFrame{
+			private JComboBox<String> packetbox;
+			private JButton confirm;
+			private Container container=this.getContentPane();
+			public void lunch(String  json,int index){
+				JSONObject userjson=JSONObject.fromObject(json);
+				setSize(320, 150);
+				setLayout(null);
+				setTitle("添加好友");
+				String[] packets=user.getPackets().toArray(new String[0]);
+				packetbox=new JComboBox<>(packets);
+				packetbox.setBounds(20, 20, 86, 28);
+				confirm=new JButton("确认添加");
+				confirm.setBounds(120, 20, 86, 28);
+				confirm.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+						String packet_=(String) packetbox.getSelectedItem();
+						SendtoServer.agreeAddFriend(userjson.getInt("user1_id"),userjson.getInt("user2_id"),userjson.getString("packet1_name"),
+								packet_);
+						synchronized (UserPanel.this) {
+							try {
+								UserPanel.this.wait();
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+						if(messages.containsKey(AgreeAddFriendMessage)){
+							if(messages.get(AgreeAddFriendMessage).equals("添加成功")){
+								agreeaddfriendFrame2.this.dispose();
+								acceptaddfriendFrame2.this.getAgree()[index].setEnabled(false);
+								acceptaddfriendFrame2.this.getAgree()[index].setText("已同意");
+								acceptaddfriendFrame2.this.getDisagree()[index].setEnabled(false);
+								messages.remove(AgreeAddFriendMessage);
+								JOptionPane.showMessageDialog(UserPanel.this, "添加成功");
+								Friend friend_=new Friend();
+								friend_.setUser_id(userjson.getInt("user1_id"));
+								friend_.setNickname(userjson.getString("nickname1"));
+								friend_.setStatus(userjson.getInt("status1"));
+								friend_.setPacket(packet_);
+								if(userjson.containsKey("signature1")){
+									friend_.setSignature(userjson.getString("signature1"));
+								}
+								friends.get(friend_.getPacket()).add(friend_);
+								initRoot();
+								friendsTree.setModel(new DefaultTreeModel(root));
+								jsPanel.setViewportView(friendsTree);
+								jsPanel.repaint();
+								jsPanel.validate();
+
+							}
+						}
+					}
+				});
+				container.add(packetbox);
+				container.add(confirm);
+				background bg=new background();
+				bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+				bg.setBounds(0, 0,320, 150);
+				container.add(bg);
+				container.repaint();
+				setVisible(true);
+			}
+		}
+
 	}
 	
 	private class agreeaddfriendFrame extends JFrame{
