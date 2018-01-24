@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 public class TCPServer {
 
 	private static final int SERVER_PORT=9001;
-	private static final int MAX_THREAD=10;
+	private static final int MAX_THREAD=20;
 	private ServerSocket serverSocket;
 	private Socket socket;
 	public static Map<Integer, ServerThread> getServerThreadMap() {

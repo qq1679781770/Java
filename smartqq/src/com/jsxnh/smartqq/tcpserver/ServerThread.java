@@ -2,10 +2,7 @@ package com.jsxnh.smartqq.tcpserver;
 
  
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -14,7 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.jsxnh.smartqq.service.CommandService;
+import com.jsxnh.smartqq.service.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -23,9 +20,6 @@ import com.jsxnh.smartqq.entities.Packet;
 import com.jsxnh.smartqq.entities.TemporaryFriend;
 import com.jsxnh.smartqq.entities.TemporaryMessage;
 import com.jsxnh.smartqq.entities.User;
-import com.jsxnh.smartqq.service.ChatService;
-import com.jsxnh.smartqq.service.FriendService;
-import com.jsxnh.smartqq.service.UserService;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -33,17 +27,19 @@ import net.sf.json.JSONObject;
 public class ServerThread implements Runnable {
 	private final  static String SUUCESS = "success";
 	private final static String FAILURE = "failure";
+	private static String relativelyPath = System.getProperty("user.dir");
 	private Socket socket;
 	private UserService userService=null;
 	private FriendService friendService=null;
 	private ChatService chatService=null;
 	private CommandService commandService = null;
+	private FileService fileService = null;
 	private ApplicationContext ctx=null;
 	private BufferedReader in=null;
 	private PrintWriter out=null;
 	private Integer user_id;
-	
-	
+	private DataInputStream din = null;
+	private DataOutputStream dout = null;
 	public Integer getUser_id(){
 		return this.user_id;
 	}
@@ -55,6 +51,9 @@ public class ServerThread implements Runnable {
 	    userService=ctx.getBean(UserService.class);
 	    chatService=ctx.getBean(ChatService.class);
 	    commandService = ctx.getBean(CommandService.class);
+		fileService = ctx.getBean(FileService.class);
+		File dir=new File(relativelyPath+"\\files");
+		if (!dir.exists()) dir.mkdirs();
 //	    try{
 //	    	
 //	    }catch(IOException e){
@@ -65,10 +64,15 @@ public class ServerThread implements Runnable {
 	@Override
 	public void run() {
 		try {
+			/**
 			in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out=new PrintWriter(socket.getOutputStream());
+			 **/
+			din = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+			dout = new DataOutputStream(socket.getOutputStream());
 		while(true){
-			JSONObject json=JSONObject.fromObject(doread(in));
+			//JSONObject json=JSONObject.fromObject(doread(in));
+			JSONObject json=JSONObject.fromObject(din.readUTF());
 			//in.close();
 			System.out.println(json);
 			@SuppressWarnings("rawtypes")
@@ -90,8 +94,10 @@ public class ServerThread implements Runnable {
 			}
 			System.out.println(result);
 			if (!result.equals("success")) {
-				out.println(result);
-				out.flush();
+				//out.println(result);
+				//out.flush();
+				dout.writeUTF(result);
+				dout.flush();
 			}
 
 //			out.close();
@@ -510,6 +516,41 @@ public class ServerThread implements Runnable {
     	}
     	return result.toString();
     }
+
+    private String sendFile(JSONObject json){
+		byte[] inputByte = new byte[1024];
+		int length = 0;
+		try {
+			JSONObject result = new JSONObject();
+			String uuid = UUID.randomUUID().toString();
+			String filename = json.getString("filename");
+			String path = uuid + filename.substring(filename.lastIndexOf("."));
+			fileService.receive(json.getInt("send"), json.getInt("receive"), path, filename);
+			FileOutputStream fout = new FileOutputStream(new File(relativelyPath + "\\files\\" + path));
+			while ((length = din.read(inputByte, 0, inputByte.length)) !=-1) {
+				fout.write(inputByte, 0, length);
+				fout.flush();
+				if(din.available()==0){
+					break;
+				}
+			}
+			User user1 = userService.findUserById(json.getInt("receive"));
+			if(user1.getStatus()==1){
+				JSONObject message = new JSONObject();
+				message.put("filemessage","waitforreceive");
+				sendMessage(json.getInt("receive"),message.toString());
+			}
+			result.put("sendFileResult",SUUCESS);
+			return result.toString();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return "{}";
+	}
+
+	private String receiveFile(JSONObject json){
+		return null;
+	}
     
     private void sendMessage(Integer user_id,String message){
 
@@ -519,17 +560,20 @@ public class ServerThread implements Runnable {
 		}
     }
     public void convertMessage(String message){
-    	PrintWriter write=null;
-    	try {
-			write=new PrintWriter(socket.getOutputStream());
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println(message);
-    	write.println(message);
-    	write.flush();
-    }
+		try {
+			dout.writeUTF(message);
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
 
 

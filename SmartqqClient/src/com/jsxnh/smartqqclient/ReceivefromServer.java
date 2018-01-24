@@ -1,8 +1,6 @@
 package com.jsxnh.smartqqclient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,9 +40,12 @@ public class ReceivefromServer extends Thread{
 	public void run() {
 		try{
 			while(true){
+				/**
 				BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String str=new String(in.readLine());
-				JSONObject json=JSONObject.fromObject(str);
+				JSONObject json=JSONObject.fromObject(str);**/
+				DataInputStream din = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+				JSONObject json = JSONObject.fromObject(din.readUTF());
 				System.out.println(json);
 				if(json.containsKey("registerresult")){
 					String result=json.getString("registerresult");
@@ -151,6 +152,8 @@ public class ReceivefromServer extends Thread{
 						user.getMsgLb().setText("有消息");
 						user.injectMessage(UserPanel.ChatMessage, json.getJSONObject("sendchat").toString());
 					}					
+				}else if(json.containsKey("sendFileResult")){
+
 				}
 			}
 		}catch(IOException e){

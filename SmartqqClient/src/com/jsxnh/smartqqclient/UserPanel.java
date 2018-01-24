@@ -7,6 +7,7 @@ package com.jsxnh.smartqqclient;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -509,7 +510,20 @@ public class UserPanel extends JFrame{
 				jsPanel.validate();
 			}
 		});
-		
+		JMenuItem sendfile = new JMenuItem("发送文件");
+		sendfile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(currentfriend==null){
+					JOptionPane.showMessageDialog(UserPanel.this, "选择好友");
+					return;
+				}
+				SendtoServer.sendFile(user.getUser_id(),currentfriend.getUser_id(),"img5.jpg",new File("C:\\img5.jpg"));
+				currentnode = null;
+				currentfriend = null;
+				currentpacket = null;
+			}
+		});
 		popupmenu.add(deletepacket);
 		popupmenu.add(addpacket);
 		popupmenu.add(modifypacket);
@@ -518,6 +532,7 @@ public class UserPanel extends JFrame{
 		popupmenu.add(modifyremark);
 		popupmenu.add(friendmessage);
 		popupmenu.add(chatwith);
+		popupmenu.add(sendfile);
 		popupmenu.addSeparator();
 		popupmenu.add(shownickname);
 		popupmenu.add(showremark);

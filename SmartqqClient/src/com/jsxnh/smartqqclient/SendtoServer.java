@@ -1,7 +1,6 @@
 package com.jsxnh.smartqqclient;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,12 +13,12 @@ public class SendtoServer{
 	public SendtoServer(Socket s){
 		socket=s;
 	}
-	public static void login(Integer id,String password){	    	
-	    PrintWriter write = null;
+	public static void login(Integer id,String password){
+
+		DataOutputStream dout = null;
 		try {
-			write = new PrintWriter(socket.getOutputStream());
+			dout = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -27,31 +26,39 @@ public class SendtoServer{
 		json.put("password", password);
 		JSONObject loginjson=new JSONObject();
 		loginjson.put("command2", json);
-		write.println(loginjson.toString());
-		write.flush();
+
+		try {
+			dout.writeUTF(loginjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		
 	}
     public static void logout(Integer user_id){
-    	PrintWriter write = null;
+		DataOutputStream dout = null;
 		try {
-			write = new PrintWriter(socket.getOutputStream());
+			dout = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
 		json.put("user_id", user_id);
 		JSONObject logoutjson=new JSONObject();
 		logoutjson.put("command15", json);
-		write.println(logoutjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(logoutjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 	public static void register(Integer user_id,String password,String nickname,String problem,String answer,Integer age,String name,String message ){
-		PrintWriter write=null;
+		DataOutputStream dout = null;
 		try {
-			write = new PrintWriter(socket.getOutputStream());
+			dout = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -65,15 +72,20 @@ public class SendtoServer{
 		json.put("answer", answer);
 		JSONObject registerjson=new JSONObject();
 		registerjson.put("command1", json);
-		write.println(registerjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(registerjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void updateNickname(Integer user_id,String nickname){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -81,15 +93,20 @@ public class SendtoServer{
 		json.put("nickname",nickname);
 		JSONObject updatejson=new JSONObject();
 		updatejson.put("command7",json);
-		write.println(updatejson.toString());
-		write.flush();
+
+		try {
+			dout.writeUTF(updatejson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void updateSignature(Integer user_id,String signature){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -97,15 +114,19 @@ public class SendtoServer{
 		json.put("signature",signature);
 		JSONObject updatejson=new JSONObject();
 		updatejson.put("command3", json);
-		write.println(updatejson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(updatejson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void updateDatas(Integer user_id,String name,Integer age,String message){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -115,30 +136,38 @@ public class SendtoServer{
 		json.put("message", message);
 		JSONObject updatejson=new JSONObject();
 		updatejson.put("command4", json);
-		write.println(updatejson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(updatejson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void findProblem(Integer user_id){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
 		json.put("user_id", user_id);
 		JSONObject findjson=new JSONObject();
 		findjson.put("command5", json);
-		write.println(findjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(findjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void modifyPassword(Integer user_id,String answer,String password){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -147,15 +176,19 @@ public class SendtoServer{
 		json.put("password", password);
 		JSONObject modifyjson=new JSONObject();
 		modifyjson.put("command6", json);
-		write.println(modifyjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(modifyjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void modifyRemark(Integer user1_id,Integer user2_id,String remarkname){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -164,15 +197,19 @@ public class SendtoServer{
 		json.put("remarkname", remarkname);
 		JSONObject modifyjson=new JSONObject();
 		modifyjson.put("command8", json);
-		write.println(modifyjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(modifyjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void addPacket(Integer user_id,String packetname){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -180,15 +217,19 @@ public class SendtoServer{
 		json.put("packetname", packetname);
 		JSONObject addjson=new JSONObject();
 		addjson.put("command9", json);
-		write.println(addjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(addjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void deletePacket(Integer user_id,String packetname){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -196,15 +237,19 @@ public class SendtoServer{
 		json.put("packetname", packetname);
 		JSONObject addjson=new JSONObject();
 		addjson.put("command11", json);
-		write.println(addjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(addjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void modifyPacket(Integer user_id,String oldpacketname,String newpacketname){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -213,15 +258,19 @@ public class SendtoServer{
 		json.put("newpacketname", newpacketname);
 		JSONObject modifyjson=new JSONObject();
 		modifyjson.put("command10",json);
-		write.println(modifyjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(modifyjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void movePacket(Integer user1_id,Integer user2_id,String oldpacketname,String newpacketname){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -231,45 +280,57 @@ public class SendtoServer{
 		json.put("newpacketname", newpacketname);
 		JSONObject movejson=new JSONObject();
 		movejson.put("command12",json);
-		write.println(movejson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(movejson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void finduserById(Integer user_id){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
 		json.put("user_id", user_id);
 		JSONObject findjson=new JSONObject();
 		findjson.put("command13", json);
-		write.println(findjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(findjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void finduserByName(String nickname){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
 		json.put("nickname", nickname);
 		JSONObject findjson=new JSONObject();
 		findjson.put("command14", json);
-		write.println(findjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(findjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void addFriend(Integer user1_id,Integer user2_id,String packetname){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -278,15 +339,19 @@ public class SendtoServer{
 		json.put("packetname", packetname);
 		JSONObject addjson=new JSONObject();
 		addjson.put("command16", json);
-		write.println(addjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(addjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void agreeAddFriend(Integer user1_id,Integer user2_id,String packet1_name,String packet2_name){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -296,15 +361,19 @@ public class SendtoServer{
 		json.put("packet2_name", packet2_name);
 		JSONObject agreefriend=new JSONObject();
 		agreefriend.put("command17", json);
-		write.println(agreefriend);
-		write.flush();
+		try {
+			dout.writeUTF(agreefriend.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void disagreeAddFriend(Integer user1_id,Integer user2_id){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -312,15 +381,19 @@ public class SendtoServer{
 		json.put("user2_id", user2_id);
 		JSONObject disagree=new JSONObject();
 		disagree.put("command18", json);
-		write.println(disagree.toString());
-		write.flush();
+		try {
+			dout.writeUTF(disagree.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void sendChat(Integer user1_id,Integer user2_id,String content,String send_time){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
@@ -331,15 +404,19 @@ public class SendtoServer{
 		json.put("send_time", send_time);
 		JSONObject sendjson=new JSONObject();
 		sendjson.put("command19", json);
-		write.println(sendjson.toString());
-		write.flush();
+		try {
+			dout.writeUTF(sendjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void receiveChat(Integer user1_id,Integer user2_id,String content,String send_time,String receive_time){
-		PrintWriter write=null;
-		try{
-			write=new PrintWriter(socket.getOutputStream());
-		}catch(IOException e){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JSONObject json=new JSONObject();
@@ -350,7 +427,39 @@ public class SendtoServer{
 		json.put("receive_time", receive_time);
 		JSONObject receivejson=new JSONObject();
 		receivejson.put("command20", json);
-		write.println(receivejson.toString());
-		write.flush();
-	}	
+		try {
+			dout.writeUTF(receivejson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public  static void sendFile(Integer send, Integer receive, String filename, File file){
+		int length = 0;
+		byte[] sendByte = null;
+		DataOutputStream dout = null;
+		FileInputStream fin = null;
+		try{
+			dout = new DataOutputStream(socket.getOutputStream());
+			fin = new FileInputStream(file);
+			sendByte = new byte[1024];
+			JSONObject json = new JSONObject();
+			json.put("send",send);
+			json.put("receive",receive);
+			json.put("filename",filename);
+			JSONObject sendjson = new JSONObject();
+			sendjson.put("command21",json);
+			dout.writeUTF(sendjson.toString());
+			dout.flush();
+			while((length = fin.read(sendByte, 0, sendByte.length))!=-1){
+				dout.write(sendByte,0,length);
+				System.out.println(length);
+				//dout.flush();
+			}
+			dout.flush();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 }
