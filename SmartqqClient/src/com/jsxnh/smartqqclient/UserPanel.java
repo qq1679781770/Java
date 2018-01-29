@@ -10,37 +10,16 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTree;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 
-import com.jsxnh.component.CellRenderer;
-import com.jsxnh.component.FriendNode;
-import com.jsxnh.component.FriendTreeUI;
+import com.jsxnh.component.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -55,10 +34,16 @@ public class UserPanel extends JFrame{
 			                    AddFriendResultMessage=9,AgreeAddFriendMessage=10,DisagreeFriendMessage=11,
 			                    FindUserByIdSuccessMessage=12,FindUserByNicknameSuccessMessage=13,
 			                    FindUserByIdFailureMessage=14,FindUserByNicknameFailureMessage=15,
-			                    ChatMessage=16,LoginAddFriend=17,LoginMessages=18;
+			                    ChatMessage=16,LoginAddFriend=17,LoginMessages=18,SendFileResult=19,
+								GetFiles=20,ReceiveFileMResult=21,FileFeedBack=22,LoginFileFeedBack=23;
 	
 	private User user;
 	private Map<String, LinkedList<Friend>> friends=new HashMap<>();
+
+	public Map<Integer, String> getMessages() {
+		return messages;
+	}
+
 	private Map<Integer, String> messages=new HashMap<Integer, String>();//消息map
 	private Map<Integer, ChatPanel> chatpanels=new HashMap<>();
 	private JTree friendsTree;//朋友列表树
@@ -66,9 +51,17 @@ public class UserPanel extends JFrame{
 	private JScrollPane jsPanel;
 	private Container con=this.getContentPane();
 	private JLabel nickname,signature,weather;
-	private JLabel headimg,headimglb,MSGLb;
+	private JLabel headimg;
+	private JLabel headimglb;
+	private JLabel MSGLb;
+
+	public JLabel getFileManager() {
+		return FileManager;
+	}
+
+	private JLabel FileManager;
 	private Point point;
-	private JButton close,min,searchbt,MSGBt;
+	private JButton close,min,searchbt,MSGBt,FileManagerb;
 	private JTextField searchtf;
 	private JMenuBar modify;
 	private Friend currentfriend;
@@ -518,7 +511,27 @@ public class UserPanel extends JFrame{
 					JOptionPane.showMessageDialog(UserPanel.this, "选择好友");
 					return;
 				}
-				SendtoServer.sendFile(user.getUser_id(),currentfriend.getUser_id(),"img5.jpg",new File("C:\\img5.jpg"));
+				JFileChooser jfc=new JFileChooser();
+				jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES );
+				jfc.setMultiSelectionEnabled(false);
+				jfc.showOpenDialog(UserPanel.this);
+				File file = jfc.getSelectedFile();
+				if(file!=null){
+					SendtoServer.sendFile(user.getUser_id(),currentfriend.getUser_id(),file.getName(),file);
+					synchronized (UserPanel.this){
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(SendFileResult)){
+						messages.remove(SendFileResult);
+						JOptionPane.showMessageDialog(UserPanel.this, "发送成功");
+					}
+				}
+
+
 				currentnode = null;
 				currentfriend = null;
 				currentpacket = null;
@@ -573,7 +586,7 @@ public class UserPanel extends JFrame{
 		edit.add(editsignature);
 		edit.add(editdatas);
 		modify.add(edit);
-		modify.setBounds(167, 0, 80, 20);
+		modify.setBounds(207, 0, 80, 20);
 		//modify.setBorder(null);
 		con.add(modify);
 		
@@ -581,7 +594,7 @@ public class UserPanel extends JFrame{
 		MSGLb.setFont(new Font("宋体",Font.PLAIN,14));
 		MSGLb.setForeground(Color.white);
 		MSGLb.setText("无消息");
-		MSGLb.setBounds(107, 0, 60, 18);
+		MSGLb.setBounds(147, 0, 60, 18);
 		MSGBt=new JButton();
 		MSGBt.setBorder(null);
 		MSGBt.setFocusPainted(false);
@@ -661,12 +674,58 @@ public class UserPanel extends JFrame{
 					}
 					messages.remove(LoginMessages);
 				}
+				if(messages.containsKey(FileFeedBack)){
+
+					JSONObject json = JSONObject.fromObject(messages.get(FileFeedBack));
+					messages.remove(FileFeedBack);
+					JOptionPane.showMessageDialog(UserPanel.this, json.getString("username")+"已接收文件"+json.getString("filename"));
+
+				}
+				if(messages.containsKey(LoginFileFeedBack)){
+					JSONArray jsonArray = JSONArray.fromObject(messages.get(LoginFileFeedBack));
+					messages.remove(LoginFileFeedBack);
+					String s = "";
+					for(int i=0;i<jsonArray.size();i++){
+						s = s+jsonArray.getJSONObject(i).getString("username")+"已接收文件 "+jsonArray.getJSONObject(i).getString("filename")+"\n";
+					}
+					JOptionPane.showMessageDialog(UserPanel.this, s);
+				}
 				MSGLb.setText("无消息");
 			}
 		});
-		MSGBt.setBounds(107, 0, 60, 18);
+		MSGBt.setBounds(147, 0, 60, 18);
 		con.add(MSGLb);
 		con.add(MSGBt);
+		FileManager = new JLabel();
+		FileManager.setFont(new Font("宋体",Font.PLAIN,14));
+		FileManager.setForeground(Color.WHITE);
+		FileManager.setText("文件管理");
+		FileManager.setBounds(67,0,80,18);
+		FileManagerb = new JButton();
+		FileManagerb.setBorder(null);
+		FileManagerb.setFocusPainted(false);
+		FileManagerb.setContentAreaFilled(false);
+		FileManagerb.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SendtoServer.getFiles(user.getUser_id());
+				synchronized (UserPanel.this){
+					try {
+						UserPanel.this.wait();
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+				}
+				if(messages.containsKey(GetFiles)){
+					new fileFrame().lunch(messages.get(GetFiles));
+					messages.remove(GetFiles);
+				}
+				FileManager.setText("文件管理");
+			}
+		});
+		FileManagerb.setBounds(67,0,80,18);
+		con.add(FileManager);
+		con.add(FileManagerb);
 		/**
 		close=new JButton();
 		close.setIcon(new ImageIcon("images\\Mainclose.png"));
@@ -742,6 +801,13 @@ public class UserPanel extends JFrame{
 		if(json.containsKey("chatMessages")){
 			getMsgLb().setText("有消息");
 			injectMessage(LoginMessages,json.getJSONArray("chatMessages").toString());
+		}
+		if(json.containsKey("filereceive")){
+			getFileManager().setText("待收文件");
+		}
+		if(json.containsKey("filefeedback")){
+			getMsgLb().setText("有消息");
+			injectMessage(LoginFileFeedBack,json.getJSONArray("filefeedback").toString());
 		}
 	}
 	
@@ -1784,7 +1850,128 @@ public class UserPanel extends JFrame{
 			setVisible(true);
 		}
 	}
-		
+
+	private class fileFrame extends JFrame{
+
+		private JTabbedPane jTabbedPane;
+		private JPanel panel1,panel2,panel3;
+		private JScrollPane jsp1,jsp2,jsp3;
+		private JList list1,list2,list3;
+		private Container container = this.getContentPane();
+		private ArrayList<JSONObject> l = new ArrayList<>();
+		public fileFrame(){
+
+		}
+
+		public void lunch(String json){
+			JSONObject jobject = JSONObject.fromObject(json);
+			setLayout(null);
+			setSize(858,710);
+			jTabbedPane = new JTabbedPane();
+			panel1 = new JPanel();
+			panel1.setLayout(null);
+			panel2 = new JPanel();
+			panel2.setLayout(null);
+			panel3 = new JPanel();
+			panel3.setLayout(null);
+			DefaultListModel model1 = new DefaultListModel();
+			JSONArray json1 = jobject.getJSONArray("hassend");
+			for(int i=0;i<json1.size();i++){
+				model1.addElement(json1.getJSONObject(i));
+			}
+			list1 = new JList();
+			list1.setModel(model1);
+			list1.setFixedCellHeight(36);
+			list1.setCellRenderer(new ListCellRenderer1());
+			jsp1 = new JScrollPane();
+			jsp1.setViewportView(list1);
+			jsp1.setBounds(0,0,800,600);
+			panel1.add(jsp1);
+
+			DefaultListModel model2 = new DefaultListModel();
+			JSONArray json2 = jobject.getJSONArray("receive");
+			for(int i=0;i<json2.size();i++){
+				model2.addElement(json2.getJSONObject(i));
+				l.add(json2.getJSONObject(i));
+			}
+			list2 = new JList();
+			list2.setModel(model2);
+			list2.setFixedCellHeight(36);
+			list2.setCellRenderer(new ListCellRenderer2(UserPanel.this));
+			list2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
+			list2.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					Object object = list2.getSelectedValue();
+					JSONObject j = (JSONObject)object;
+					if(j==null){
+						return;
+					}
+					System.out.println(j);
+
+					SendtoServer.Receive(j.getInt("id"));
+					synchronized (UserPanel.this){
+						try {
+							UserPanel.this.wait();
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+					}
+					if(messages.containsKey(ReceiveFileMResult)){
+						JOptionPane.showMessageDialog(UserPanel.this, "接收成功");
+						messages.remove(ReceiveFileMResult);
+						for(JSONObject i:l){
+							if(i.getInt("id")==j.getInt("id")){
+								i.put("status",2);
+								break;
+							}
+						}
+						DefaultListModel model = new DefaultListModel();
+						for(JSONObject i:l){
+							model.addElement(i);
+						}
+						list2.setModel(model);
+						jsp2.setViewportView(list2);
+						jsp2.repaint();
+						jsp2.validate();
+
+					}
+					list2.clearSelection();
+				}
+			});
+			jsp2 = new JScrollPane();
+			jsp2.setViewportView(list2);
+			jsp2.setBounds(0,0,800,600);
+			panel2.add(jsp2);
+
+			DefaultListModel model3 = new DefaultListModel();
+			JSONArray json3 = jobject.getJSONArray("hasreceive");
+			for(int i=0;i<json3.size();i++){
+				model3.addElement(json3.getJSONObject(i));
+			}
+			list3 = new JList();
+			list3.setModel(model3);
+			list3.setFixedCellHeight(36);
+			list3.setCellRenderer(new ListCellRenderer3());
+			jsp3 = new JScrollPane();
+			jsp3.setViewportView(list3);
+			jsp3.setBounds(0,0,800,600);
+			panel3.add(jsp3);
+			jTabbedPane.add("已发送",panel1);
+			jTabbedPane.add("待接收",panel2);
+			jTabbedPane.add("已接收",panel3);
+			setContentPane(jTabbedPane);
+			background bg=new background();
+			bg.setImage(this.getToolkit().getImage("images\\bg1.jpg"));
+			bg.setBounds(0, 0,900, 700);
+			container.add(bg);
+			container.repaint();
+
+			setVisible(true);
+		}
+
+	}
+
 	private class backgournd extends JPanel{
 		private Image image;
 		public backgournd(){

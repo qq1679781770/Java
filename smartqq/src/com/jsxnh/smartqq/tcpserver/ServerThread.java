@@ -251,10 +251,21 @@ public class ServerThread implements Runnable {
 					message.put("contents",contents);
 					messages.add(message);
 				}
-
 				result.put("chatMessages", messages);
 			}
-			
+			if(fileService.findSend(user_id).size()>0){
+				JSONArray files = new JSONArray();
+				for(com.jsxnh.smartqq.entities.File f:fileService.findSend(user_id)){
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("username",userService.findUserById(f.getReceive()).getNick_name());
+					jsonObject.put("filename",f.getFilename());
+					files.add(jsonObject);
+				}
+				result.put("filefeedback",files);
+			}
+			if(fileService.findReceive(user_id).size()>0){
+				result.put("filereceive","Y");
+			}
 		}
 		else{
 			result.put("loginresult", FAILURE);
@@ -527,17 +538,20 @@ public class ServerThread implements Runnable {
 			String path = uuid + filename.substring(filename.lastIndexOf("."));
 			fileService.receive(json.getInt("send"), json.getInt("receive"), path, filename);
 			FileOutputStream fout = new FileOutputStream(new File(relativelyPath + "\\files\\" + path));
+			int l = json.getInt("length");
+			int ll = 0;
 			while ((length = din.read(inputByte, 0, inputByte.length)) !=-1) {
 				fout.write(inputByte, 0, length);
 				fout.flush();
-				if(din.available()==0){
+				ll = ll+length;
+				if(ll==l){
 					break;
 				}
 			}
 			User user1 = userService.findUserById(json.getInt("receive"));
 			if(user1.getStatus()==1){
 				JSONObject message = new JSONObject();
-				message.put("filemessage","waitforreceive");
+				message.put("filereceive","waitforreceive");
 				sendMessage(json.getInt("receive"),message.toString());
 			}
 			result.put("sendFileResult",SUUCESS);
@@ -549,9 +563,89 @@ public class ServerThread implements Runnable {
 	}
 
 	private String receiveFile(JSONObject json){
-		return null;
+		JSONObject res = new JSONObject();
+		res.put("ReceiveFile","Y");
+		com.jsxnh.smartqq.entities.File f = fileService.findFile(json.getInt("id"));
+		res.put("filename",f.getFilename());
+		try {
+
+			int length = 0;
+			byte[] sendByte ;
+			FileInputStream fin ;
+			fin = new FileInputStream(new File(relativelyPath + "\\files\\" +f.getPath()));
+			res.put("length",fin.available());
+			dout.writeUTF(res.toString());
+			dout.flush();
+			sendByte = new byte[1024];
+			while((length = fin.read(sendByte, 0, sendByte.length))!=-1){
+				dout.write(sendByte,0,length);
+			}
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		fileService.send(json.getInt("id"));
+		User user1 = userService.findUserById(f.getSend());
+		if(user1.getStatus()==1){
+			JSONObject message = new JSONObject();
+			JSONObject file = new JSONObject();
+			file.put("username",userService.findUserById(f.getReceive()).getNick_name());
+			file.put("filename",f.getFilename());
+			message.put("filefeedback",file);
+			sendMessage(f.getSend(),message.toString());
+			fileService.feedback(json.getInt("id"));
+		}
+
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("receiveFileResult",SUUCESS);
+		return jsonObject.toString();
 	}
-    
+
+	private String  getFiles(JSONObject json){
+		JSONObject res = new JSONObject();
+		Integer userid = json.getInt("user_id");
+		JSONObject files = new JSONObject();
+		JSONArray hassend = new JSONArray();
+		for(com.jsxnh.smartqq.entities.File f:fileService.findHasSend(userid)){
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("send",f.getSend());
+			jsonObject.put("receive",f.getReceive());
+			jsonObject.put("id",f.getId());
+			jsonObject.put("username",userService.findUserById(f.getReceive()).getNick_name());
+			jsonObject.put("filename",f.getFilename());
+			jsonObject.put("status",f.getStatus());
+			hassend.add(jsonObject);
+		}
+		JSONArray receive = new JSONArray();
+		for(com.jsxnh.smartqq.entities.File f:fileService.findReceive(userid)){
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("send",f.getSend());
+			jsonObject.put("receive",f.getReceive());
+			jsonObject.put("id",f.getId());
+			jsonObject.put("username",userService.findUserById(f.getSend()).getNick_name());
+			jsonObject.put("filename",f.getFilename());
+			jsonObject.put("path",f.getPath());
+			jsonObject.put("status",f.getStatus());
+			receive.add(jsonObject);
+		}
+
+		JSONArray hasreceive = new JSONArray();
+		for(com.jsxnh.smartqq.entities.File f:fileService.findHasReceive(userid)){
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("send",f.getSend());
+			jsonObject.put("receive",f.getReceive());
+			jsonObject.put("id",f.getId());
+			jsonObject.put("username",userService.findUserById(f.getSend()).getNick_name());
+			jsonObject.put("filename",f.getFilename());
+			jsonObject.put("path",f.getPath());
+			hasreceive.add(jsonObject);
+		}
+		files.put("hassend",hassend);
+		files.put("receive",receive);
+		files.put("hasreceive",hasreceive);
+		res.put("getFiles",files);
+		return res.toString();
+	}
     private void sendMessage(Integer user_id,String message){
 
 		ServerThread s = TCPServer.getServerThreadMap().get(user_id);

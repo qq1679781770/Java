@@ -55,4 +55,22 @@ public class FileDaoImpl implements FileDao{
         String hql = "from File a where a.receive=? and a.status=1";
         return getSession().createQuery(hql).setParameter(0,receive).list();
     }
+
+    @Override
+    public List<File> findHasReceive(Integer receive) {
+        String hql = "from File a where a.receive=? and (a.status=2 or a.status=3)";
+        return getSession().createQuery(hql).setParameter(0,receive).list();
+    }
+
+    @Override
+    public List<File> findHasSend(Integer send) {
+        String hql = "from File a where a.send=?";
+        return getSession().createQuery(hql).setParameter(0,send).list();
+    }
+
+    @Override
+    public File findFile(Integer id) {
+        String hql = "from File a where a.id=?";
+        return (File)getSession().createQuery(hql).setParameter(0,id).uniqueResult();
+    }
 }

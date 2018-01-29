@@ -34,7 +34,7 @@ public class Login extends JFrame{
 	public Login(){
 //		socket=new Socket("127.0.0.1",9001);
 		try {
-			socket=new Socket("127.0.0.1",9001);
+			socket=new Socket("45.32.22.186",2888);
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -695,14 +695,5 @@ public class Login extends JFrame{
 			}
 		}
 	}
-	public static void main(String[] args) {
-		try {
-			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
-			UIManager.put("Tree.rowHeight",42);
-		}
-		catch(Exception e) {
-			//TODO exception
-		}
-		new Login().lunch();
-	}
+
 }

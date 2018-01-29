@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl implements FileService{
 
     @Autowired
     private FileDao fileDao;
@@ -37,5 +37,20 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<File> findReceive(Integer receive) {
         return fileDao.findReceive(receive);
+    }
+
+    @Override
+    public List<File> findHasReceive(Integer receive) {
+        return fileDao.findHasReceive(receive);
+    }
+
+    @Override
+    public List<File> findHasSend(Integer send) {
+        return fileDao.findHasSend(send);
+    }
+
+    @Override
+    public File findFile(Integer id) {
+        return fileDao.findFile(id);
     }
 }

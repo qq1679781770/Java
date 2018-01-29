@@ -13,10 +13,12 @@ public class ReceivefromServer extends Thread{
 	private Socket socket;
 	private Login login;
 	private UserPanel user;
-	
+	private static String relativelyPath = System.getProperty("user.dir");
+	private String path;
 	public ReceivefromServer(Socket s,Login l){
 		socket=s;
 		login=l;
+
 	}
 	public Login getLogin() {
 		return login;
@@ -29,6 +31,11 @@ public class ReceivefromServer extends Thread{
 	}
 	public void setUser(UserPanel user) {
 		this.user = user;
+		path = relativelyPath+"\\"+String.valueOf(user.getUser().getUser_id());
+		File f = new File(relativelyPath+"\\"+String.valueOf(user.getUser().getUser_id()));
+		if(!f.exists()){
+			f.mkdir();
+		}
 	}
 	public Socket getSocket() {
 		return socket;
@@ -153,7 +160,37 @@ public class ReceivefromServer extends Thread{
 						user.injectMessage(UserPanel.ChatMessage, json.getJSONObject("sendchat").toString());
 					}					
 				}else if(json.containsKey("sendFileResult")){
+					user.notifyall(UserPanel.SendFileResult,json.getString("sendFileResult").toString());
+				}else if(json.containsKey("filereceive")){
+					user.getFileManager().setText("待收文件");
+				}else if(json.containsKey("getFiles")){
+					user.notifyall(UserPanel.GetFiles,json.getJSONObject("getFiles").toString());
+				}else if(json.containsKey("receiveFileResult")){
+					user.notifyall(UserPanel.ReceiveFileMResult,json.getString("receiveFileResult"));
+				}else if(json.containsKey("ReceiveFile")){
+					byte[] inputByte = new byte[1024];
+					int length = 0;
 
+
+					FileOutputStream fout = new FileOutputStream(new File(path+"\\"+json.getString("filename")));
+					int l = json.getInt("length");
+					int ll = 0 ;
+
+					while ((length = din.read(inputByte, 0, inputByte.length)) !=-1) {
+						fout.write(inputByte, 0, length);
+						fout.flush();
+						ll = ll+length;
+
+						if(ll==l){
+							break;
+						}
+
+					}
+					System.out.println("hwllo");
+
+				}else if(json.containsKey("filefeedback")){
+					user.getMsgLb().setText("有消息");
+					user.injectMessage(UserPanel.FileFeedBack, json.getJSONObject("filefeedback").toString());
 				}
 			}
 		}catch(IOException e){

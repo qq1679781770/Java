@@ -72,6 +72,7 @@ public class SendtoServer{
 		json.put("answer", answer);
 		JSONObject registerjson=new JSONObject();
 		registerjson.put("command1", json);
+		System.out.println(registerjson);
 		try {
 			dout.writeUTF(registerjson.toString());
 			dout.flush();
@@ -448,17 +449,59 @@ public class SendtoServer{
 			json.put("send",send);
 			json.put("receive",receive);
 			json.put("filename",filename);
+			json.put("length",fin.available());
 			JSONObject sendjson = new JSONObject();
 			sendjson.put("command21",json);
 			dout.writeUTF(sendjson.toString());
 			dout.flush();
+			int l = fin.available();
+			int r = 0;
+			ProcessBar p = new ProcessBar();
 			while((length = fin.read(sendByte, 0, sendByte.length))!=-1){
 				dout.write(sendByte,0,length);
-				System.out.println(length);
-				//dout.flush();
+				r = r+length;
+				p.setValue((int)((double)r/(double)l*100));
 			}
+			p.dispose();
 			dout.flush();
 		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	public static void getFiles(Integer user_id){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		JSONObject json = new JSONObject();
+		json.put("user_id",user_id);
+		JSONObject getjson = new JSONObject();
+		getjson.put("command23",json);
+		try {
+			dout.writeUTF(getjson.toString());
+			dout.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void Receive(Integer id){
+		DataOutputStream dout = null;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		JSONObject json = new JSONObject();
+		json.put("id",id);
+		JSONObject getjson = new JSONObject();
+		getjson.put("command22",json);
+		try {
+			dout.writeUTF(getjson.toString());
+			dout.flush();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
